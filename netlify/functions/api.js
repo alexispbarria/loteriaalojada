@@ -1,4 +1,4 @@
-const fetch = require('node-fetch');
+const fetch = require('node-fetch'); // ✅ Esto ahora funcionará
 
 // Los secrets se configuran en Netlify Dashboard
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;

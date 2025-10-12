@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lotería Mexicana</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Topbar -->
+    <header class="topbar">
+        <h1>Lotería Mexicana</h1>
+        <div id="auth-container">
+            <button id="auth-btn">Iniciar sesión / Registrarse</button>
+            <!-- Menú de usuario (oculto inicialmente) -->
+            <div id="user-menu" class="hidden user-menu">
+                <button id="user-name-btn" class="user-name-btn">Usuario</button>
+                <div id="user-dropdown" class="user-dropdown hidden">
+                    <button id="change-password-btn">Cambiar contraseña</button>
+                    <button id="logout-btn">Cerrar sesión</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Modal: login -->
+    <div id="auth-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Iniciar sesión / Registrarse</h2>
+            <form id="auth-form">
+                <input type="text" id="nickname" placeholder="Nickname" required>
+                <input type="password" id="password" placeholder="Contraseña" required>
+                <button type="submit">Continuar</button>
+                <p id="auth-message"></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: cambiar contraseña -->
+    <div id="password-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Cambiar contraseña</h2>
+            <form id="password-form">
+                <input type="password" id="current-password" placeholder="Contraseña actual" required>
+                <input type="password" id="new-password" placeholder="Nueva contraseña" required>
+                <input type="password" id="confirm-password" placeholder="Confirmar nueva contraseña" required>
+                <button type="submit">Actualizar contraseña</button>
+                <p id="password-message"></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: advertencia (no logueado) -->
+    <div id="login-required-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>¡Atención!</h2>
+            <p>Debes iniciar sesión o registrarte para seleccionar cartas.</p>
+            <button id="go-to-login-btn">Iniciar sesión</button>
+        </div>
+    </div>
+
+    <!-- Modal: cartas ya seleccionadas -->
+    <div id="cards-locked-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Cartas bloqueadas</h2>
+            <p>Tus cartas ya han sido seleccionadas y no pueden ser modificadas.</p>
+            <button id="close-locked-modal">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- Modal: cartas de usuario -->
+    <div id="user-cards-modal" class="modal hidden">
+        <div class="modal-content" style="text-align:center;">
+            <span class="close">&times;</span>
+            <p id="user-cards-message"></p>
+            <button id="copy-cards-btn">📋 Copiar</button>
+        </div>
+    </div>
+
+    <!-- Tabla principal -->
+    <div class="bingo-container">
+        <div class="desktop-table"></div>
+        <div class="mobile-table"></div>
+    </div>
+
+    <!-- Panel de admin -->
+    <div id="admin-panel" class="hidden admin-panel">
+        <button id="clear-all">🧹 Vaciar todas las cartas</button>
+    </div>
+
+    <!-- Botón de confirmación de selección -->
+    <div id="confirm-selection" class="hidden confirm-selection">
+        <p>Tus cartas seleccionadas: <span id="selected-cards-display"></span></p>
+        <button id="confirm-btn">✅ Seleccionar cartas</button>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="loteria.js"></script>
+    <script src="auth.js"></script>
+</body>
+</html>

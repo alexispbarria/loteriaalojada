@@ -340,6 +340,10 @@ th {
     margin: 20px auto;
     max-width: 95%;
     border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
 .admin-panel button {
@@ -354,6 +358,21 @@ th {
 
 .admin-panel button:hover {
     background: #d32f2f;
+}
+
+/* ===== BOTÓN DE TOGGLE EN PANEL ADMIN ===== */
+#toggle-table-btn {
+    background: #ff9800;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#toggle-table-btn:hover {
+    background: #f57c00;
 }
 
 /* ===== CONFIRMACIÓN DE SELECCIÓN ===== */
@@ -401,6 +420,22 @@ th {
 
 #copy-cards-btn:hover {
     background: #1976D2;
+}
+
+/* ===== MODAL DE TABLA CERRADA ===== */
+#close-table-modal {
+    background: #ff9800;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+#close-table-modal:hover {
+    background: #f57c00;
 }
 
 /* ===== UTILIDADES ===== */

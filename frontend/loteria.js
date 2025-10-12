@@ -19,6 +19,7 @@ window.appState = {
 
 let selecciones = {};
 let tempSelections = new Set();
+let config = { tablaCerrada: false }; // Nueva configuración
 
 // === API ===
 async function fetchGistFile(filename) {
@@ -203,6 +204,12 @@ function handleCellClick(e) {
         return;
     }
 
+    // Si la tabla está cerrada, no permitir inscripciones
+    if (config.tablaCerrada) {
+        document.getElementById('table-closed-modal')?.classList.remove('hidden');
+        return;
+    }
+
     // Si la carta está vacía, aplicar lógica normal
     if (!window.appState.currentUser) {
         document.getElementById('login-required-modal').classList.remove('hidden');
@@ -326,11 +333,28 @@ async function saveSelections() {
     }
 }
 
+// === NUEVA FUNCIÓN: Guardar configuración ===
+async function saveConfig() {
+    try {
+        await updateGist({ 'config.json': { content: JSON.stringify(config, null, 2) } });
+    } catch (err) {
+        alert('❌ Error al guardar configuración: ' + err.message);
+        console.error(err);
+    }
+}
+
 // === INICIALIZACIÓN ===
 async function initLoteria() {
     try {
         selecciones = await fetchGistFile('selecciones.json');
+        // Cargar configuración
+        try {
+            config = await fetchGistFile('config.json');
+        } catch (err) {
+            config = { tablaCerrada: false };
+        }
         renderTable();
+        updateAdminPanel();
     } catch (err) {
         console.error('Error al cargar selecciones:', err);
         document.querySelector('.desktop-table').textContent = '⚠️ Error de conexión';
@@ -348,7 +372,7 @@ window.loteria = {
         const userCardCount = Object.values(selecciones).filter(owner => owner === user).length;
         window.appState.userHasConfirmed = userCardCount >= 2;
         renderTable();
-        document.getElementById('admin-panel').classList.toggle('hidden', !admin);
+        updateAdminPanel();
         updateConfirmButton();
     },
     clearAll: async () => {
@@ -365,3 +389,45 @@ window.loteria = {
         updateConfirmButton();
     }
 };
+
+// === ACTUALIZAR PANEL DE ADMIN ===
+function updateAdminPanel() {
+    const panel = document.getElementById('admin-panel');
+    if (window.appState.isAdmin) {
+        panel.classList.remove('hidden');
+        
+        // Botón de toggle tabla
+        let toggleBtn = document.getElementById('toggle-table-btn');
+        if (!toggleBtn) {
+            toggleBtn = document.createElement('button');
+            toggleBtn.id = 'toggle-table-btn';
+            toggleBtn.textContent = config.tablaCerrada ? '🔓 Abrir tabla' : '🔒 Cerrar tabla';
+            toggleBtn.onclick = async () => {
+                config.tablaCerrada = !config.tablaCerrada;
+                toggleBtn.textContent = config.tablaCerrada ? '🔓 Abrir tabla' : '🔒 Cerrar tabla';
+                await saveConfig();
+                renderTable();
+            };
+            panel.appendChild(toggleBtn);
+        } else {
+            toggleBtn.textContent = config.tablaCerrada ? '🔓 Abrir tabla' : '🔒 Cerrar tabla';
+        }
+        
+        // Botón de vaciar
+        let clearBtn = document.getElementById('clear-all');
+        if (!clearBtn) {
+            clearBtn = document.createElement('button');
+            clearBtn.id = 'clear-all';
+            clearBtn.textContent = '🧹 Vaciar todas las cartas';
+            clearBtn.onclick = async () => {
+                if (confirm('¿Vaciar todas las cartas?')) {
+                    selecciones = {};
+                    await saveSelections();
+                }
+            };
+            panel.appendChild(clearBtn);
+        }
+    } else {
+        panel.classList.add('hidden');
+    }
+}

@@ -29,6 +29,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    const closeTableModal = document.getElementById('close-table-modal');
+    if (closeTableModal) {
+        closeTableModal.addEventListener('click', () => {
+            document.getElementById('table-closed-modal').classList.add('hidden');
+        });
+    }
+
     const userNameBtn = document.getElementById('user-name-btn');
     if (userNameBtn) {
         userNameBtn.addEventListener('click', () => {
@@ -69,11 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const confirmBtn = document.getElementById('confirm-btn');
     if (confirmBtn) {
         confirmBtn.addEventListener('click', window.loteria.confirmSelection);
-    }
-
-    const clearAllBtn = document.getElementById('clear-all');
-    if (clearAllBtn) {
-        clearAllBtn.addEventListener('click', window.loteria.clearAll);
     }
 });
 

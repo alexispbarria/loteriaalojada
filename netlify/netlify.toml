@@ -1,6 +1,11 @@
 [build]
   functions = "netlify/functions"
-  publish = "frontend"
+  publish = "."
+
+[[redirects]]
+  from = "/loteria/*"
+  to = "/loteria/index.html"
+  status = 200
 
 [[redirects]]
   from = "/*"

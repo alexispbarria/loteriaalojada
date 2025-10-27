@@ -8,20 +8,22 @@
 </head>
 <body>
     <!-- Topbar -->
-    <header class="topbar">
-        <h1>Lotería Mexicana</h1>
-        <div id="auth-container">
-            <button id="auth-btn">Iniciar sesión / Registrarse</button>
-            <!-- Menú de usuario (oculto inicialmente) -->
-            <div id="user-menu" class="hidden user-menu">
-                <button id="user-name-btn" class="user-name-btn">Usuario</button>
-                <div id="user-dropdown" class="user-dropdown hidden">
-                    <button id="change-password-btn">Cambiar contraseña</button>
-                    <button id="logout-btn">Cerrar sesión</button>
-                </div>
+    <!-- Topbar -->
+<header class="topbar">
+    <button id="back-to-home-btn" class="back-btn">←</button>
+    <h1>Lotería Mexicana</h1>
+    <div id="auth-container">
+        <button id="auth-btn">Iniciar sesión / Registrarse</button>
+        <!-- Menú de usuario (oculto inicialmente) -->
+        <div id="user-menu" class="hidden user-menu">
+            <button id="user-name-btn" class="user-name-btn">Usuario</button>
+            <div id="user-dropdown" class="user-dropdown hidden">
+                <button id="change-password-btn">Cambiar contraseña</button>
+                <button id="logout-btn">Cerrar sesión</button>
             </div>
         </div>
-    </header>
+    </div>
+</header>
 
     <!-- Modal: login -->
     <div id="auth-modal" class="modal hidden">

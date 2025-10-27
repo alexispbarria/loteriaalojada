@@ -107,7 +107,11 @@
         <p>Tus cartas seleccionadas: <span id="selected-cards-display"></span></p>
         <button id="confirm-btn">✅ Seleccionar cartas</button>
     </div>
-
+    <script>
+    document.getElementById('back-to-home-btn').addEventListener('click', () => {
+        window.location.href = '/';
+    });
+</script>
     <script src="config.js"></script>
     <script src="loteria.js"></script>
     <script src="auth.js"></script>

@@ -8,22 +8,21 @@
 </head>
 <body>
     <!-- Topbar -->
-    <!-- Topbar -->
-<header class="topbar">
-    <button id="back-to-home-btn" class="back-btn">←</button>
-    <h1>Lotería Mexicana</h1>
-    <div id="auth-container">
-        <button id="auth-btn">Iniciar sesión / Registrarse</button>
-        <!-- Menú de usuario (oculto inicialmente) -->
-        <div id="user-menu" class="hidden user-menu">
-            <button id="user-name-btn" class="user-name-btn">Usuario</button>
-            <div id="user-dropdown" class="user-dropdown hidden">
-                <button id="change-password-btn">Cambiar contraseña</button>
-                <button id="logout-btn">Cerrar sesión</button>
+    <header class="topbar">
+        <button id="back-to-home-btn" class="back-btn">←</button>
+        <h1>Lotería Mexicana</h1>
+        <div id="auth-container">
+            <button id="auth-btn">Iniciar sesión / Registrarse</button>
+            <!-- Menú de usuario (oculto inicialmente) -->
+            <div id="user-menu" class="hidden user-menu">
+                <button id="user-name-btn" class="user-name-btn">Usuario</button>
+                <div id="user-dropdown" class="user-dropdown hidden">
+                    <button id="change-password-btn">Cambiar contraseña</button>
+                    <button id="logout-btn">Cerrar sesión</button>
+                </div>
             </div>
         </div>
-    </div>
-</header>
+    </header>
 
     <!-- Modal: login -->
     <div id="auth-modal" class="modal hidden">
@@ -93,6 +92,39 @@
         </div>
     </div>
 
+    <!-- Modal: generador de cartas (solo admin) -->
+    <div id="card-generator-modal" class="modal hidden">
+        <div class="modal-content generator-modal">
+            <span class="close">&times;</span>
+            <h2>Generador de Cartas - Lotería Mexicana</h2>
+            
+            <div class="generator-main">
+                <!-- Área de miniaturas -->
+                <div class="miniatures-container">
+                    <div id="miniatures-grid" class="miniatures-grid"></div>
+                </div>
+                
+                <!-- Panel derecho: carta actual + botón -->
+                <div class="current-card-panel">
+                    <div class="current-card-display">
+                        <img id="current-card-img" src="" alt="Carta actual">
+                        <p id="current-card-name" class="current-card-name">—</p>
+                    </div>
+                    <button id="next-card-btn" class="next-card-btn">Siguiente carta 🎲</button>
+                    <button id="copy-current-card" class="copy-btn">📋 Copiar nombre</button>
+                </div>
+            </div>
+            
+            <!-- Última carta generada (transparencia) -->
+            <div class="last-card-section">
+                <h3>Última carta generada:</h3>
+                <div id="last-card-display" class="last-card-display">
+                    <span id="last-card-text">Ninguna</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Tabla principal -->
     <div class="bingo-container">
         <div class="desktop-table"></div>
@@ -101,7 +133,7 @@
 
     <!-- Panel de admin -->
     <div id="admin-panel" class="hidden admin-panel">
-        <!-- Botones se crearán dinámicamente -->
+        <!-- Los botones se crearán dinámicamente -->
     </div>
 
     <!-- Botón de confirmación de selección -->
@@ -109,11 +141,7 @@
         <p>Tus cartas seleccionadas: <span id="selected-cards-display"></span></p>
         <button id="confirm-btn">✅ Seleccionar cartas</button>
     </div>
-    <script>
-    document.getElementById('back-to-home-btn').addEventListener('click', () => {
-        window.location.href = '/';
-    });
-</script>
+
     <script src="config.js"></script>
     <script src="loteria.js"></script>
     <script src="auth.js"></script>

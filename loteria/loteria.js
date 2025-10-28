@@ -10,6 +10,64 @@ const CARTAS = [
     "LA CAMPANA", "EL CANTARITO", "EL VENADO", "EL SOL", "LA CORONA", "LA CHALUPA", "EL PINO", "EL PESCADO", "LA PALMA", "LA MACETA", "LA ARPA", "LA RANA"
 ];
 
+// URLs de imágenes (reemplaza con tus propias URLs)
+const CARTAS_IMAGENES = {
+    "EL GALLO": "https://i.ibb.co/yBm513qg/EL-GALLO.jpg",
+    "LA PERA": "https://i.ibb.co/Y457kCNQ/LA-PERA.jpg",
+    "EL TAMBOR": "https://i.ibb.co/bnHSkK2/EL-TAMBOR.jpg",
+    "LA CAMPANA": "https://i.ibb.co/spmj2QyD/LA-CAMPANA.jpg",
+    "EL DIABLITO": "https://i.ibb.co/HDmwQ13k/EL-DIABLITO.jpg",
+    "LA BANDERA": "https://i.ibb.co/G3tcJ3Qw/LA-BANDERA.jpg",
+    "EL CAMARÓN": "https://i.ibb.co/SXJZQqHZ/EL-CAMARON.jpg",
+    "EL CANTARITO": "https://i.ibb.co/3mXs4sm9/EL-CANTARITO.jpg",
+    "LA DAMA": "https://i.ibb.co/C3WSD6yS/LA-DAMA.jpg",
+    "EL BANDOLÓN": "https://i.ibb.co/KpHm1GkK/EL-BANDOLON.jpg",
+    "LAS JARAS": "https://i.ibb.co/Dfs1s58B/LAS-JARAS.jpg",
+    "EL VENADO": "https://i.ibb.co/230HbZTV/EL-VENADO.jpg",
+    "EL CATRÍN": "https://i.ibb.co/YBqWdDRW/EL-CATRIN.jpg",
+    "EL VIOLONCELLO": "https://i.ibb.co/HLzgXxS6/EL-VIOLONCELLO.jpg",
+    "EL MÚSICO": "https://i.ibb.co/ycn2bV6h/EL-MUSICO.jpg",
+    "EL SOL": "https://i.ibb.co/93n4gWJX/EL-SOL.jpg",
+    "EL PARAGUAS": "https://i.ibb.co/mC2fg5CM/EL-PARAGUAS.jpg",
+    "LA GARZA": "https://i.ibb.co/gZD5skcB/LA-GARZA.jpg",
+    "LA ARAÑA": "https://i.ibb.co/HTqD8pP2/LA-ARANA.jpg",
+    "LA CORONA": "https://i.ibb.co/6cTj706Z/LA-CORONA.jpg",
+    "LA SIRENA": "https://i.ibb.co/Q7kpqBrR/LA-SIRENA.jpg",
+    "EL PÁJARO": "https://i.ibb.co/NdNXvFTk/EL-PAJARO.jpg",
+    "EL SOLDADO": "https://i.ibb.co/NgCgJ8Tf/EL-SOLDADO.jpg",
+    "LA CHALUPA": "https://i.ibb.co/1fwcH0zr/LA-CHALUPA.jpg",
+    "LA ESCALERA": "https://i.ibb.co/Kx6Wns7Y/LA-ESCALERA.jpg",
+    "LA MANO": "https://i.ibb.co/PZb49PXB/LA-MANO.jpg",
+    "LA ESTRELLA": "https://i.ibb.co/cKSXjW7f/LA-ESTRELLA.jpg",
+    "EL PINO": "https://i.ibb.co/QFbCyN9r/EL-PINO.jpg",
+    "LA BOTELLA": "https://i.ibb.co/TB6PjFPK/LA-BOTELLA.jpg",
+    "LA BOTA": "https://i.ibb.co/5X203xH2/LA-BOTA.jpg",
+    "EL CAZO": "https://i.ibb.co/CKq5fyqf/EL-CAZO.jpg",
+    "EL PESCADO": "https://i.ibb.co/5XPM1dgX/EL-PESCADO.jpg",
+    "EL BARRIL": "https://i.ibb.co/0yy6DVSH/EL-BARRIL.jpg",
+    "LA LUNA": "https://i.ibb.co/ks4NMj32/LA-LUNA.jpg",
+    "EL MUNDO": "https://i.ibb.co/4ZByNtVL/EL-MUNDO.jpg",
+    "LA PALMA": "https://i.ibb.co/8WLRx7X/LA-PALMA.jpg",
+    "EL ÁRBOL": "https://i.ibb.co/8nYD2XY3/EL-ARBOL.jpg",
+    "EL COTORRO": "https://i.ibb.co/WNvSBZ8f/EL-COTORRO.jpg",
+    "EL APACHE": "https://i.ibb.co/C3DJDfDV/EL-APACHE.jpg",
+    "LA MACETA": "https://i.ibb.co/Gf42NhM8/LA-MACETA.jpg",
+    "EL MELÓN": "https://i.ibb.co/KzbwgZFW/EL-MELON.jpg",
+    "EL BORRACHO": "https://i.ibb.co/b5HkZFVR/EL-BORRACHO.jpg",
+    "EL NOPAL": "https://i.ibb.co/HpXZYDgJ/EL-NOPAL.jpg",
+    "EL ARPA": "https://i.ibb.co/35Jxddt7/EL-ARPA.jpg",
+    "EL VALIENTE": "https://i.ibb.co/JRcbyDdM/EL-VALIENTE.jpg",
+    "EL NEGRITO": "https://i.ibb.co/cKkDqtFm/EL-NEGRITO.jpg",
+    "EL ALACRÁN": "https://i.ibb.co/23FFxH87/EL-ALACRAN.jpg",
+    "LA RANA": "https://i.ibb.co/SXhZF4Vr/LA-RANA.jpg",
+    "EL GORRITO": "https://i.ibb.co/gZHw0X3k/EL-GORRITO.jpg",
+    "EL CORAZÓN": "https://i.ibb.co/W4f2Yg6H/EL-CORAZON.jpg",
+    "LA ROSA": "https://i.ibb.co/ccRdZLqy/LA-ROSA.jpg",
+    "LA MUERTE": "https://i.ibb.co/FqJq6Z63/LA-MUERTE.jpg",
+    "LA SANDÍA": "https://i.ibb.co/tTvKjmty/LA-SANDIA.jpg",
+    "LA CALAVERA": "https://i.ibb.co/qYNV3ZYW/LA-CALAVERA.jpg"
+};
+
 // Estado global
 window.appState = {
     currentUser: null,
@@ -19,7 +77,9 @@ window.appState = {
 
 let selecciones = {};
 let tempSelections = new Set();
-let config = { tablaCerrada: false }; // Nueva configuración
+let config = { tablaCerrada: false };
+let cartasGeneradas = [];
+let ultimaCarta = null;
 
 // === API ===
 async function fetchGistFile(filename) {
@@ -50,7 +110,6 @@ function getMaxSelectableCards() {
 
 // === RENDER ===
 function renderTable() {
-    // Renderizar versión desktop
     const desktop = document.querySelector('.desktop-table');
     if (desktop) {
         desktop.innerHTML = '';
@@ -58,7 +117,6 @@ function renderTable() {
         desktop.appendChild(desktopTable);
     }
 
-    // Renderizar versión móvil
     const mobile = document.querySelector('.mobile-table');
     if (mobile) {
         mobile.innerHTML = '';
@@ -66,7 +124,6 @@ function renderTable() {
         mobile.appendChild(mobileTable);
     }
 
-    // Añadir eventos a ambas versiones
     document.querySelectorAll('.player-cell').forEach(cell => {
         cell.addEventListener('click', handleCellClick);
     });
@@ -78,6 +135,7 @@ function renderTable() {
     }
 
     updateConfirmButton();
+    updateAdminPanel(); // Asegurar que el panel de admin esté actualizado
 }
 
 // === TABLA DE ESCRITORIO (4 columnas verticales) ===
@@ -85,7 +143,6 @@ function createDesktopTable() {
     const table = document.createElement('table');
     table.className = 'desktop-cards-table';
     
-    // Crear thead con 8 columnas (4 pares)
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');
     for (let i = 0; i < 4; i++) {
@@ -100,7 +157,6 @@ function createDesktopTable() {
     thead.appendChild(headerRow);
     table.appendChild(thead);
 
-    // Crear filas (14 filas)
     const tbody = document.createElement('tbody');
     const numFilas = 14;
     const numColumnas = 4;
@@ -109,19 +165,17 @@ function createDesktopTable() {
         const tr = document.createElement('tr');
         
         for (let col = 0; col < numColumnas; col++) {
-            const index = fila + col * numFilas; // Índice para columna vertical
+            const index = fila + col * numFilas;
             
             if (index < CARTAS.length) {
                 const carta = CARTAS[index];
                 
-                // Celda de carta
                 const cartaCell = document.createElement('td');
                 cartaCell.className = 'number-cell pink-bg';
                 cartaCell.textContent = carta;
                 cartaCell.dataset.card = carta;
                 tr.appendChild(cartaCell);
                 
-                // Celda de jugador
                 const jugadorCell = document.createElement('td');
                 jugadorCell.className = 'player-cell';
                 jugadorCell.dataset.card = carta;
@@ -133,14 +187,12 @@ function createDesktopTable() {
                 }
                 jugadorCell.textContent = jugador;
                 
-                // Botón de eliminar para admin
                 if (window.appState.isAdmin && jugador !== '—') {
                     jugadorCell.innerHTML = `${jugador} <span class="remove-btn" data-card="${carta}">×</span>`;
                 }
                 
                 tr.appendChild(jugadorCell);
             } else {
-                // Celdas vacías
                 const emptyCarta = document.createElement('td');
                 emptyCarta.className = 'number-cell pink-bg';
                 emptyCarta.textContent = '';
@@ -198,19 +250,16 @@ function handleCellClick(e) {
     const carta = e.currentTarget.dataset.card;
     const currentOwner = selecciones[carta];
 
-    // Si la carta TIENE un dueño, mostrar info (incluso si soy yo)
     if (currentOwner) {
         showUserCardsModal(currentOwner);
         return;
     }
 
-    // Si la tabla está cerrada, no permitir inscripciones
     if (config.tablaCerrada) {
         document.getElementById('table-closed-modal')?.classList.remove('hidden');
         return;
     }
 
-    // Si la carta está vacía, aplicar lógica normal
     if (!window.appState.currentUser) {
         document.getElementById('login-required-modal').classList.remove('hidden');
         return;
@@ -221,7 +270,6 @@ function handleCellClick(e) {
         return;
     }
 
-    // Verificar límite de selección
     const maxSelectable = getMaxSelectableCards();
     if (tempSelections.has(carta)) {
         tempSelections.delete(carta);
@@ -238,7 +286,6 @@ function handleCellClick(e) {
 }
 
 function showUserCardsModal(owner) {
-    // Obtener todas las cartas del usuario
     const userCards = Object.entries(selecciones)
         .filter(([carta, user]) => user === owner)
         .map(([carta]) => carta);
@@ -247,10 +294,8 @@ function showUserCardsModal(owner) {
         ? `El usuario <strong>${owner}</strong> ha seleccionado: <strong>${userCards.join(' y ')}</strong>`
         : `El usuario <strong>${owner}</strong> no tiene cartas seleccionadas.`;
 
-    // Actualizar contenido del modal existente
     document.getElementById('user-cards-message').innerHTML = message;
     
-    // Evento de copiar
     const copyBtn = document.getElementById('copy-cards-btn');
     copyBtn.onclick = () => {
         const textToCopy = userCards.join('-');
@@ -264,7 +309,6 @@ function showUserCardsModal(owner) {
         });
     };
 
-    // Mostrar modal
     document.getElementById('user-cards-modal').classList.remove('hidden');
 }
 
@@ -333,7 +377,6 @@ async function saveSelections() {
     }
 }
 
-// === NUEVA FUNCIÓN: Guardar configuración ===
 async function saveConfig() {
     try {
         await updateGist({ 'config.json': { content: JSON.stringify(config, null, 2) } });
@@ -343,18 +386,46 @@ async function saveConfig() {
     }
 }
 
+// === GENERADOR DE CARTAS ===
+function obtenerCartaAleatoria() {
+    const cartas = Object.keys(CARTAS_IMAGENES);
+    const carta = cartas[Math.floor(Math.random() * cartas.length)];
+    return carta;
+}
+
+function mostrarCartaActual(carta) {
+    const img = document.getElementById('current-card-img');
+    const name = document.getElementById('current-card-name');
+    
+    img.src = CARTAS_IMAGENES[carta];
+    img.alt = carta;
+    name.textContent = carta;
+    
+    ultimaCarta = carta;
+    document.getElementById('last-card-text').textContent = carta;
+}
+
+function agregarMiniatura(carta) {
+    const grid = document.getElementById('miniatures-grid');
+    const miniatura = document.createElement('div');
+    miniatura.className = 'miniature-card';
+    miniatura.innerHTML = `
+        <img src="${CARTAS_IMAGENES[carta]}" alt="${carta}">
+        <div>${carta}</div>
+    `;
+    grid.prepend(miniatura);
+}
+
 // === INICIALIZACIÓN ===
 async function initLoteria() {
     try {
         selecciones = await fetchGistFile('selecciones.json');
-        // Cargar configuración
         try {
             config = await fetchGistFile('config.json');
         } catch (err) {
             config = { tablaCerrada: false };
         }
         renderTable();
-        updateAdminPanel();
     } catch (err) {
         console.error('Error al cargar selecciones:', err);
         document.querySelector('.desktop-table').textContent = '⚠️ Error de conexión';
@@ -362,7 +433,17 @@ async function initLoteria() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', initLoteria);
+document.addEventListener('DOMContentLoaded', () => {
+    initLoteria();
+    
+    // Botón de volver al inicio
+    const backBtn = document.getElementById('back-to-home-btn');
+    if (backBtn) {
+        backBtn.addEventListener('click', () => {
+            window.location.href = '/';
+        });
+    }
+});
 
 // Exponer para auth.js
 window.loteria = {
@@ -427,6 +508,42 @@ function updateAdminPanel() {
             };
             panel.appendChild(clearBtn);
         }
+        
+        // Botón del generador (SOLO PARA ADMINS)
+        let generatorBtn = document.getElementById('generator-btn');
+        if (!generatorBtn) {
+            generatorBtn = document.createElement('button');
+            generatorBtn.id = 'generator-btn';
+            generatorBtn.textContent = '🎲 Generar Cartas';
+            generatorBtn.onclick = () => {
+                document.getElementById('card-generator-modal').classList.remove('hidden');
+            };
+            panel.appendChild(generatorBtn);
+        }
+        
+        // Eventos del generador
+        document.querySelector('#card-generator-modal .close')?.addEventListener('click', () => {
+            document.getElementById('card-generator-modal').classList.add('hidden');
+        });
+        
+        document.getElementById('next-card-btn')?.addEventListener('click', () => {
+            const carta = obtenerCartaAleatoria();
+            mostrarCartaActual(carta);
+            agregarMiniatura(carta);
+            cartasGeneradas.push(carta);
+        });
+        
+        document.getElementById('copy-current-card')?.addEventListener('click', () => {
+            if (ultimaCarta) {
+                navigator.clipboard.writeText(ultimaCarta).then(() => {
+                    const btn = document.getElementById('copy-current-card');
+                    btn.textContent = '✅ ¡Copiado!';
+                    setTimeout(() => {
+                        btn.textContent = '📋 Copiar nombre';
+                    }, 2000);
+                });
+            }
+        });
     } else {
         panel.classList.add('hidden');
     }

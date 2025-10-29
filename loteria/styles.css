@@ -634,3 +634,15 @@ th {
         border-radius: 10px;
     }
 }
+
+/* ===== FIN DEL JUEGO ===== */
+.fin-juego {
+    font-size: 1.3rem;
+    color: #4CAF50;
+    font-weight: bold;
+    text-align: center;
+    padding: 40px 20px;
+    background: #e8f5e9;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}

@@ -78,6 +78,10 @@ window.appState = {
 let selecciones = {};
 let tempSelections = new Set();
 let config = { tablaCerrada: false };
+
+// === VARIABLES DEL GENERADOR ===
+let mazoMezclado = [];
+let indiceCartaActual = 0;
 let cartasGeneradas = [];
 let ultimaCarta = null;
 let generadorInicializado = false;
@@ -387,16 +391,29 @@ async function saveConfig() {
     }
 }
 
-// === GENERADOR DE CARTAS ===
-function obtenerCartaAleatoria() {
-    const cartas = Object.keys(CARTAS_IMAGENES);
-    const carta = cartas[Math.floor(Math.random() * cartas.length)];
-    return carta;
+// === GENERADOR SIN REPETICIÓN ===
+function reiniciarMazo() {
+    mazoMezclado = [...Object.keys(CARTAS_IMAGENES)];
+    // Mezclar con Fisher-Yates
+    for (let i = mazoMezclado.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [mazoMezclado[i], mazoMezclado[j]] = [mazoMezclado[j], mazoMezclado[i]];
+    }
+    indiceCartaActual = 0;
+}
+
+function obtenerSiguienteCarta() {
+    if (indiceCartaActual >= mazoMezclado.length) {
+        return null;
+    }
+    return mazoMezclado[indiceCartaActual++];
 }
 
 function mostrarCartaActual(carta) {
     const img = document.getElementById('current-card-img');
     const name = document.getElementById('current-card-name');
+    const placeholder = document.getElementById('generator-placeholder');
+    const finJuego = document.getElementById('fin-juego');
     
     img.src = CARTAS_IMAGENES[carta];
     img.alt = carta;
@@ -404,11 +421,23 @@ function mostrarCartaActual(carta) {
     name.textContent = carta;
     name.style.display = 'block';
     
-    const placeholder = document.getElementById('generator-placeholder');
     if (placeholder) placeholder.style.display = 'none';
+    if (finJuego) finJuego.style.display = 'none';
     
     ultimaCarta = carta;
     document.getElementById('last-card-text').textContent = carta;
+}
+
+function mostrarFinJuego() {
+    const img = document.getElementById('current-card-img');
+    const name = document.getElementById('current-card-name');
+    const placeholder = document.getElementById('generator-placeholder');
+    const finJuego = document.getElementById('fin-juego');
+    
+    if (img) img.style.display = 'none';
+    if (name) name.style.display = 'none';
+    if (placeholder) placeholder.style.display = 'none';
+    if (finJuego) finJuego.style.display = 'block';
 }
 
 function agregarMiniatura(carta) {
@@ -423,6 +452,7 @@ function agregarMiniatura(carta) {
 }
 
 function reiniciarGenerador() {
+    reiniciarMazo();
     cartasGeneradas = [];
     ultimaCarta = null;
     
@@ -433,11 +463,13 @@ function reiniciarGenerador() {
     const img = document.getElementById('current-card-img');
     const name = document.getElementById('current-card-name');
     const lastText = document.getElementById('last-card-text');
+    const finJuego = document.getElementById('fin-juego');
     
     if (placeholder) placeholder.style.display = 'block';
     if (img) img.style.display = 'none';
     if (name) name.style.display = 'none';
     if (lastText) lastText.textContent = 'Ninguna';
+    if (finJuego) finJuego.style.display = 'none';
     
     document.getElementById('reset-confirm-modal').classList.add('hidden');
 }
@@ -446,20 +478,32 @@ function inicializarGenerador() {
     if (generadorInicializado) return;
     generadorInicializado = true;
     
+    reiniciarMazo();
+    cartasGeneradas = [];
+    ultimaCarta = null;
+    
     const placeholder = document.getElementById('generator-placeholder');
     const img = document.getElementById('current-card-img');
     const name = document.getElementById('current-card-name');
+    const lastText = document.getElementById('last-card-text');
+    const finJuego = document.getElementById('fin-juego');
     
     if (placeholder) placeholder.style.display = 'block';
     if (img) img.style.display = 'none';
     if (name) name.style.display = 'none';
+    if (lastText) lastText.textContent = 'Ninguna';
+    if (finJuego) finJuego.style.display = 'none';
     
     document.querySelector('#card-generator-modal .close')?.addEventListener('click', () => {
         document.getElementById('card-generator-modal').classList.add('hidden');
     });
     
     document.getElementById('next-card-btn')?.addEventListener('click', () => {
-        const carta = obtenerCartaAleatoria();
+        const carta = obtenerSiguienteCarta();
+        if (carta === null) {
+            mostrarFinJuego();
+            return;
+        }
         mostrarCartaActual(carta);
         agregarMiniatura(carta);
         cartasGeneradas.push(carta);
@@ -485,13 +529,6 @@ function inicializarGenerador() {
 // === INICIALIZACIÓN ===
 document.addEventListener('DOMContentLoaded', () => {
     initLoteria();
-    
-    const backBtn = document.getElementById('back-to-home-btn');
-    if (backBtn) {
-        backBtn.addEventListener('click', () => {
-            window.location.href = '/';
-        });
-    }
     
     // Eventos del modal de reinicio
     document.querySelectorAll('.reset-close').forEach(el => {

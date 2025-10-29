@@ -563,28 +563,37 @@ th {
     border-radius: 4px;
     cursor: pointer;
     width: 100%;
+    margin: 10px 0;
 }
 
 .copy-btn:hover {
     background: #1976D2;
 }
 
-.last-card-section {
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid #eee;
-    text-align: center;
+.reset-btn {
+    background: #ff5722;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    width: 100%;
+    margin-top: 10px;
 }
 
-.last-card-display {
-    font-size: 1.3rem;
-    font-weight: bold;
-    color: #4CAF50;
-    margin-top: 10px;
-    padding: 10px;
-    background: #f9f9f9;
-    border-radius: 6px;
-    display: inline-block;
+.reset-btn:hover {
+    background: #e64a19;
+}
+
+.reset-btn.cancel {
+    background: #ccc;
+    color: #333;
+}
+
+.reset-btn.confirm {
+    background: #f44336;
+    color: white;
 }
 
 /* ===== PLACEHOLDER DEL GENERADOR ===== */
@@ -624,44 +633,4 @@ th {
         background: rgba(229, 31, 99, 0.7);
         border-radius: 10px;
     }
-}
-
-/* ===== BOTONES DE REINICIO ===== */
-.reset-btn {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.reset-btn.cancel {
-    background: #ccc;
-    color: #333;
-}
-
-.reset-btn.confirm {
-    background: #f44336;
-    color: white;
-}
-
-.reset-btn:hover {
-    opacity: 0.9;
-}
-
-/* Botón de reinicio en panel de generador */
-#reset-generator-btn {
-    background: #ff5722;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    margin-top: 10px;
-    width: 100%;
-}
-
-#reset-generator-btn:hover {
-    background: #e64a19;
 }

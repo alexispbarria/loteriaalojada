@@ -10,7 +10,7 @@ const CARTAS = [
     "LA CAMPANA", "EL CANTARITO", "EL VENADO", "EL SOL", "LA CORONA", "LA CHALUPA", "EL PINO", "EL PESCADO", "LA PALMA", "LA MACETA", "LA ARPA", "LA RANA"
 ];
 
-// URLs de imágenes (reemplaza con tus propias URLs)
+// URLs de imágenes
 const CARTAS_IMAGENES = {
     "EL GALLO": "https://i.ibb.co/yBm513qg/EL-GALLO.jpg",
     "LA PERA": "https://i.ibb.co/Y457kCNQ/LA-PERA.jpg",
@@ -423,15 +423,12 @@ function agregarMiniatura(carta) {
 }
 
 function reiniciarGenerador() {
-    // Limpiar estado
     cartasGeneradas = [];
     ultimaCarta = null;
     
-    // Limpiar miniaturas
     const grid = document.getElementById('miniatures-grid');
     if (grid) grid.innerHTML = '';
     
-    // Restaurar placeholder
     const placeholder = document.getElementById('generator-placeholder');
     const img = document.getElementById('current-card-img');
     const name = document.getElementById('current-card-name');
@@ -442,7 +439,6 @@ function reiniciarGenerador() {
     if (name) name.style.display = 'none';
     if (lastText) lastText.textContent = 'Ninguna';
     
-    // Cerrar modal de confirmación
     document.getElementById('reset-confirm-modal').classList.add('hidden');
 }
 
@@ -480,9 +476,39 @@ function inicializarGenerador() {
             });
         }
     });
+    
+    document.getElementById('reset-generator-btn')?.addEventListener('click', () => {
+        document.getElementById('reset-confirm-modal').classList.remove('hidden');
+    });
 }
 
 // === INICIALIZACIÓN ===
+document.addEventListener('DOMContentLoaded', () => {
+    initLoteria();
+    
+    const backBtn = document.getElementById('back-to-home-btn');
+    if (backBtn) {
+        backBtn.addEventListener('click', () => {
+            window.location.href = '/';
+        });
+    }
+    
+    // Eventos del modal de reinicio
+    document.querySelectorAll('.reset-close').forEach(el => {
+        el.addEventListener('click', () => {
+            document.getElementById('reset-confirm-modal').classList.add('hidden');
+        });
+    });
+    
+    document.getElementById('cancel-reset')?.addEventListener('click', () => {
+        document.getElementById('reset-confirm-modal').classList.add('hidden');
+    });
+    
+    document.getElementById('confirm-reset')?.addEventListener('click', () => {
+        reiniciarGenerador();
+    });
+});
+
 async function initLoteria() {
     try {
         selecciones = await fetchGistFile('selecciones.json');
@@ -498,31 +524,6 @@ async function initLoteria() {
         document.querySelector('.mobile-table').textContent = '⚠️ Error de conexión';
     }
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    initLoteria();
-    
-    const backBtn = document.getElementById('back-to-home-btn');
-    if (backBtn) {
-        backBtn.addEventListener('click', () => {
-            window.location.href = '/';
-        });
-    }
-    // Eventos del modal de reinicio
-document.querySelectorAll('.reset-close').forEach(el => {
-    el.addEventListener('click', () => {
-        document.getElementById('reset-confirm-modal').classList.add('hidden');
-    });
-});
-
-document.getElementById('cancel-reset')?.addEventListener('click', () => {
-    document.getElementById('reset-confirm-modal').classList.add('hidden');
-});
-
-document.getElementById('confirm-reset')?.addEventListener('click', () => {
-    reiniciarGenerador();
-});
-});
 
 // Exponer para auth.js
 window.loteria = {
@@ -596,18 +597,6 @@ function updateAdminPanel() {
                 inicializarGenerador();
             };
             panel.appendChild(generatorBtn);
-        }
-
-        // Dentro de updateAdminPanel(), después del botón generator-btn
-        let resetBtn = document.getElementById('reset-generator-btn');
-        if (!resetBtn) {
-            resetBtn = document.createElement('button');
-            resetBtn.id = 'reset-generator-btn';
-            resetBtn.textContent = '🔄 Reiniciar Bingo';
-            resetBtn.onclick = () => {
-                document.getElementById('reset-confirm-modal').classList.remove('hidden');
-            };
-            panel.appendChild(resetBtn);
         }
     } else {
         panel.classList.add('hidden');

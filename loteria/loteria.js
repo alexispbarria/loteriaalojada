@@ -80,6 +80,7 @@ let tempSelections = new Set();
 let config = { tablaCerrada: false };
 let cartasGeneradas = [];
 let ultimaCarta = null;
+let generadorInicializado = false;
 
 // === API ===
 async function fetchGistFile(filename) {
@@ -135,7 +136,7 @@ function renderTable() {
     }
 
     updateConfirmButton();
-    updateAdminPanel(); // Asegurar que el panel de admin esté actualizado
+    updateAdminPanel();
 }
 
 // === TABLA DE ESCRITORIO (4 columnas verticales) ===
@@ -399,7 +400,12 @@ function mostrarCartaActual(carta) {
     
     img.src = CARTAS_IMAGENES[carta];
     img.alt = carta;
+    img.style.display = 'block';
     name.textContent = carta;
+    name.style.display = 'block';
+    
+    const placeholder = document.getElementById('generator-placeholder');
+    if (placeholder) placeholder.style.display = 'none';
     
     ultimaCarta = carta;
     document.getElementById('last-card-text').textContent = carta;
@@ -414,6 +420,42 @@ function agregarMiniatura(carta) {
         <div>${carta}</div>
     `;
     grid.prepend(miniatura);
+}
+
+function inicializarGenerador() {
+    if (generadorInicializado) return;
+    generadorInicializado = true;
+    
+    const placeholder = document.getElementById('generator-placeholder');
+    const img = document.getElementById('current-card-img');
+    const name = document.getElementById('current-card-name');
+    
+    if (placeholder) placeholder.style.display = 'block';
+    if (img) img.style.display = 'none';
+    if (name) name.style.display = 'none';
+    
+    document.querySelector('#card-generator-modal .close')?.addEventListener('click', () => {
+        document.getElementById('card-generator-modal').classList.add('hidden');
+    });
+    
+    document.getElementById('next-card-btn')?.addEventListener('click', () => {
+        const carta = obtenerCartaAleatoria();
+        mostrarCartaActual(carta);
+        agregarMiniatura(carta);
+        cartasGeneradas.push(carta);
+    });
+    
+    document.getElementById('copy-current-card')?.addEventListener('click', () => {
+        if (ultimaCarta) {
+            navigator.clipboard.writeText(ultimaCarta).then(() => {
+                const btn = document.getElementById('copy-current-card');
+                btn.textContent = '✅ ¡Copiado!';
+                setTimeout(() => {
+                    btn.textContent = '📋 Copiar nombre';
+                }, 2000);
+            });
+        }
+    });
 }
 
 // === INICIALIZACIÓN ===
@@ -436,7 +478,6 @@ async function initLoteria() {
 document.addEventListener('DOMContentLoaded', () => {
     initLoteria();
     
-    // Botón de volver al inicio
     const backBtn = document.getElementById('back-to-home-btn');
     if (backBtn) {
         backBtn.addEventListener('click', () => {
@@ -477,7 +518,6 @@ function updateAdminPanel() {
     if (window.appState.isAdmin) {
         panel.classList.remove('hidden');
         
-        // Botón de toggle tabla
         let toggleBtn = document.getElementById('toggle-table-btn');
         if (!toggleBtn) {
             toggleBtn = document.createElement('button');
@@ -494,7 +534,6 @@ function updateAdminPanel() {
             toggleBtn.textContent = config.tablaCerrada ? '🔓 Abrir tabla' : '🔒 Cerrar tabla';
         }
         
-        // Botón de vaciar
         let clearBtn = document.getElementById('clear-all');
         if (!clearBtn) {
             clearBtn = document.createElement('button');
@@ -509,7 +548,6 @@ function updateAdminPanel() {
             panel.appendChild(clearBtn);
         }
         
-        // Botón del generador (SOLO PARA ADMINS)
         let generatorBtn = document.getElementById('generator-btn');
         if (!generatorBtn) {
             generatorBtn = document.createElement('button');
@@ -517,33 +555,10 @@ function updateAdminPanel() {
             generatorBtn.textContent = '🎲 Generar Cartas';
             generatorBtn.onclick = () => {
                 document.getElementById('card-generator-modal').classList.remove('hidden');
+                inicializarGenerador();
             };
             panel.appendChild(generatorBtn);
         }
-        
-        // Eventos del generador
-        document.querySelector('#card-generator-modal .close')?.addEventListener('click', () => {
-            document.getElementById('card-generator-modal').classList.add('hidden');
-        });
-        
-        document.getElementById('next-card-btn')?.addEventListener('click', () => {
-            const carta = obtenerCartaAleatoria();
-            mostrarCartaActual(carta);
-            agregarMiniatura(carta);
-            cartasGeneradas.push(carta);
-        });
-        
-        document.getElementById('copy-current-card')?.addEventListener('click', () => {
-            if (ultimaCarta) {
-                navigator.clipboard.writeText(ultimaCarta).then(() => {
-                    const btn = document.getElementById('copy-current-card');
-                    btn.textContent = '✅ ¡Copiado!';
-                    setTimeout(() => {
-                        btn.textContent = '📋 Copiar nombre';
-                    }, 2000);
-                });
-            }
-        });
     } else {
         panel.classList.add('hidden');
     }

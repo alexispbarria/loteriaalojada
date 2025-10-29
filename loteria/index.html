@@ -107,8 +107,11 @@
                 <!-- Panel derecho: carta actual + botón -->
                 <div class="current-card-panel">
                     <div class="current-card-display">
-                        <img id="current-card-img" src="" alt="Carta actual">
-                        <p id="current-card-name" class="current-card-name">—</p>
+                        <div id="generator-placeholder" class="generator-placeholder">
+                            Pulse "Siguiente carta" para comenzar
+                        </div>
+                        <img id="current-card-img" src="" alt="Carta actual" style="display:none;">
+                        <p id="current-card-name" class="current-card-name" style="display:none;">—</p>
                     </div>
                     <button id="next-card-btn" class="next-card-btn">Siguiente carta 🎲</button>
                     <button id="copy-current-card" class="copy-btn">📋 Copiar nombre</button>

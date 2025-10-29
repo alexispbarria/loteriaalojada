@@ -54,6 +54,28 @@ body {
     background: #f5f5f5;
 }
 
+/* ===== BOTÓN DE VOLVER AL INICIO ===== */
+.back-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    margin-right: 15px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.back-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
 /* ===== MODAL ===== */
 .modal {
     position: fixed;
@@ -438,77 +460,6 @@ th {
     background: #f57c00;
 }
 
-/* ===== UTILIDADES ===== */
-.hidden {
-    display: none !important;
-}
-
-/* ===== SCROLL EN MÓVIL ===== */
-@media (max-width: 768px) {
-    .bingo-container {
-        max-height: 70vh;
-        overflow-y: auto;
-    }
-
-    .bingo-container::-webkit-scrollbar {
-        width: 8px;
-    }
-
-    .bingo-container::-webkit-scrollbar-track {
-        background: rgba(241, 241, 241, 0.2);
-        border-radius: 10px;
-    }
-
-    .bingo-container::-webkit-scrollbar-thumb {
-        background: rgba(229, 31, 99, 0.7);
-        border-radius: 10px;
-    }
-}
-
-/* ===== BOTÓN DE VOLVER AL INICIO ===== */
-.back-btn {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 1.5rem;
-    cursor: pointer;
-    padding: 0;
-    margin-right: 15px;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 4px;
-    transition: background 0.2s;
-}
-
-.back-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-}
-
-/* ===== BOTÓN DE VOLVER AL INICIO ===== */
-.back-btn {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 1.5rem;
-    cursor: pointer;
-    padding: 0;
-    margin-right: 15px;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 4px;
-    transition: background 0.2s;
-}
-
-.back-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-}
-
 /* ===== MODAL GENERADOR ===== */
 .generator-modal {
     width: 95%;
@@ -634,4 +585,43 @@ th {
     background: #f9f9f9;
     border-radius: 6px;
     display: inline-block;
+}
+
+/* ===== PLACEHOLDER DEL GENERADOR ===== */
+.generator-placeholder {
+    font-size: 1.1rem;
+    color: #666;
+    font-style: italic;
+    text-align: center;
+    padding: 40px 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+/* ===== UTILIDADES ===== */
+.hidden {
+    display: none !important;
+}
+
+/* ===== SCROLL EN MÓVIL ===== */
+@media (max-width: 768px) {
+    .bingo-container {
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+
+    .bingo-container::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .bingo-container::-webkit-scrollbar-track {
+        background: rgba(241, 241, 241, 0.2);
+        border-radius: 10px;
+    }
+
+    .bingo-container::-webkit-scrollbar-thumb {
+        background: rgba(229, 31, 99, 0.7);
+        border-radius: 10px;
+    }
 }

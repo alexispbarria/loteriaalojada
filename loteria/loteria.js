@@ -422,6 +422,30 @@ function agregarMiniatura(carta) {
     grid.prepend(miniatura);
 }
 
+function reiniciarGenerador() {
+    // Limpiar estado
+    cartasGeneradas = [];
+    ultimaCarta = null;
+    
+    // Limpiar miniaturas
+    const grid = document.getElementById('miniatures-grid');
+    if (grid) grid.innerHTML = '';
+    
+    // Restaurar placeholder
+    const placeholder = document.getElementById('generator-placeholder');
+    const img = document.getElementById('current-card-img');
+    const name = document.getElementById('current-card-name');
+    const lastText = document.getElementById('last-card-text');
+    
+    if (placeholder) placeholder.style.display = 'block';
+    if (img) img.style.display = 'none';
+    if (name) name.style.display = 'none';
+    if (lastText) lastText.textContent = 'Ninguna';
+    
+    // Cerrar modal de confirmación
+    document.getElementById('reset-confirm-modal').classList.add('hidden');
+}
+
 function inicializarGenerador() {
     if (generadorInicializado) return;
     generadorInicializado = true;
@@ -484,6 +508,20 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.href = '/';
         });
     }
+    // Eventos del modal de reinicio
+document.querySelectorAll('.reset-close').forEach(el => {
+    el.addEventListener('click', () => {
+        document.getElementById('reset-confirm-modal').classList.add('hidden');
+    });
+});
+
+document.getElementById('cancel-reset')?.addEventListener('click', () => {
+    document.getElementById('reset-confirm-modal').classList.add('hidden');
+});
+
+document.getElementById('confirm-reset')?.addEventListener('click', () => {
+    reiniciarGenerador();
+});
 });
 
 // Exponer para auth.js
@@ -558,6 +596,18 @@ function updateAdminPanel() {
                 inicializarGenerador();
             };
             panel.appendChild(generatorBtn);
+        }
+
+        // Dentro de updateAdminPanel(), después del botón generator-btn
+        let resetBtn = document.getElementById('reset-generator-btn');
+        if (!resetBtn) {
+            resetBtn = document.createElement('button');
+            resetBtn.id = 'reset-generator-btn';
+            resetBtn.textContent = '🔄 Reiniciar Bingo';
+            resetBtn.onclick = () => {
+                document.getElementById('reset-confirm-modal').classList.remove('hidden');
+            };
+            panel.appendChild(resetBtn);
         }
     } else {
         panel.classList.add('hidden');

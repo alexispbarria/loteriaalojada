@@ -625,3 +625,43 @@ th {
         border-radius: 10px;
     }
 }
+
+/* ===== BOTONES DE REINICIO ===== */
+.reset-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.reset-btn.cancel {
+    background: #ccc;
+    color: #333;
+}
+
+.reset-btn.confirm {
+    background: #f44336;
+    color: white;
+}
+
+.reset-btn:hover {
+    opacity: 0.9;
+}
+
+/* Botón de reinicio en panel de generador */
+#reset-generator-btn {
+    background: #ff5722;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+    width: 100%;
+}
+
+#reset-generator-btn:hover {
+    background: #e64a19;
+}

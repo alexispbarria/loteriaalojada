@@ -145,6 +145,19 @@
         <button id="confirm-btn">✅ Seleccionar cartas</button>
     </div>
 
+    <!-- Mini modal de confirmación de reinicio -->
+<div id="reset-confirm-modal" class="modal hidden">
+    <div class="modal-content" style="text-align:center; max-width: 350px;">
+        <span class="close reset-close">&times;</span>
+        <h3>¿Reiniciar Bingo?</h3>
+        <p>Estás seguro que deseas reiniciar el bingo?</p>
+        <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: center;">
+            <button id="cancel-reset" class="reset-btn cancel">Cancelar</button>
+            <button id="confirm-reset" class="reset-btn confirm">Reiniciar</button>
+        </div>
+    </div>
+</div>
+
     <script src="config.js"></script>
     <script src="loteria.js"></script>
     <script src="auth.js"></script>

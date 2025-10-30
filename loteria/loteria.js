@@ -474,6 +474,31 @@ function reiniciarGenerador() {
     document.getElementById('reset-confirm-modal').classList.add('hidden');
 }
 
+function capturarMiniaturas() {
+    const grid = document.getElementById('miniatures-grid');
+    if (!grid || grid.children.length === 0) {
+        alert('No hay cartas generadas para capturar.');
+        return;
+    }
+
+    // Configurar html2canvas
+    html2canvas(grid, {
+        backgroundColor: '#f5f5f5',
+        scale: 2, // Mejor calidad
+        useCORS: true, // Para imágenes externas
+        allowTaint: true
+    }).then(canvas => {
+        // Crear enlace de descarga
+        const link = document.createElement('a');
+        link.download = 'cartas-loteria.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    }).catch(err => {
+        console.error('Error al capturar:', err);
+        alert('Error al generar la captura. Intente nuevamente.');
+    });
+}
+
 function inicializarGenerador() {
     if (generadorInicializado) return;
     generadorInicializado = true;
@@ -524,6 +549,10 @@ function inicializarGenerador() {
     document.getElementById('reset-generator-btn')?.addEventListener('click', () => {
         document.getElementById('reset-confirm-modal').classList.remove('hidden');
     });
+
+    document.getElementById('capture-screenshot-btn')?.addEventListener('click', () => {
+    capturarMiniaturas();
+});
 }
 
 // === INICIALIZACIÓN ===

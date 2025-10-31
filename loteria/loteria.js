@@ -481,7 +481,16 @@ async function subirCapturaCartas() {
         return;
     }
 
+    const linkContainer = document.getElementById('screenshot-link-container');
+    const linkInput = document.getElementById('screenshot-link');
+    const copyBtn = document.getElementById('copy-screenshot-link');
+    const captureBtn = document.getElementById('capture-screenshot-btn');
+
     try {
+        // Deshabilitar botón durante la subida
+        captureBtn.disabled = true;
+        captureBtn.textContent = '📤 Subiendo...';
+
         const canvas = await html2canvas(grid, {
             backgroundColor: '#f5f5f5',
             scale: 2,
@@ -501,8 +510,20 @@ async function subirCapturaCartas() {
             const result = await response.json();
             
             if (result.success) {
-                await navigator.clipboard.writeText(result.data.url);
-                alert('✅ ¡Enlace copiado! Puedes pegarlo donde quieras.');
+                const imageUrl = result.data.url;
+                
+                // Mostrar enlace
+                linkInput.value = imageUrl;
+                linkContainer.classList.remove('hidden');
+                
+                // Evento de copiar
+                copyBtn.onclick = async () => {
+                    await navigator.clipboard.writeText(imageUrl);
+                    copyBtn.textContent = '✅ ¡Copiado!';
+                    setTimeout(() => {
+                        copyBtn.textContent = '📋 Copiar';
+                    }, 2000);
+                };
             } else {
                 throw new Error(result.error?.message || 'Error al subir');
             }
@@ -510,6 +531,10 @@ async function subirCapturaCartas() {
     } catch (err) {
         console.error('Error:', err);
         alert('❌ Error al subir la imagen: ' + (err.message || 'intente nuevamente'));
+    } finally {
+        // Restaurar botón
+        captureBtn.disabled = false;
+        captureBtn.textContent = '📤 Subir cartas';
     }
 }
 

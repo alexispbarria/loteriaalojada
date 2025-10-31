@@ -474,29 +474,43 @@ function reiniciarGenerador() {
     document.getElementById('reset-confirm-modal').classList.add('hidden');
 }
 
-function capturarMiniaturas() {
+async function subirCapturaCartas() {
     const grid = document.getElementById('miniatures-grid');
     if (!grid || grid.children.length === 0) {
-        alert('No hay cartas generadas para capturar.');
+        alert('No hay cartas generadas para subir.');
         return;
     }
 
-    // Configurar html2canvas
-    html2canvas(grid, {
-        backgroundColor: '#f5f5f5',
-        scale: 2, // Mejor calidad
-        useCORS: true, // Para imágenes externas
-        allowTaint: true
-    }).then(canvas => {
-        // Crear enlace de descarga
-        const link = document.createElement('a');
-        link.download = 'cartas-loteria.png';
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-    }).catch(err => {
-        console.error('Error al capturar:', err);
-        alert('Error al generar la captura. Intente nuevamente.');
-    });
+    try {
+        const canvas = await html2canvas(grid, {
+            backgroundColor: '#f5f5f5',
+            scale: 2,
+            useCORS: true
+        });
+
+        canvas.toBlob(async (blob) => {
+            const formData = new FormData();
+            formData.append('image', blob, 'cartas-loteria.png');
+
+            // ⚠️ REEMPLAZA "TU_CLAVE_IMGBB" POR TU API KEY REAL
+            const response = await fetch('https://api.imgbb.com/1/upload?key=9979891f16223fc79a7d5dfa7a42d526', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+            
+            if (result.success) {
+                await navigator.clipboard.writeText(result.data.url);
+                alert('✅ ¡Enlace copiado! Puedes pegarlo donde quieras.');
+            } else {
+                throw new Error(result.error?.message || 'Error al subir');
+            }
+        }, 'image/png');
+    } catch (err) {
+        console.error('Error:', err);
+        alert('❌ Error al subir la imagen: ' + (err.message || 'intente nuevamente'));
+    }
 }
 
 function inicializarGenerador() {
@@ -551,8 +565,9 @@ function inicializarGenerador() {
     });
 
     document.getElementById('capture-screenshot-btn')?.addEventListener('click', () => {
-    capturarMiniaturas();
+    subirCapturaCartas();
 });
+
 }
 
 // === INICIALIZACIÓN ===

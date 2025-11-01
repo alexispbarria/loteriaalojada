@@ -91,21 +91,21 @@ let pollingInterval = null;
 
 function startPolling() {
     if (pollingInterval) return;
-    
+
     pollingInterval = setInterval(async () => {
         try {
             const nuevasSelecciones = await fetchGistFile('selecciones.json');
             const nuevasStr = JSON.stringify(nuevasSelecciones);
             const actualesStr = JSON.stringify(selecciones);
-            
+
             if (nuevasStr !== actualesStr) {
                 selecciones = nuevasSelecciones;
                 renderTable();
-                
+
                 // Actualizar estado de confirmación del usuario actual
                 if (window.appState.currentUser) {
                     const userLower = window.appState.currentUser.toLowerCase();
-                    const userCardCount = Object.values(selecciones).filter(owner => 
+                    const userCardCount = Object.values(selecciones).filter(owner =>
                         owner && owner.toLowerCase() === userLower
                     ).length;
                     window.appState.userHasConfirmed = userCardCount >= 2;
@@ -145,7 +145,7 @@ async function updateGist(files) {
 function getSavedCardsCount() {
     if (!window.appState.currentUser) return 0;
     const userLower = window.appState.currentUser.toLowerCase();
-    return Object.values(selecciones).filter(owner => 
+    return Object.values(selecciones).filter(owner =>
         owner && owner.toLowerCase() === userLower
     ).length;
 }
@@ -188,14 +188,14 @@ function renderTable() {
 function createDesktopTable() {
     const table = document.createElement('table');
     table.className = 'desktop-cards-table';
-    
+
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');
     for (let i = 0; i < 4; i++) {
         const thCarta = document.createElement('th');
         thCarta.textContent = 'Carta';
         headerRow.appendChild(thCarta);
-        
+
         const thJugador = document.createElement('th');
         thJugador.textContent = 'Jugador';
         headerRow.appendChild(thJugador);
@@ -209,53 +209,53 @@ function createDesktopTable() {
 
     for (let fila = 0; fila < numFilas; fila++) {
         const tr = document.createElement('tr');
-        
+
         for (let col = 0; col < numColumnas; col++) {
             const index = fila + col * numFilas;
-            
+
             if (index < CARTAS.length) {
                 const carta = CARTAS[index];
-                
+
                 const cartaCell = document.createElement('td');
                 cartaCell.className = 'number-cell pink-bg';
                 cartaCell.textContent = carta;
                 cartaCell.dataset.card = carta;
                 tr.appendChild(cartaCell);
-                
+
                 const jugadorCell = document.createElement('td');
                 jugadorCell.className = 'player-cell';
                 jugadorCell.dataset.card = carta;
-                
+
                 let jugador = selecciones[carta] || '—';
-                if (window.appState.currentUser && 
-                    ((window.appState.userHasConfirmed && selecciones[carta] && 
-                      selecciones[carta].toLowerCase() === window.appState.currentUser.toLowerCase()) ||
-                     tempSelections.has(carta))) {
+                if (window.appState.currentUser &&
+                    ((window.appState.userHasConfirmed && selecciones[carta] &&
+                        selecciones[carta].toLowerCase() === window.appState.currentUser.toLowerCase()) ||
+                        tempSelections.has(carta))) {
                     jugador = window.appState.currentUser;
                 }
                 jugadorCell.textContent = jugador;
-                
+
                 if (window.appState.isAdmin && jugador !== '—') {
                     jugadorCell.innerHTML = `${jugador} <span class="remove-btn" data-card="${carta}">×</span>`;
                 }
-                
+
                 tr.appendChild(jugadorCell);
             } else {
                 const emptyCarta = document.createElement('td');
                 emptyCarta.className = 'number-cell pink-bg';
                 emptyCarta.textContent = '';
                 tr.appendChild(emptyCarta);
-                
+
                 const emptyJugador = document.createElement('td');
                 emptyJugador.className = 'player-cell';
                 emptyJugador.textContent = '';
                 tr.appendChild(emptyJugador);
             }
         }
-        
+
         tbody.appendChild(tr);
     }
-    
+
     table.appendChild(tbody);
     return table;
 }
@@ -271,11 +271,11 @@ function createMobileTable() {
 
     CARTAS.forEach(carta => {
         let jugador = selecciones[carta] || '—';
-        
-        if (window.appState.currentUser && 
-            ((window.appState.userHasConfirmed && selecciones[carta] && 
-              selecciones[carta].toLowerCase() === window.appState.currentUser.toLowerCase()) ||
-             tempSelections.has(carta))) {
+
+        if (window.appState.currentUser &&
+            ((window.appState.userHasConfirmed && selecciones[carta] &&
+                selecciones[carta].toLowerCase() === window.appState.currentUser.toLowerCase()) ||
+                tempSelections.has(carta))) {
             jugador = window.appState.currentUser;
         }
 
@@ -301,14 +301,14 @@ function handleCellClick(e) {
     const currentOwner = selecciones[carta];
 
     // Si la carta TIENE un dueño (y no es el usuario actual), mostrar info
-    if (currentOwner && window.appState.currentUser && 
+    if (currentOwner && window.appState.currentUser &&
         currentOwner.toLowerCase() !== window.appState.currentUser.toLowerCase()) {
         showUserCardsModal(currentOwner);
         return;
     }
 
     // Si la carta TIENE un dueño pero es el usuario actual, permitir deselección
-    if (currentOwner && window.appState.currentUser && 
+    if (currentOwner && window.appState.currentUser &&
         currentOwner.toLowerCase() === window.appState.currentUser.toLowerCase()) {
         // Permitir deselección solo si no ha confirmado
         if (!window.appState.userHasConfirmed) {
@@ -356,13 +356,13 @@ function showUserCardsModal(owner) {
     const userCards = Object.entries(selecciones)
         .filter(([carta, user]) => user === owner)
         .map(([carta]) => carta);
-    
-    const message = userCards.length > 0 
+
+    const message = userCards.length > 0
         ? `El usuario <strong>${owner}</strong> ha seleccionado: <strong>${userCards.join(' y ')}</strong>`
         : `El usuario <strong>${owner}</strong> no tiene cartas seleccionadas.`;
 
     document.getElementById('user-cards-message').innerHTML = message;
-    
+
     const copyBtn = document.getElementById('copy-cards-btn');
     copyBtn.onclick = () => {
         const textToCopy = userCards.join('-');
@@ -414,17 +414,17 @@ async function confirmSelection() {
         alert('Sesión inválida. Por favor, inicia sesión nuevamente.');
         return;
     }
-    
+
     const savedCount = getSavedCardsCount();
     const totalNeeded = 2 - savedCount;
-    
+
     if (tempSelections.size !== totalNeeded) {
         alert(`Debes seleccionar exactamente ${totalNeeded} carta(s) adicional(es).`);
         return;
     }
 
     for (const carta of tempSelections) {
-        if (selecciones[carta] && 
+        if (selecciones[carta] &&
             selecciones[carta].toLowerCase() !== window.appState.currentUser.toLowerCase()) {
             alert(`La carta "${carta}" ya está ocupada por otro usuario.`);
             return;
@@ -481,16 +481,16 @@ function mostrarCartaActual(carta) {
     const name = document.getElementById('current-card-name');
     const placeholder = document.getElementById('generator-placeholder');
     const finJuego = document.getElementById('fin-juego');
-    
+
     img.src = CARTAS_IMAGENES[carta];
     img.alt = carta;
     img.style.display = 'block';
     name.textContent = carta;
     name.style.display = 'block';
-    
+
     if (placeholder) placeholder.style.display = 'none';
     if (finJuego) finJuego.style.display = 'none';
-    
+
     ultimaCarta = carta;
     document.getElementById('last-card-text').textContent = carta;
 }
@@ -500,7 +500,7 @@ function mostrarFinJuego() {
     const name = document.getElementById('current-card-name');
     const placeholder = document.getElementById('generator-placeholder');
     const finJuego = document.getElementById('fin-juego');
-    
+
     if (img) img.style.display = 'none';
     if (name) name.style.display = 'none';
     if (placeholder) placeholder.style.display = 'none';
@@ -552,7 +552,7 @@ async function subirCapturaCartas() {
             });
 
             const result = await response.json();
-            
+
             if (result.success) {
                 const imageUrl = result.data.url;
                 linkInput.value = imageUrl;
@@ -581,49 +581,49 @@ function reiniciarGenerador() {
     reiniciarMazo();
     cartasGeneradas = [];
     ultimaCarta = null;
-    
+
     const grid = document.getElementById('miniatures-grid');
     if (grid) grid.innerHTML = '';
-    
+
     const placeholder = document.getElementById('generator-placeholder');
     const img = document.getElementById('current-card-img');
     const name = document.getElementById('current-card-name');
     const lastText = document.getElementById('last-card-text');
     const finJuego = document.getElementById('fin-juego');
-    
+
     if (placeholder) placeholder.style.display = 'block';
     if (img) img.style.display = 'none';
     if (name) name.style.display = 'none';
     if (lastText) lastText.textContent = 'Ninguna';
     if (finJuego) finJuego.style.display = 'none';
-    
+
     document.getElementById('reset-confirm-modal').classList.add('hidden');
 }
 
 function inicializarGenerador() {
     if (generadorInicializado) return;
     generadorInicializado = true;
-    
+
     reiniciarMazo();
     cartasGeneradas = [];
     ultimaCarta = null;
-    
+
     const placeholder = document.getElementById('generator-placeholder');
     const img = document.getElementById('current-card-img');
     const name = document.getElementById('current-card-name');
     const lastText = document.getElementById('last-card-text');
     const finJuego = document.getElementById('fin-juego');
-    
+
     if (placeholder) placeholder.style.display = 'block';
     if (img) img.style.display = 'none';
     if (name) name.style.display = 'none';
     if (lastText) lastText.textContent = 'Ninguna';
     if (finJuego) finJuego.style.display = 'none';
-    
+
     document.querySelector('#card-generator-modal .close')?.addEventListener('click', () => {
         document.getElementById('card-generator-modal').classList.add('hidden');
     });
-    
+
     document.getElementById('next-card-btn')?.addEventListener('click', () => {
         const carta = obtenerSiguienteCarta();
         if (carta === null) {
@@ -634,7 +634,7 @@ function inicializarGenerador() {
         agregarMiniatura(carta);
         cartasGeneradas.push(carta);
     });
-    
+
     document.getElementById('copy-current-card')?.addEventListener('click', () => {
         if (ultimaCarta) {
             navigator.clipboard.writeText(ultimaCarta).then(() => {
@@ -646,11 +646,11 @@ function inicializarGenerador() {
             });
         }
     });
-    
+
     document.getElementById('reset-generator-btn')?.addEventListener('click', () => {
         document.getElementById('reset-confirm-modal').classList.remove('hidden');
     });
-    
+
     document.getElementById('capture-screenshot-btn')?.addEventListener('click', () => {
         subirCapturaCartas();
     });
@@ -666,7 +666,6 @@ async function initLoteria() {
             config = { tablaCerrada: false };
         }
         renderTable();
-        
         // Restaurar sesión si existe
         const savedUser = localStorage.getItem('loteriaUser');
         if (savedUser) {
@@ -675,7 +674,7 @@ async function initLoteria() {
                 window.appState.currentUser = nickname;
                 window.appState.isAdmin = isAdmin;
                 const userLower = nickname.toLowerCase();
-                const userCardCount = Object.values(selecciones).filter(owner => 
+                const userCardCount = Object.values(selecciones).filter(owner =>
                     owner && owner.toLowerCase() === userLower
                 ).length;
                 window.appState.userHasConfirmed = userCardCount >= 2;
@@ -696,6 +695,19 @@ async function initLoteria() {
 
 document.addEventListener('DOMContentLoaded', initLoteria);
 
+// Eventos delegados para el modal de reinicio (FUNCIONA SIEMPRE)
+document.addEventListener('click', function (e) {
+    if (e.target.id === 'cancel-reset') {
+        document.getElementById('reset-confirm-modal').classList.add('hidden');
+    }
+    if (e.target.id === 'confirm-reset') {
+        reiniciarGenerador();
+    }
+    if (e.target.classList.contains('reset-close')) {
+        document.getElementById('reset-confirm-modal').classList.add('hidden');
+    }
+});
+
 // Exponer para auth.js
 window.loteria = {
     setUsuario: (user, admin) => {
@@ -706,7 +718,7 @@ window.loteria = {
             isAdmin: admin
         }));
         const userLower = user.toLowerCase();
-        const userCardCount = Object.values(selecciones).filter(owner => 
+        const userCardCount = Object.values(selecciones).filter(owner =>
             owner && owner.toLowerCase() === userLower
         ).length;
         window.appState.userHasConfirmed = userCardCount >= 2;
@@ -736,7 +748,7 @@ function updateAdminPanel() {
     const panel = document.getElementById('admin-panel');
     if (window.appState.isAdmin) {
         panel.classList.remove('hidden');
-        
+
         let toggleBtn = document.getElementById('toggle-table-btn');
         if (!toggleBtn) {
             toggleBtn = document.createElement('button');
@@ -752,7 +764,7 @@ function updateAdminPanel() {
         } else {
             toggleBtn.textContent = config.tablaCerrada ? '🔓 Abrir tabla' : '🔒 Cerrar tabla';
         }
-        
+
         let clearBtn = document.getElementById('clear-all');
         if (!clearBtn) {
             clearBtn = document.createElement('button');
@@ -766,7 +778,7 @@ function updateAdminPanel() {
             };
             panel.appendChild(clearBtn);
         }
-        
+
         let generatorBtn = document.getElementById('generator-btn');
         if (!generatorBtn) {
             generatorBtn = document.createElement('button');

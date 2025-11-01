@@ -384,7 +384,17 @@ function handleRemove(e) {
     const carta = e.target.dataset.card;
     if (confirm(`¿Eliminar a ${selecciones[carta]} de ${carta}?`)) {
         delete selecciones[carta];
-        saveSelections();
+        saveSelections().then(() => {
+            // Recalcular estado del usuario actual (incluyendo admin)
+            if (window.appState.currentUser) {
+                const userLower = window.appState.currentUser.toLowerCase();
+                const userCardCount = Object.values(selecciones).filter(owner =>
+                    owner && owner.toLowerCase() === userLower
+                ).length;
+                window.appState.userHasConfirmed = userCardCount >= 2;
+                updateConfirmButton();
+            }
+        });
     }
 }
 
@@ -731,6 +741,12 @@ window.loteria = {
         if (confirm('¿Vaciar todas las cartas?')) {
             selecciones = {};
             await saveSelections();
+            // Resetear estado del usuario actual
+            if (window.appState.currentUser) {
+                window.appState.userHasConfirmed = false;
+                tempSelections.clear();
+                updateConfirmButton();
+            }
         }
     },
     confirmSelection: confirmSelection,

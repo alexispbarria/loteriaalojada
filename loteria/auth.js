@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
             window.loteria.clearTempSelections();
             document.getElementById('user-dropdown').classList.add('hidden');
             localStorage.removeItem('loteriaUser');
+            stopPolling();
         });
     }
     const changePasswordBtn = document.getElementById('change-password-btn');

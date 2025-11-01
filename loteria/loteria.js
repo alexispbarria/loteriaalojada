@@ -518,28 +518,6 @@ function agregarMiniatura(carta) {
     grid.prepend(miniatura);
 }
 
-function reiniciarGenerador() {
-    reiniciarMazo();
-    cartasGeneradas = [];
-    ultimaCarta = null;
-    
-    const grid = document.getElementById('miniatures-grid');
-    if (grid) grid.innerHTML = '';
-    
-    const placeholder = document.getElementById('generator-placeholder');
-    const img = document.getElementById('current-card-img');
-    const name = document.getElementById('current-card-name');
-    const lastText = document.getElementById('last-card-text');
-    const finJuego = document.getElementById('fin-juego');
-    
-    if (placeholder) placeholder.style.display = 'block';
-    if (img) img.style.display = 'none';
-    if (name) name.style.display = 'none';
-    if (lastText) lastText.textContent = 'Ninguna';
-    if (finJuego) finJuego.style.display = 'none';
-    
-    document.getElementById('reset-confirm-modal').classList.add('hidden');
-}
 
 async function subirCapturaCartas() {
     const grid = document.getElementById('miniatures-grid');
@@ -597,6 +575,29 @@ async function subirCapturaCartas() {
         captureBtn.disabled = false;
         captureBtn.textContent = '📤 Subir cartas';
     }
+}
+
+function reiniciarGenerador() {
+    reiniciarMazo();
+    cartasGeneradas = [];
+    ultimaCarta = null;
+    
+    const grid = document.getElementById('miniatures-grid');
+    if (grid) grid.innerHTML = '';
+    
+    const placeholder = document.getElementById('generator-placeholder');
+    const img = document.getElementById('current-card-img');
+    const name = document.getElementById('current-card-name');
+    const lastText = document.getElementById('last-card-text');
+    const finJuego = document.getElementById('fin-juego');
+    
+    if (placeholder) placeholder.style.display = 'block';
+    if (img) img.style.display = 'none';
+    if (name) name.style.display = 'none';
+    if (lastText) lastText.textContent = 'Ninguna';
+    if (finJuego) finJuego.style.display = 'none';
+    
+    document.getElementById('reset-confirm-modal').classList.add('hidden');
 }
 
 function inicializarGenerador() {

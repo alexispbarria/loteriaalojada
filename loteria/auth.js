@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
             window.loteria.clearTempSelections();
             document.getElementById('user-dropdown').classList.add('hidden');
             localStorage.removeItem('loteriaUser');
-            stopPolling();
+            window.loteria.stopPolling(); // Detener polling
         });
     }
     const changePasswordBtn = document.getElementById('change-password-btn');
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function handleLogin(e) {
     e.preventDefault();
     const nickInput = document.getElementById('nickname').value.trim();
-    const nickLower = nickInput.toLowerCase(); // Normalizar a minúsculas
+    const nickLower = nickInput.toLowerCase();
     const pass = document.getElementById('password').value;
     const msg = document.getElementById('auth-message');
     msg.textContent = 'Procesando...';
@@ -86,14 +86,13 @@ async function handleLogin(e) {
         if (users[nickLower]) {
             if (users[nickLower] === hash) {
                 const admins = await fetchGistFile('admins.json');
-                // Normalizar admins a minúsculas para comparación
+                // Normalizar admins a minúsculas
                 const isAdmin = Array.isArray(admins) && admins.map(a => a.toLowerCase()).includes(nickLower);
-                window.appState.currentUser = nickInput; // Nombre original
+                window.appState.currentUser = nickInput;
                 window.appState.isAdmin = isAdmin;
                 updateAuthUI();
                 window.loteria.setUsuario(nickInput, isAdmin);
                 document.getElementById('auth-modal').classList.add('hidden');
-                // Guardar en localStorage
                 localStorage.setItem('loteriaUser', JSON.stringify({
                     nickname: nickInput,
                     isAdmin: isAdmin
@@ -109,7 +108,6 @@ async function handleLogin(e) {
             updateAuthUI();
             window.loteria.setUsuario(nickInput, false);
             document.getElementById('auth-modal').classList.add('hidden');
-            // Guardar en localStorage
             localStorage.setItem('loteriaUser', JSON.stringify({
                 nickname: nickInput,
                 isAdmin: false
@@ -138,7 +136,11 @@ async function handleChangePassword(e) {
         const newHash = await hashPassword(newPass);
         const users = await fetchGistFile('usuarios.json');
         
-        // Usar versión en minúsculas para buscar
+        if (!window.appState.currentUser) {
+            msg.textContent = 'Sesión inválida.';
+            return;
+        }
+        
         const currentUserLower = window.appState.currentUser.toLowerCase();
         if (users[currentUserLower] !== currentHash) {
             msg.textContent = 'Contraseña actual incorrecta.';
@@ -206,6 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
             window.appState.currentUser = nickname;
             window.appState.isAdmin = isAdmin;
             updateAuthUI();
+            // La inicialización de loteria.js se encargará del resto
         } catch (e) {
             console.error('Error al restaurar sesión:', e);
             localStorage.removeItem('loteriaUser');

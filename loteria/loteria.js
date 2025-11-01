@@ -77,7 +77,7 @@ window.appState = {
 
 let selecciones = {};
 let tempSelections = new Set();
-let config = { tablaCerrada: false };
+let config = { tablaCerrada: false, cartasPorUsuario: 2 };
 
 // === VARIABLES DEL GENERADOR ===
 let mazoMezclado = [];
@@ -85,32 +85,37 @@ let indiceCartaActual = 0;
 let cartasGeneradas = [];
 let ultimaCarta = null;
 let generadorInicializado = false;
+let generadorAutoInterval = null;
+let generadorAutoActivo = false;
 
 // === POLLING EN TIEMPO REAL ===
 let pollingInterval = null;
 
 function startPolling() {
     if (pollingInterval) return;
-
     pollingInterval = setInterval(async () => {
         try {
             const nuevasSelecciones = await fetchGistFile('selecciones.json');
             const nuevasStr = JSON.stringify(nuevasSelecciones);
             const actualesStr = JSON.stringify(selecciones);
-
             if (nuevasStr !== actualesStr) {
                 selecciones = nuevasSelecciones;
                 renderTable();
-
-                // Actualizar estado de confirmación del usuario actual
-                if (window.appState.currentUser) {
-                    const userLower = window.appState.currentUser.toLowerCase();
-                    const userCardCount = Object.values(selecciones).filter(owner =>
-                        owner && owner.toLowerCase() === userLower
-                    ).length;
-                    window.appState.userHasConfirmed = userCardCount >= 2;
-                    updateConfirmButton();
-                }
+            }
+            const nuevaConfig = await fetchGistFile('config.json');
+            if (JSON.stringify(nuevaConfig) !== JSON.stringify(config)) {
+                config = nuevaConfig;
+                updateAdminPanel();
+            }
+            // Actualizar estado de confirmación del usuario actual
+            if (window.appState.currentUser) {
+                const userLower = window.appState.currentUser.toLowerCase();
+                const userCardCount = Object.values(selecciones).filter(owner =>
+                    owner && owner.toLowerCase() === userLower
+                ).length;
+                const maxCartas = config.cartasPorUsuario || 2;
+                window.appState.userHasConfirmed = userCardCount >= maxCartas;
+                updateConfirmButton();
             }
         } catch (err) {
             console.warn('No se pudo actualizar en tiempo real:', err.message);
@@ -152,7 +157,8 @@ function getSavedCardsCount() {
 
 function getMaxSelectableCards() {
     const saved = getSavedCardsCount();
-    return Math.max(0, 2 - saved);
+    const maxTotal = config.cartasPorUsuario || 2;
+    return Math.max(0, maxTotal - saved);
 }
 
 // === RENDER ===
@@ -163,69 +169,56 @@ function renderTable() {
         const desktopTable = createDesktopTable();
         desktop.appendChild(desktopTable);
     }
-
     const mobile = document.querySelector('.mobile-table');
     if (mobile) {
         mobile.innerHTML = '';
         const mobileTable = createMobileTable();
         mobile.appendChild(mobileTable);
     }
-
     document.querySelectorAll('.player-cell').forEach(cell => {
         cell.addEventListener('click', handleCellClick);
     });
-
     if (window.appState.isAdmin) {
         document.querySelectorAll('.remove-btn').forEach(btn => {
             btn.addEventListener('click', handleRemove);
         });
     }
-
     updateConfirmButton();
 }
 
-// === TABLA DE ESCRITORIO (4 columnas verticales) ===
+// === TABLA DE ESCRITORIO ===
 function createDesktopTable() {
     const table = document.createElement('table');
     table.className = 'desktop-cards-table';
-
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');
     for (let i = 0; i < 4; i++) {
         const thCarta = document.createElement('th');
         thCarta.textContent = 'Carta';
         headerRow.appendChild(thCarta);
-
         const thJugador = document.createElement('th');
         thJugador.textContent = 'Jugador';
         headerRow.appendChild(thJugador);
     }
     thead.appendChild(headerRow);
     table.appendChild(thead);
-
     const tbody = document.createElement('tbody');
     const numFilas = 14;
     const numColumnas = 4;
-
     for (let fila = 0; fila < numFilas; fila++) {
         const tr = document.createElement('tr');
-
         for (let col = 0; col < numColumnas; col++) {
             const index = fila + col * numFilas;
-
             if (index < CARTAS.length) {
                 const carta = CARTAS[index];
-
                 const cartaCell = document.createElement('td');
                 cartaCell.className = 'number-cell pink-bg';
                 cartaCell.textContent = carta;
                 cartaCell.dataset.card = carta;
                 tr.appendChild(cartaCell);
-
                 const jugadorCell = document.createElement('td');
                 jugadorCell.className = 'player-cell';
                 jugadorCell.dataset.card = carta;
-
                 let jugador = selecciones[carta] || '—';
                 if (window.appState.currentUser &&
                     ((window.appState.userHasConfirmed && selecciones[carta] &&
@@ -234,33 +227,28 @@ function createDesktopTable() {
                     jugador = window.appState.currentUser;
                 }
                 jugadorCell.textContent = jugador;
-
                 if (window.appState.isAdmin && jugador !== '—') {
                     jugadorCell.innerHTML = `${jugador} <span class="remove-btn" data-card="${carta}">×</span>`;
                 }
-
                 tr.appendChild(jugadorCell);
             } else {
                 const emptyCarta = document.createElement('td');
                 emptyCarta.className = 'number-cell pink-bg';
                 emptyCarta.textContent = '';
                 tr.appendChild(emptyCarta);
-
                 const emptyJugador = document.createElement('td');
                 emptyJugador.className = 'player-cell';
                 emptyJugador.textContent = '';
                 tr.appendChild(emptyJugador);
             }
         }
-
         tbody.appendChild(tr);
     }
-
     table.appendChild(tbody);
     return table;
 }
 
-// === TABLA MÓVIL (vertical) ===
+// === TABLA MÓVIL ===
 function createMobileTable() {
     const table = document.createElement('table');
     table.innerHTML = `
@@ -268,23 +256,18 @@ function createMobileTable() {
         <tbody></tbody>
     `;
     const tbody = table.querySelector('tbody');
-
     CARTAS.forEach(carta => {
         let jugador = selecciones[carta] || '—';
-
         if (window.appState.currentUser &&
             ((window.appState.userHasConfirmed && selecciones[carta] &&
                 selecciones[carta].toLowerCase() === window.appState.currentUser.toLowerCase()) ||
                 tempSelections.has(carta))) {
             jugador = window.appState.currentUser;
         }
-
         let celdaJugador = jugador;
-
         if (window.appState.isAdmin && jugador !== '—') {
             celdaJugador = `${jugador} <span class="remove-btn" data-card="${carta}">×</span>`;
         }
-
         const row = document.createElement('tr');
         row.innerHTML = `
             <td class="number-cell pink-bg">${carta}</td>
@@ -299,18 +282,13 @@ function createMobileTable() {
 function handleCellClick(e) {
     const carta = e.currentTarget.dataset.card;
     const currentOwner = selecciones[carta];
-
-    // Si la carta TIENE un dueño (y no es el usuario actual), mostrar info
     if (currentOwner && window.appState.currentUser &&
         currentOwner.toLowerCase() !== window.appState.currentUser.toLowerCase()) {
         showUserCardsModal(currentOwner);
         return;
     }
-
-    // Si la carta TIENE un dueño pero es el usuario actual, permitir deselección
     if (currentOwner && window.appState.currentUser &&
         currentOwner.toLowerCase() === window.appState.currentUser.toLowerCase()) {
-        // Permitir deselección solo si no ha confirmado
         if (!window.appState.userHasConfirmed) {
             tempSelections.delete(carta);
             renderTable();
@@ -318,36 +296,28 @@ function handleCellClick(e) {
         }
         return;
     }
-
-    // Si la tabla está cerrada, no permitir inscripciones
     if (config.tablaCerrada) {
         document.getElementById('table-closed-modal')?.classList.remove('hidden');
         return;
     }
-
-    // Si la carta está vacía, aplicar lógica normal
     if (!window.appState.currentUser) {
         document.getElementById('login-required-modal').classList.remove('hidden');
         return;
     }
-
     if (window.appState.userHasConfirmed) {
         document.getElementById('cards-locked-modal').classList.remove('hidden');
         return;
     }
-
-    // Verificar límite de selección
     const maxSelectable = getMaxSelectableCards();
     if (tempSelections.has(carta)) {
         tempSelections.delete(carta);
     } else {
         if (tempSelections.size >= maxSelectable) {
-            alert(`Ya tienes ${2 - maxSelectable} carta(s) seleccionada(s). Solo puedes seleccionar ${maxSelectable} más.`);
+            alert(`Ya tienes ${config.cartasPorUsuario - maxSelectable} carta(s) seleccionada(s). Solo puedes seleccionar ${maxSelectable} más.`);
             return;
         }
         tempSelections.add(carta);
     }
-
     renderTable();
     updateConfirmButton();
 }
@@ -356,13 +326,10 @@ function showUserCardsModal(owner) {
     const userCards = Object.entries(selecciones)
         .filter(([carta, user]) => user === owner)
         .map(([carta]) => carta);
-
     const message = userCards.length > 0
         ? `El usuario <strong>${owner}</strong> ha seleccionado: <strong>${userCards.join(' y ')}</strong>`
         : `El usuario <strong>${owner}</strong> no tiene cartas seleccionadas.`;
-
     document.getElementById('user-cards-message').innerHTML = message;
-
     const copyBtn = document.getElementById('copy-cards-btn');
     copyBtn.onclick = () => {
         const textToCopy = userCards.join('-');
@@ -375,7 +342,6 @@ function showUserCardsModal(owner) {
             console.error('Error al copiar:', err);
         });
     };
-
     document.getElementById('user-cards-modal').classList.remove('hidden');
 }
 
@@ -384,27 +350,15 @@ function handleRemove(e) {
     const carta = e.target.dataset.card;
     if (confirm(`¿Eliminar a ${selecciones[carta]} de ${carta}?`)) {
         delete selecciones[carta];
-        saveSelections().then(() => {
-            // Recalcular estado del usuario actual (incluyendo admin)
-            if (window.appState.currentUser) {
-                const userLower = window.appState.currentUser.toLowerCase();
-                const userCardCount = Object.values(selecciones).filter(owner =>
-                    owner && owner.toLowerCase() === userLower
-                ).length;
-                window.appState.userHasConfirmed = userCardCount >= 2;
-                updateConfirmButton();
-            }
-        });
+        saveSelections();
     }
 }
 
 function updateConfirmButton() {
     const confirmDiv = document.getElementById('confirm-selection');
     const display = document.getElementById('selected-cards-display');
-
     const savedCount = getSavedCardsCount();
     const totalSelected = savedCount + tempSelections.size;
-
     if (tempSelections.size > 0 && window.appState.currentUser && !window.appState.userHasConfirmed) {
         const allSelected = Array.from(tempSelections);
         Object.entries(selecciones).forEach(([carta, owner]) => {
@@ -424,15 +378,12 @@ async function confirmSelection() {
         alert('Sesión inválida. Por favor, inicia sesión nuevamente.');
         return;
     }
-
     const savedCount = getSavedCardsCount();
-    const totalNeeded = 2 - savedCount;
-
+    const totalNeeded = (config.cartasPorUsuario || 2) - savedCount;
     if (tempSelections.size !== totalNeeded) {
         alert(`Debes seleccionar exactamente ${totalNeeded} carta(s) adicional(es).`);
         return;
     }
-
     for (const carta of tempSelections) {
         if (selecciones[carta] &&
             selecciones[carta].toLowerCase() !== window.appState.currentUser.toLowerCase()) {
@@ -440,7 +391,6 @@ async function confirmSelection() {
             return;
         }
     }
-
     for (const carta of tempSelections) {
         selecciones[carta] = window.appState.currentUser;
     }
@@ -491,16 +441,13 @@ function mostrarCartaActual(carta) {
     const name = document.getElementById('current-card-name');
     const placeholder = document.getElementById('generator-placeholder');
     const finJuego = document.getElementById('fin-juego');
-
     img.src = CARTAS_IMAGENES[carta];
     img.alt = carta;
     img.style.display = 'block';
     name.textContent = carta;
     name.style.display = 'block';
-
     if (placeholder) placeholder.style.display = 'none';
     if (finJuego) finJuego.style.display = 'none';
-
     ultimaCarta = carta;
     document.getElementById('last-card-text').textContent = carta;
 }
@@ -510,7 +457,6 @@ function mostrarFinJuego() {
     const name = document.getElementById('current-card-name');
     const placeholder = document.getElementById('generator-placeholder');
     const finJuego = document.getElementById('fin-juego');
-
     if (img) img.style.display = 'none';
     if (name) name.style.display = 'none';
     if (placeholder) placeholder.style.display = 'none';
@@ -528,41 +474,33 @@ function agregarMiniatura(carta) {
     grid.prepend(miniatura);
 }
 
-
 async function subirCapturaCartas() {
     const grid = document.getElementById('miniatures-grid');
     if (!grid || grid.children.length === 0) {
         alert('No hay cartas generadas para subir.');
         return;
     }
-
     const linkContainer = document.getElementById('screenshot-link-container');
     const linkInput = document.getElementById('screenshot-link');
     const copyBtn = document.getElementById('copy-screenshot-link');
     const captureBtn = document.getElementById('capture-screenshot-btn');
-
     try {
         captureBtn.disabled = true;
         captureBtn.textContent = '📤 Subiendo...';
-
         const canvas = await html2canvas(grid, {
             backgroundColor: '#f5f5f5',
             scale: 2,
             useCORS: true
         });
-
         canvas.toBlob(async (blob) => {
             const formData = new FormData();
             formData.append('image', blob, 'cartas-loteria.png');
-
             // ⚠️ REEMPLAZA "TU_CLAVE_IMGBB" POR TU API KEY REAL
             const response = await fetch('https://api.imgbb.com/1/upload?key=9979891f16223fc79a7d5dfa7a42d526', {
                 method: 'POST',
                 body: formData
             });
-
             const result = await response.json();
-
             if (result.success) {
                 const imageUrl = result.data.url;
                 linkInput.value = imageUrl;
@@ -588,32 +526,52 @@ async function subirCapturaCartas() {
 }
 
 function reiniciarGenerador() {
+    detenerGeneradorAutomatico();
     reiniciarMazo();
     cartasGeneradas = [];
     ultimaCarta = null;
-
     const grid = document.getElementById('miniatures-grid');
     if (grid) grid.innerHTML = '';
-
     const placeholder = document.getElementById('generator-placeholder');
     const img = document.getElementById('current-card-img');
     const name = document.getElementById('current-card-name');
     const lastText = document.getElementById('last-card-text');
     const finJuego = document.getElementById('fin-juego');
-
     if (placeholder) placeholder.style.display = 'block';
     if (img) img.style.display = 'none';
     if (name) name.style.display = 'none';
     if (lastText) lastText.textContent = 'Ninguna';
     if (finJuego) finJuego.style.display = 'none';
-
     document.getElementById('reset-confirm-modal').classList.add('hidden');
+}
+
+function detenerGeneradorAutomatico() {
+    if (generadorAutoInterval) {
+        clearInterval(generadorAutoInterval);
+        generadorAutoInterval = null;
+    }
+    generadorAutoActivo = false;
+}
+
+function iniciarGeneradorAutomatico(delay) {
+    detenerGeneradorAutomatico();
+    generadorAutoActivo = true;
+    generadorAutoInterval = setInterval(() => {
+        const carta = obtenerSiguienteCarta();
+        if (carta === null) {
+            mostrarFinJuego();
+            detenerGeneradorAutomatico();
+            return;
+        }
+        mostrarCartaActual(carta);
+        agregarMiniatura(carta);
+        cartasGeneradas.push(carta);
+    }, delay);
 }
 
 function inicializarGenerador() {
     if (generadorInicializado) return;
     generadorInicializado = true;
-
     reiniciarMazo();
     cartasGeneradas = [];
     ultimaCarta = null;
@@ -623,7 +581,6 @@ function inicializarGenerador() {
     const name = document.getElementById('current-card-name');
     const lastText = document.getElementById('last-card-text');
     const finJuego = document.getElementById('fin-juego');
-
     if (placeholder) placeholder.style.display = 'block';
     if (img) img.style.display = 'none';
     if (name) name.style.display = 'none';
@@ -632,9 +589,11 @@ function inicializarGenerador() {
 
     document.querySelector('#card-generator-modal .close')?.addEventListener('click', () => {
         document.getElementById('card-generator-modal').classList.add('hidden');
+        detenerGeneradorAutomatico();
     });
 
     document.getElementById('next-card-btn')?.addEventListener('click', () => {
+        if (generadorAutoActivo) return;
         const carta = obtenerSiguienteCarta();
         if (carta === null) {
             mostrarFinJuego();
@@ -664,6 +623,74 @@ function inicializarGenerador() {
     document.getElementById('capture-screenshot-btn')?.addEventListener('click', () => {
         subirCapturaCartas();
     });
+
+    // === AGREGAR CONTROL AUTOMÁTICO ===
+    const autoContainer = document.getElementById('auto-generator-container');
+    if (!autoContainer) {
+        const container = document.createElement('div');
+        container.id = 'auto-generator-container';
+        container.style.display = 'flex';
+        container.style.flexDirection = 'column';
+        container.style.gap = '10px';
+        container.style.width = '100%';
+        container.style.marginTop = '15px';
+
+        const label = document.createElement('span');
+        label.textContent = 'Generador automático:';
+        label.style.fontWeight = 'bold';
+        label.style.fontSize = '0.95rem';
+
+        const select = document.createElement('select');
+        select.id = 'auto-speed-select';
+        select.style.padding = '8px';
+        select.style.borderRadius = '4px';
+        select.style.border = '1px solid #ccc';
+        select.style.width = '100%';
+
+        const options = [
+            { text: 'Lento (8s)', value: 8000 },
+            { text: 'Normal (5s)', value: 5000 },
+            { text: 'Veloz (2.5s)', value: 2500 }
+        ];
+        options.forEach(opt => {
+            const el = document.createElement('option');
+            el.value = opt.value;
+            el.textContent = opt.text;
+            select.appendChild(el);
+        });
+
+        const controlBtn = document.createElement('button');
+        controlBtn.id = 'auto-control-btn';
+        controlBtn.textContent = '▶️ Iniciar';
+        controlBtn.style.background = '#4CAF50';
+        controlBtn.style.color = 'white';
+        controlBtn.style.border = 'none';
+        controlBtn.style.padding = '10px';
+        controlBtn.style.borderRadius = '6px';
+        controlBtn.style.cursor = 'pointer';
+        controlBtn.style.fontWeight = 'bold';
+        controlBtn.style.width = '100%';
+
+        controlBtn.addEventListener('click', () => {
+            if (generadorAutoActivo) {
+                detenerGeneradorAutomatico();
+                controlBtn.textContent = '▶️ Retomar';
+                controlBtn.style.background = '#4CAF50';
+            } else {
+                const delay = parseInt(select.value);
+                iniciarGeneradorAutomatico(delay);
+                controlBtn.textContent = '⏸ Pausa';
+                controlBtn.style.background = '#ff9800';
+            }
+        });
+
+        container.appendChild(label);
+        container.appendChild(select);
+        container.appendChild(controlBtn);
+
+        const captureBtn = document.getElementById('capture-screenshot-btn');
+        captureBtn.parentNode.insertBefore(container, captureBtn);
+    }
 }
 
 // === INICIALIZACIÓN ===
@@ -673,10 +700,9 @@ async function initLoteria() {
         try {
             config = await fetchGistFile('config.json');
         } catch (err) {
-            config = { tablaCerrada: false };
+            config = { tablaCerrada: false, cartasPorUsuario: 2 };
         }
         renderTable();
-        // Restaurar sesión si existe
         const savedUser = localStorage.getItem('loteriaUser');
         if (savedUser) {
             try {
@@ -687,10 +713,11 @@ async function initLoteria() {
                 const userCardCount = Object.values(selecciones).filter(owner =>
                     owner && owner.toLowerCase() === userLower
                 ).length;
-                window.appState.userHasConfirmed = userCardCount >= 2;
+                const maxCartas = config.cartasPorUsuario || 2;
+                window.appState.userHasConfirmed = userCardCount >= maxCartas;
                 updateAuthUI();
                 updateAdminPanel();
-                startPolling(); // Iniciar polling
+                startPolling();
             } catch (e) {
                 console.error('Error al restaurar sesión:', e);
                 localStorage.removeItem('loteriaUser');
@@ -705,7 +732,6 @@ async function initLoteria() {
 
 document.addEventListener('DOMContentLoaded', initLoteria);
 
-// Eventos delegados para el modal de reinicio (FUNCIONA SIEMPRE)
 document.addEventListener('click', function (e) {
     if (e.target.id === 'cancel-reset') {
         document.getElementById('reset-confirm-modal').classList.add('hidden');
@@ -718,7 +744,7 @@ document.addEventListener('click', function (e) {
     }
 });
 
-// Exponer para auth.js
+// === EXPOSICIÓN GLOBAL ===
 window.loteria = {
     setUsuario: (user, admin) => {
         window.appState.currentUser = user;
@@ -731,38 +757,22 @@ window.loteria = {
         const userCardCount = Object.values(selecciones).filter(owner =>
             owner && owner.toLowerCase() === userLower
         ).length;
-        window.appState.userHasConfirmed = userCardCount >= 2;
+        const maxCartas = config.cartasPorUsuario || 2;
+        window.appState.userHasConfirmed = userCardCount >= maxCartas;
         renderTable();
         updateAdminPanel();
         updateConfirmButton();
-        startPolling(); // Iniciar polling
+        startPolling();
     },
     clearAll: async () => {
         if (confirm('¿Vaciar todas las cartas?')) {
-            // Vaciar localmente
-            selecciones = {};
-            // Guardar en Gist
-            await saveSelections(); // Esto ya llama a renderTable()
-            // Ahora, después de guardar, recalcular estado del usuario ACTUAL
             if (window.appState.currentUser) {
-                // Forzar recarga desde el Gist para evitar desincronización
-                try {
-                    const freshSelecciones = await fetchGistFile('selecciones.json');
-                    const userLower = window.appState.currentUser.toLowerCase();
-                    const userCardCount = Object.values(freshSelecciones).filter(owner =>
-                        owner && owner.toLowerCase() === userLower
-                    ).length;
-                    window.appState.userHasConfirmed = userCardCount >= 2;
-                    tempSelections.clear();
-                    updateConfirmButton();
-                } catch (err) {
-                    console.warn('No se pudo recargar selecciones tras clearAll:', err);
-                    // Fallback: asumir que está vacío
-                    window.appState.userHasConfirmed = false;
-                    tempSelections.clear();
-                    updateConfirmButton();
-                }
+                window.appState.userHasConfirmed = false;
+                tempSelections.clear();
             }
+            selecciones = {};
+            await saveSelections();
+            updateConfirmButton();
         }
     },
     confirmSelection: confirmSelection,
@@ -781,6 +791,7 @@ function updateAdminPanel() {
     if (window.appState.isAdmin) {
         panel.classList.remove('hidden');
 
+        // Botón: Cerrar/Abrir tabla
         let toggleBtn = document.getElementById('toggle-table-btn');
         if (!toggleBtn) {
             toggleBtn = document.createElement('button');
@@ -797,6 +808,7 @@ function updateAdminPanel() {
             toggleBtn.textContent = config.tablaCerrada ? '🔓 Abrir tabla' : '🔒 Cerrar tabla';
         }
 
+        // Botón: Vaciar todas las cartas
         let clearBtn = document.getElementById('clear-all');
         if (!clearBtn) {
             clearBtn = document.createElement('button');
@@ -804,13 +816,19 @@ function updateAdminPanel() {
             clearBtn.textContent = '🧹 Vaciar todas las cartas';
             clearBtn.onclick = async () => {
                 if (confirm('¿Vaciar todas las cartas?')) {
+                    if (window.appState.currentUser) {
+                        window.appState.userHasConfirmed = false;
+                        tempSelections.clear();
+                    }
                     selecciones = {};
                     await saveSelections();
+                    updateConfirmButton();
                 }
             };
             panel.appendChild(clearBtn);
         }
 
+        // Botón: Generar cartas
         let generatorBtn = document.getElementById('generator-btn');
         if (!generatorBtn) {
             generatorBtn = document.createElement('button');
@@ -821,6 +839,58 @@ function updateAdminPanel() {
                 inicializarGenerador();
             };
             panel.appendChild(generatorBtn);
+        }
+
+        // ✅ Selector: Cartas por usuario
+        let cardsPerUserContainer = document.getElementById('cards-per-user-container');
+        if (!cardsPerUserContainer) {
+            cardsPerUserContainer = document.createElement('div');
+            cardsPerUserContainer.id = 'cards-per-user-container';
+            cardsPerUserContainer.style.display = 'flex';
+            cardsPerUserContainer.style.gap = '8px';
+            cardsPerUserContainer.style.alignItems = 'center';
+            cardsPerUserContainer.style.marginTop = '10px';
+
+            const label = document.createElement('span');
+            label.textContent = 'Cartas por usuario:';
+            label.style.fontWeight = 'bold';
+            label.style.fontSize = '0.9rem';
+
+            const select = document.createElement('select');
+            select.id = 'cards-per-user-select';
+            select.style.padding = '6px';
+            select.style.borderRadius = '4px';
+            select.style.border = '1px solid #ccc';
+
+            [1, 2].forEach(num => {
+                const opt = document.createElement('option');
+                opt.value = num;
+                opt.textContent = num;
+                if ((config.cartasPorUsuario || 2) === num) opt.selected = true;
+                select.appendChild(opt);
+            });
+
+            select.addEventListener('change', async () => {
+                const newValue = parseInt(select.value);
+                config.cartasPorUsuario = newValue;
+                await saveConfig();
+                renderTable();
+                if (window.appState.currentUser) {
+                    const userLower = window.appState.currentUser.toLowerCase();
+                    const count = Object.values(selecciones).filter(owner =>
+                        owner && owner.toLowerCase() === userLower
+                    ).length;
+                    window.appState.userHasConfirmed = count >= newValue;
+                    updateConfirmButton();
+                }
+            });
+
+            cardsPerUserContainer.appendChild(label);
+            cardsPerUserContainer.appendChild(select);
+            panel.appendChild(cardsPerUserContainer);
+        } else {
+            const select = document.getElementById('cards-per-user-select');
+            if (select) select.value = config.cartasPorUsuario || 2;
         }
     } else {
         panel.classList.add('hidden');

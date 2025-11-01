@@ -543,6 +543,9 @@ function reiniciarGenerador() {
     if (lastText) lastText.textContent = 'Ninguna';
     if (finJuego) finJuego.style.display = 'none';
     document.getElementById('reset-confirm-modal').classList.add('hidden');
+    // ✅ Resetear contadores
+    document.getElementById('cards-generated-count').textContent = '0';
+    document.getElementById('cards-remaining-count').textContent = '54';
 }
 
 function detenerGeneradorAutomatico() {
@@ -587,6 +590,10 @@ function inicializarGenerador() {
     if (lastText) lastText.textContent = 'Ninguna';
     if (finJuego) finJuego.style.display = 'none';
 
+    // ✅ Resetear contadores de cartas generadas/restantes
+    document.getElementById('cards-generated-count').textContent = '0';
+    document.getElementById('cards-remaining-count').textContent = '54';
+
     document.querySelector('#card-generator-modal .close')?.addEventListener('click', () => {
         document.getElementById('card-generator-modal').classList.add('hidden');
         detenerGeneradorAutomatico();
@@ -602,6 +609,10 @@ function inicializarGenerador() {
         mostrarCartaActual(carta);
         agregarMiniatura(carta);
         cartasGeneradas.push(carta);
+
+        // ✅ Actualizar contadores
+        document.getElementById('cards-generated-count').textContent = cartasGeneradas.length;
+        document.getElementById('cards-remaining-count').textContent = 54 - cartasGeneradas.length;
     });
 
     document.getElementById('copy-current-card')?.addEventListener('click', () => {
@@ -841,7 +852,7 @@ function updateAdminPanel() {
             panel.appendChild(generatorBtn);
         }
 
-        // ✅ Selector: Cartas por usuario
+        // ✅ Selector: Cartas por usuario (con validación)
         let cardsPerUserContainer = document.getElementById('cards-per-user-container');
         if (!cardsPerUserContainer) {
             cardsPerUserContainer = document.createElement('div');
@@ -872,6 +883,28 @@ function updateAdminPanel() {
 
             select.addEventListener('change', async () => {
                 const newValue = parseInt(select.value);
+                const currentValue = config.cartasPorUsuario || 2;
+
+                // Si intenta reducir de 2 a 1
+                if (newValue === 1 && currentValue === 2) {
+                    // Verificar si algún usuario tiene 2 cartas
+                    const userCardCounts = {};
+                    for (const owner of Object.values(selecciones)) {
+                        if (owner) {
+                            userCardCounts[owner] = (userCardCounts[owner] || 0) + 1;
+                        }
+                    }
+                    const hasUserWithTwoCards = Object.values(userCardCounts).some(count => count >= 2);
+
+                    if (hasUserWithTwoCards) {
+                        // Mostrar modal y revertir selección
+                        select.value = 2;
+                        document.getElementById('cards-reduction-modal').classList.remove('hidden');
+                        return;
+                    }
+                }
+
+                // Si pasa la validación, guardar
                 config.cartasPorUsuario = newValue;
                 await saveConfig();
                 renderTable();

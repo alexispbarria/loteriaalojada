@@ -127,6 +127,9 @@
                         <button id="copy-screenshot-link" class="copy-link-btn">📋 Copiar</button>
                     </div>
                 </div>
+                <div class="card-counters">
+                    <span id="cards-generated-count">0</span> / <span id="cards-remaining-count">54</span>
+                </div>
             </div>
 
             <!-- Última carta generada (transparencia) -->
@@ -149,6 +152,19 @@
                 <button id="cancel-reset" class="reset-btn cancel">Cancelar</button>
                 <button id="confirm-reset" class="reset-btn confirm">Reiniciar</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal: advertencia al intentar reducir cartas por usuario -->
+    <div id="cards-reduction-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>⚠️ Acción no permitida</h2>
+            <p>Ya existen usuarios con 2 cartas seleccionadas. No puedes reducir el límite a 1 carta por usuario.</p>
+            <button id="close-reduction-modal"
+                style="width:100%; padding:10px; background:#ff9800; color:white; border:none; border-radius:6px; font-weight:bold; margin-top:15px;">
+                Entendido
+            </button>
         </div>
     </div>
 

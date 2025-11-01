@@ -739,3 +739,19 @@ th {
 .copy-link-btn:hover {
     background: #1976D2;
 }
+
+/* ===== CONTADORES EN GENERADOR ===== */
+.card-counters {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 15px;
+    font-size: 0.95rem;
+    color: #555;
+    font-weight: bold;
+}
+.card-counters span {
+    background: #f0f0f0;
+    padding: 4px 10px;
+    border-radius: 6px;
+}

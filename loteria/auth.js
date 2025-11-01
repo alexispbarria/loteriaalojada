@@ -69,6 +69,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (confirmBtn) {
         confirmBtn.addEventListener('click', window.loteria.confirmSelection);
     }
+    const closeReductionModal = document.getElementById('close-reduction-modal');
+    if (closeReductionModal) {
+        closeReductionModal.addEventListener('click', () => {
+            document.getElementById('cards-reduction-modal').classList.add('hidden');
+        });
+    }
 });
 
 async function handleLogin(e) {
@@ -82,7 +88,7 @@ async function handleLogin(e) {
     try {
         const hash = await hashPassword(pass);
         const users = await fetchGistFile('usuarios.json');
-        
+
         if (users[nickLower]) {
             if (users[nickLower] === hash) {
                 const admins = await fetchGistFile('admins.json');
@@ -135,12 +141,12 @@ async function handleChangePassword(e) {
         const currentHash = await hashPassword(currentPass);
         const newHash = await hashPassword(newPass);
         const users = await fetchGistFile('usuarios.json');
-        
+
         if (!window.appState.currentUser) {
             msg.textContent = 'Sesión inválida.';
             return;
         }
-        
+
         const currentUserLower = window.appState.currentUser.toLowerCase();
         if (users[currentUserLower] !== currentHash) {
             msg.textContent = 'Contraseña actual incorrecta.';

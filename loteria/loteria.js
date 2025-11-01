@@ -184,6 +184,11 @@ function renderTable() {
         });
     }
     updateConfirmButton();
+
+    // ✅ Actualizar contadores de tabla
+    const selectedCount = Object.keys(selecciones).filter(carta => selecciones[carta] !== undefined && selecciones[carta] !== null).length;
+    document.getElementById('cards-selected-count').textContent = selectedCount;
+    document.getElementById('cards-available-count').textContent = 54 - selectedCount;
 }
 
 // === TABLA DE ESCRITORIO ===

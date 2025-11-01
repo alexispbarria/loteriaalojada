@@ -755,3 +755,20 @@ th {
     padding: 4px 10px;
     border-radius: 6px;
 }
+
+/* ===== CONTADORES EN TABLA PRINCIPAL ===== */
+.table-counters {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px;
+    background: #222;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+.table-counters span {
+    background: #333;
+    padding: 4px 10px;
+    border-radius: 6px;
+}

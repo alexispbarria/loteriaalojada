@@ -105,7 +105,8 @@ async function updateGist(files) {
 // === FUNCIONES AUXILIARES ===
 function getSavedCardsCount() {
     if (!window.appState.currentUser) return 0;
-    return Object.values(selecciones).filter(owner => owner === window.appState.currentUser).length;
+    const currentUserLower = window.appState.currentUser.toLowerCase();
+    return Object.values(selecciones).filter(owner => owner.toLowerCase() === currentUserLower).length;
 }
 
 function getMaxSelectableCards() {
@@ -186,7 +187,7 @@ function createDesktopTable() {
                 jugadorCell.dataset.card = carta;
                 
                 let jugador = selecciones[carta] || '—';
-                if ((window.appState.userHasConfirmed && selecciones[carta] === window.appState.currentUser) ||
+                if ((window.appState.userHasConfirmed && selecciones[carta].toLowerCase() === window.appState.currentUser.toLowerCase()) ||
                     tempSelections.has(carta)) {
                     jugador = window.appState.currentUser;
                 }
@@ -229,7 +230,7 @@ function createMobileTable() {
     CARTAS.forEach(carta => {
         let jugador = selecciones[carta] || '—';
         
-        if ((window.appState.userHasConfirmed && selecciones[carta] === window.appState.currentUser) ||
+        if ((window.appState.userHasConfirmed && selecciones[carta].toLowerCase() === window.appState.currentUser.toLowerCase()) ||
             tempSelections.has(carta)) {
             jugador = window.appState.currentUser;
         }
@@ -336,7 +337,7 @@ function updateConfirmButton() {
     if (tempSelections.size > 0 && window.appState.currentUser && !window.appState.userHasConfirmed) {
         const allSelected = Array.from(tempSelections);
         Object.entries(selecciones).forEach(([carta, owner]) => {
-            if (owner === window.appState.currentUser) {
+            if (owner.toLowerCase() === window.appState.currentUser.toLowerCase()) {
                 allSelected.push(carta);
             }
         });
@@ -357,7 +358,7 @@ async function confirmSelection() {
     }
 
     for (const carta of tempSelections) {
-        if (selecciones[carta] && selecciones[carta] !== window.appState.currentUser) {
+        if (selecciones[carta] && selecciones[carta].toLowerCase() !== window.appState.currentUser.toLowerCase()) {
             alert(`La carta "${carta}" ya está ocupada por otro usuario.`);
             return;
         }
@@ -588,11 +589,10 @@ function inicializarGenerador() {
     document.getElementById('reset-generator-btn')?.addEventListener('click', () => {
         document.getElementById('reset-confirm-modal').classList.remove('hidden');
     });
-
+    
     document.getElementById('capture-screenshot-btn')?.addEventListener('click', () => {
-    subirCapturaCartas();
-});
-
+        subirCapturaCartas();
+    });
 }
 
 // === INICIALIZACIÓN ===
@@ -624,6 +624,12 @@ async function initLoteria() {
             config = { tablaCerrada: false };
         }
         renderTable();
+        
+        // Restaurar panel de admin si hay sesión
+        const savedUser = localStorage.getItem('loteriaUser');
+        if (savedUser && window.appState.currentUser) {
+            updateAdminPanel();
+        }
     } catch (err) {
         console.error('Error al cargar selecciones:', err);
         document.querySelector('.desktop-table').textContent = '⚠️ Error de conexión';
@@ -636,7 +642,12 @@ window.loteria = {
     setUsuario: (user, admin) => {
         window.appState.currentUser = user;
         window.appState.isAdmin = admin;
-        const userCardCount = Object.values(selecciones).filter(owner => owner === user).length;
+        // Actualizar localStorage
+        localStorage.setItem('loteriaUser', JSON.stringify({
+            nickname: user,
+            isAdmin: admin
+        }));
+        const userCardCount = Object.values(selecciones).filter(owner => owner.toLowerCase() === user.toLowerCase()).length;
         window.appState.userHasConfirmed = userCardCount >= 2;
         renderTable();
         updateAdminPanel();

@@ -7,13 +7,11 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('auth-modal').classList.remove('hidden');
         });
     }
-
     document.querySelectorAll('.close').forEach(el => {
         el.addEventListener('click', () => {
             document.querySelectorAll('.modal').forEach(m => m.classList.add('hidden'));
         });
     });
-
     const goToLoginBtn = document.getElementById('go-to-login-btn');
     if (goToLoginBtn) {
         goToLoginBtn.addEventListener('click', () => {
@@ -21,21 +19,18 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('auth-modal').classList.remove('hidden');
         });
     }
-
     const closeLockedModal = document.getElementById('close-locked-modal');
     if (closeLockedModal) {
         closeLockedModal.addEventListener('click', () => {
             document.getElementById('cards-locked-modal').classList.add('hidden');
         });
     }
-
     const closeTableModal = document.getElementById('close-table-modal');
     if (closeTableModal) {
         closeTableModal.addEventListener('click', () => {
             document.getElementById('table-closed-modal').classList.add('hidden');
         });
     }
-
     const userNameBtn = document.getElementById('user-name-btn');
     if (userNameBtn) {
         userNameBtn.addEventListener('click', () => {
@@ -43,7 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
             dropdown.classList.toggle('hidden');
         });
     }
-
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
@@ -52,9 +46,9 @@ document.addEventListener('DOMContentLoaded', () => {
             updateAuthUI();
             window.loteria.clearTempSelections();
             document.getElementById('user-dropdown').classList.add('hidden');
+            localStorage.removeItem('loteriaUser');
         });
     }
-
     const changePasswordBtn = document.getElementById('change-password-btn');
     if (changePasswordBtn) {
         changePasswordBtn.addEventListener('click', () => {
@@ -62,17 +56,14 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('password-modal').classList.remove('hidden');
         });
     }
-
     const authForm = document.getElementById('auth-form');
     if (authForm) {
         authForm.addEventListener('submit', handleLogin);
     }
-
     const passwordForm = document.getElementById('password-form');
     if (passwordForm) {
         passwordForm.addEventListener('submit', handleChangePassword);
     }
-
     const confirmBtn = document.getElementById('confirm-btn');
     if (confirmBtn) {
         confirmBtn.addEventListener('click', window.loteria.confirmSelection);
@@ -81,7 +72,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function handleLogin(e) {
     e.preventDefault();
-    const nick = document.getElementById('nickname').value.trim();
+    const nickInput = document.getElementById('nickname').value.trim();
+    const nickLower = nickInput.toLowerCase(); // Normalizar a minúsculas
     const pass = document.getElementById('password').value;
     const msg = document.getElementById('auth-message');
     msg.textContent = 'Procesando...';
@@ -90,26 +82,37 @@ async function handleLogin(e) {
         const hash = await hashPassword(pass);
         const users = await fetchGistFile('usuarios.json');
         
-        if (users[nick]) {
-            if (users[nick] === hash) {
+        if (users[nickLower]) {
+            if (users[nickLower] === hash) {
                 const admins = await fetchGistFile('admins.json');
-                const isAdmin = Array.isArray(admins) && admins.includes(nick);
-                window.appState.currentUser = nick;
+                // Normalizar admins a minúsculas para comparación
+                const isAdmin = Array.isArray(admins) && admins.map(a => a.toLowerCase()).includes(nickLower);
+                window.appState.currentUser = nickInput; // Nombre original
                 window.appState.isAdmin = isAdmin;
                 updateAuthUI();
-                window.loteria.setUsuario(nick, isAdmin);
+                window.loteria.setUsuario(nickInput, isAdmin);
                 document.getElementById('auth-modal').classList.add('hidden');
+                // Guardar en localStorage
+                localStorage.setItem('loteriaUser', JSON.stringify({
+                    nickname: nickInput,
+                    isAdmin: isAdmin
+                }));
             } else {
                 msg.textContent = 'Contraseña incorrecta.';
             }
         } else {
-            users[nick] = hash;
+            users[nickLower] = hash;
             await updateGist({ 'usuarios.json': { content: JSON.stringify(users, null, 2) } });
-            window.appState.currentUser = nick;
+            window.appState.currentUser = nickInput;
             window.appState.isAdmin = false;
             updateAuthUI();
-            window.loteria.setUsuario(nick, false);
+            window.loteria.setUsuario(nickInput, false);
             document.getElementById('auth-modal').classList.add('hidden');
+            // Guardar en localStorage
+            localStorage.setItem('loteriaUser', JSON.stringify({
+                nickname: nickInput,
+                isAdmin: false
+            }));
         }
     } catch (err) {
         msg.textContent = 'Error: ' + (err.message || 'conexión');
@@ -133,13 +136,15 @@ async function handleChangePassword(e) {
         const currentHash = await hashPassword(currentPass);
         const newHash = await hashPassword(newPass);
         const users = await fetchGistFile('usuarios.json');
-
-        if (users[window.appState.currentUser] !== currentHash) {
+        
+        // Usar versión en minúsculas para buscar
+        const currentUserLower = window.appState.currentUser.toLowerCase();
+        if (users[currentUserLower] !== currentHash) {
             msg.textContent = 'Contraseña actual incorrecta.';
             return;
         }
 
-        users[window.appState.currentUser] = newHash;
+        users[currentUserLower] = newHash;
         await updateGist({ 'usuarios.json': { content: JSON.stringify(users, null, 2) } });
         msg.textContent = 'Contraseña actualizada correctamente.';
         setTimeout(() => {
@@ -190,3 +195,19 @@ async function updateGist(files) {
     });
     if (!res.ok) throw new Error('Error en backend');
 }
+
+// Restaurar sesión al cargar
+document.addEventListener('DOMContentLoaded', () => {
+    const savedUser = localStorage.getItem('loteriaUser');
+    if (savedUser) {
+        try {
+            const { nickname, isAdmin } = JSON.parse(savedUser);
+            window.appState.currentUser = nickname;
+            window.appState.isAdmin = isAdmin;
+            updateAuthUI();
+        } catch (e) {
+            console.error('Error al restaurar sesión:', e);
+            localStorage.removeItem('loteriaUser');
+        }
+    }
+});

@@ -739,13 +739,29 @@ window.loteria = {
     },
     clearAll: async () => {
         if (confirm('¿Vaciar todas las cartas?')) {
+            // Vaciar localmente
             selecciones = {};
-            await saveSelections();
-            // Resetear estado del usuario actual
+            // Guardar en Gist
+            await saveSelections(); // Esto ya llama a renderTable()
+            // Ahora, después de guardar, recalcular estado del usuario ACTUAL
             if (window.appState.currentUser) {
-                window.appState.userHasConfirmed = false;
-                tempSelections.clear();
-                updateConfirmButton();
+                // Forzar recarga desde el Gist para evitar desincronización
+                try {
+                    const freshSelecciones = await fetchGistFile('selecciones.json');
+                    const userLower = window.appState.currentUser.toLowerCase();
+                    const userCardCount = Object.values(freshSelecciones).filter(owner =>
+                        owner && owner.toLowerCase() === userLower
+                    ).length;
+                    window.appState.userHasConfirmed = userCardCount >= 2;
+                    tempSelections.clear();
+                    updateConfirmButton();
+                } catch (err) {
+                    console.warn('No se pudo recargar selecciones tras clearAll:', err);
+                    // Fallback: asumir que está vacío
+                    window.appState.userHasConfirmed = false;
+                    tempSelections.clear();
+                    updateConfirmButton();
+                }
             }
         }
     },

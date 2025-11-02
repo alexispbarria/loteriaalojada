@@ -99,10 +99,8 @@
             <span class="close">&times;</span>
             <h2>Generador de Cartas - Lotería Mexicana</h2>
             <div class="generator-main">
-                <div class="miniatures-container">
-                    <div id="miniatures-grid" class="miniatures-grid"></div>
-                </div>
-                <div class="current-card-panel">
+                <!-- Panel izquierdo: carta actual + miniaturas -->
+                <div class="left-panel">
                     <div class="current-card-display">
                         <div id="generator-placeholder" class="generator-placeholder">
                             Pulse "Siguiente carta" para comenzar
@@ -113,32 +111,47 @@
                         <img id="current-card-img" src="" alt="Carta actual" style="display:none;">
                         <p id="current-card-name" class="current-card-name" style="display:none;">—</p>
                     </div>
-                    <button id="next-card-btn" class="next-card-btn">Siguiente carta 🎲</button>
-                    <button id="copy-current-card" class="copy-btn">📋 Copiar nombre</button>
-                    <button id="reset-generator-btn" class="reset-btn">🔄 Reiniciar Bingo</button>
-                    <button id="capture-screenshot-btn" class="capture-btn">📤 Captura de Cartas</button>
-                    <div id="screenshot-link-container" class="screenshot-link-container hidden">
-                        <input type="text" id="screenshot-link" class="screenshot-link-input" readonly>
-                        <button id="copy-screenshot-link" class="copy-link-btn">📋 Copiar</button>
+                    <div class="miniatures-container">
+                        <div id="miniatures-grid" class="miniatures-grid"></div>
                     </div>
-                    <!-- Contadores del generador -->
-                    <div class="card-counters">
-                        <span id="cards-generated-count">0</span> / <span id="cards-remaining-count">54</span>
+                </div>
+                <!-- Panel derecho: botones y controles -->
+                <div class="right-panel">
+                    <div class="controls-section">
+                        <button id="next-card-btn" class="next-card-btn">Siguiente carta 🎲</button>
+                        <button id="copy-current-card" class="copy-btn">📋 Copiar nombre</button>
+                        <button id="reset-generator-btn" class="reset-btn">🔄 Reiniciar Bingo</button>
+                        <button id="capture-screenshot-btn" class="capture-btn">📤 Captura de Cartas</button>
+                        <div id="screenshot-link-container" class="screenshot-link-container hidden">
+                            <input type="text" id="screenshot-link" class="screenshot-link-input" readonly>
+                            <button id="copy-screenshot-link" class="copy-link-btn">📋 Copiar</button>
+                        </div>
                     </div>
-                    <!-- ✅ NUEVO: Input y botón para xat -->
-                    <div style="margin-top: 15px;">
-                        <label style="font-weight:bold; font-size:0.9rem; display:block; margin-bottom:5px;">
-                            Nombre del grupo xat:
-                        </label>
-                        <input type="text" id="xat-group-name" value="Viciososymas" placeholder="Ej: Viciososymas"
-                            style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; margin-bottom:8px;">
-                        <button id="redirect-to-xat-btn"
-                            style="width:100%; padding:10px; background:#673AB7; color:white; border:none; border-radius:6px; font-weight:bold;">
-                            ➡️ Redirigir al xat
-                        </button>
+                    <!-- Generador automático -->
+                    <div class="auto-generator-section">
+                        <label>Generador automático:</label>
+                        <select id="auto-speed-select">
+                            <option value="8000">Lento (8s)</option>
+                            <option value="5000">Normal (5s)</option>
+                            <option value="2500">Veloz (2.5s)</option>
+                        </select>
+                        <button id="auto-control-btn" class="auto-control-btn">▶️ Iniciar</button>
+                    </div>
+                    <!-- Contadores -->
+                    <div class="counters-section">
+                        <div class="card-counters">
+                            <span id="cards-generated-count">0</span> / <span id="cards-remaining-count">54</span>
+                        </div>
+                    </div>
+                    <!-- Input y botón para xat -->
+                    <div class="xat-section">
+                        <label>Nombre del grupo xat:</label>
+                        <input type="text" id="xat-group-name" value="Viciososymas" placeholder="Ej: Viciososymas">
+                        <button id="redirect-to-xat-btn" class="xat-btn">➡️ Redirigir al xat</button>
                     </div>
                 </div>
             </div>
+            <!-- Última carta generada (transparencia) -->
             <div class="last-card-section">
                 <h3>Última carta generada:</h3>
                 <div id="last-card-display" class="last-card-display">

@@ -506,7 +506,7 @@ async function subirCapturaCartas() {
             const formData = new FormData();
             formData.append('image', blob, 'cartas-loteria.png');
             // ⚠️ REEMPLAZA "TU_CLAVE_IMGBB" POR TU API KEY REAL
-            const response = await fetch('https://api.imgbb.com/1/upload?key=api_key', {
+            const response = await fetch('https://api.imgbb.com/1/upload?key=9979891f16223fc79a7d5dfa7a42d526', {
                 method: 'POST',
                 body: formData
             });
@@ -600,7 +600,7 @@ function inicializarGenerador() {
     if (lastText) lastText.textContent = 'Ninguna';
     if (finJuego) finJuego.style.display = 'none';
 
-    // ✅ Resetear contadores de cartas generadas/restantes
+    // ✅ Resetear contadores
     document.getElementById('cards-generated-count').textContent = '0';
     document.getElementById('cards-remaining-count').textContent = '54';
 
@@ -619,7 +619,6 @@ function inicializarGenerador() {
         mostrarCartaActual(carta);
         agregarMiniatura(carta);
         cartasGeneradas.push(carta);
-
         // ✅ Actualizar contadores
         document.getElementById('cards-generated-count').textContent = cartasGeneradas.length;
         document.getElementById('cards-remaining-count').textContent = 54 - cartasGeneradas.length;
@@ -645,122 +644,31 @@ function inicializarGenerador() {
         subirCapturaCartas();
     });
 
-    // === AGREGAR CONTROL AUTOMÁTICO ===
-    const autoContainer = document.getElementById('auto-generator-container');
-    if (!autoContainer) {
-        const container = document.createElement('div');
-        container.id = 'auto-generator-container';
-        container.style.display = 'flex';
-        container.style.flexDirection = 'column';
-        container.style.gap = '10px';
-        container.style.width = '100%';
-        container.style.marginTop = '15px';
+    // === CONTROL AUTOMÁTICO ===
+    const speedSelect = document.getElementById('auto-speed-select');
+    const controlBtn = document.getElementById('auto-control-btn');
 
-        const label = document.createElement('span');
-        label.textContent = 'Generador automático:';
-        label.style.fontWeight = 'bold';
-        label.style.fontSize = '0.95rem';
+    controlBtn.addEventListener('click', () => {
+        if (generadorAutoActivo) {
+            detenerGeneradorAutomatico();
+            controlBtn.textContent = '▶️ Retomar';
+            controlBtn.style.background = '#4CAF50';
+        } else {
+            const delay = parseInt(speedSelect.value);
+            iniciarGeneradorAutomatico(delay);
+            controlBtn.textContent = '⏸ Pausa';
+            controlBtn.style.background = '#ff9800';
+        }
+    });
 
-        const select = document.createElement('select');
-        select.id = 'auto-speed-select';
-        select.style.padding = '8px';
-        select.style.borderRadius = '4px';
-        select.style.border = '1px solid #ccc';
-        select.style.width = '100%';
-
-        const options = [
-            { text: 'Lento (8s)', value: 8000 },
-            { text: 'Normal (5s)', value: 5000 },
-            { text: 'Veloz (2.5s)', value: 2500 }
-        ];
-        options.forEach(opt => {
-            const el = document.createElement('option');
-            el.value = opt.value;
-            el.textContent = opt.text;
-            select.appendChild(el);
-        });
-
-        const controlBtn = document.createElement('button');
-        controlBtn.id = 'auto-control-btn';
-        controlBtn.textContent = '▶️ Iniciar';
-        controlBtn.style.background = '#4CAF50';
-        controlBtn.style.color = 'white';
-        controlBtn.style.border = 'none';
-        controlBtn.style.padding = '10px';
-        controlBtn.style.borderRadius = '6px';
-        controlBtn.style.cursor = 'pointer';
-        controlBtn.style.fontWeight = 'bold';
-        controlBtn.style.width = '100%';
-
-        controlBtn.addEventListener('click', () => {
-            if (generadorAutoActivo) {
-                detenerGeneradorAutomatico();
-                controlBtn.textContent = '▶️ Retomar';
-                controlBtn.style.background = '#4CAF50';
-            } else {
-                const delay = parseInt(select.value);
-                iniciarGeneradorAutomatico(delay);
-                controlBtn.textContent = '⏸ Pausa';
-                controlBtn.style.background = '#ff9800';
-            }
-        });
-
-        container.appendChild(label);
-        container.appendChild(select);
-        container.appendChild(controlBtn);
-
-        const captureBtn = document.getElementById('capture-screenshot-btn');
-        captureBtn.parentNode.insertBefore(container, captureBtn);
-    }
-
-    // ✅ NUEVO: Redirección a xat
+    // ✅ REDIRECCIÓN A XAT
     const xatBtn = document.getElementById('redirect-to-xat-btn');
-    if (!xatBtn) {
-        const xatContainer = document.createElement('div');
-        xatContainer.style.display = 'flex';
-        xatContainer.style.flexDirection = 'column';
-        xatContainer.style.gap = '8px';
-        xatContainer.style.marginTop = '15px';
-        xatContainer.style.width = '100%';
-
-        const xatLabel = document.createElement('span');
-        xatLabel.textContent = 'Nombre del grupo xat:';
-        xatLabel.style.fontWeight = 'bold';
-        xatLabel.style.fontSize = '0.9rem';
-
-        const xatInput = document.createElement('input');
-        xatInput.id = 'xat-group-name';
-        xatInput.type = 'text';
-        xatInput.value = 'Viciososymas';
-        xatInput.placeholder = 'Ej: Viciososymas';
-        xatInput.style.padding = '8px';
-        xatInput.style.borderRadius = '4px';
-        xatInput.style.border = '1px solid #ccc';
-        xatInput.style.width = '100%';
-
-        const btn = document.createElement('button');
-        btn.id = 'redirect-to-xat-btn';
-        btn.textContent = '➡️ Redirigir al xat';
-        btn.style.background = '#673AB7';
-        btn.style.color = 'white';
-        btn.style.border = 'none';
-        btn.style.padding = '10px';
-        btn.style.borderRadius = '6px';
-        btn.style.cursor = 'pointer';
-        btn.style.fontWeight = 'bold';
-        btn.style.width = '100%';
-
-        btn.addEventListener('click', () => {
+    const xatInput = document.getElementById('xat-group-name');
+    if (xatBtn && xatInput) {
+        xatBtn.addEventListener('click', () => {
             const groupName = xatInput.value.trim() || 'Viciososymas';
             window.open(`xat.html?group=${encodeURIComponent(groupName)}`, '_blank');
         });
-
-        xatContainer.appendChild(xatLabel);
-        xatContainer.appendChild(xatInput);
-        xatContainer.appendChild(btn);
-
-        const captureBtn = document.getElementById('capture-screenshot-btn');
-        captureBtn.parentNode.insertBefore(xatContainer, captureBtn.nextSibling);
     }
 }
 

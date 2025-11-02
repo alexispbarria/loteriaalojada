@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lotería Mexicana</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <!-- Topbar -->
     <header class="topbar">
@@ -119,6 +121,10 @@
                         <input type="text" id="screenshot-link" class="screenshot-link-input" readonly>
                         <button id="copy-screenshot-link" class="copy-link-btn">📋 Copiar</button>
                     </div>
+                    <!-- Contadores del generador -->
+                    <div class="card-counters">
+                        <span id="cards-generated-count">0</span> / <span id="cards-remaining-count">54</span>
+                    </div>
                     <!-- ✅ NUEVO: Input y botón para xat -->
                     <div style="margin-top: 15px;">
                         <label style="font-weight:bold; font-size:0.9rem; display:block; margin-bottom:5px;">
@@ -126,7 +132,8 @@
                         </label>
                         <input type="text" id="xat-group-name" value="Viciososymas" placeholder="Ej: Viciososymas"
                             style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; margin-bottom:8px;">
-                        <button id="redirect-to-xat-btn" style="width:100%; padding:10px; background:#673AB7; color:white; border:none; border-radius:6px; font-weight:bold;">
+                        <button id="redirect-to-xat-btn"
+                            style="width:100%; padding:10px; background:#673AB7; color:white; border:none; border-radius:6px; font-weight:bold;">
                             ➡️ Redirigir al xat
                         </button>
                     </div>
@@ -158,6 +165,10 @@
     <div class="bingo-container">
         <div class="desktop-table"></div>
         <div class="mobile-table"></div>
+        <!-- Contadores de tabla principal -->
+        <div class="table-counters">
+            <span id="cards-selected-count">0</span> / <span id="cards-available-count">54</span>
+        </div>
     </div>
 
     <!-- Panel de admin -->
@@ -174,4 +185,5 @@
     <script src="loteria.js"></script>
     <script src="auth.js"></script>
 </body>
+
 </html>

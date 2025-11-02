@@ -362,8 +362,13 @@ function handleRemove(e) {
 function updateConfirmButton() {
     const confirmDiv = document.getElementById('confirm-selection');
     const display = document.getElementById('selected-cards-display');
+
+    // ✅ Protección: si no existen los elementos, salir
+    if (!confirmDiv || !display) return;
+
     const savedCount = getSavedCardsCount();
     const totalSelected = savedCount + tempSelections.size;
+
     if (tempSelections.size > 0 && window.appState.currentUser && !window.appState.userHasConfirmed) {
         const allSelected = Array.from(tempSelections);
         Object.entries(selecciones).forEach(([carta, owner]) => {
@@ -501,7 +506,7 @@ async function subirCapturaCartas() {
             const formData = new FormData();
             formData.append('image', blob, 'cartas-loteria.png');
             // ⚠️ REEMPLAZA "TU_CLAVE_IMGBB" POR TU API KEY REAL
-            const response = await fetch('https://api.imgbb.com/1/upload?key=9979891f16223fc79a7d5dfa7a42d526', {
+            const response = await fetch('https://api.imgbb.com/1/upload?key=api_key', {
                 method: 'POST',
                 body: formData
             });

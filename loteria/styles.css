@@ -466,9 +466,28 @@ th {
     flex: 2;
     background: #f5f5f5;
     border-radius: 8px;
-    padding: 12px;
+    padding: 15px;
     overflow-y: auto;
-    max-height: 300px;
+    /* Scroll solo en miniaturas */
+    max-height: 400px;
+    /* Altura máxima fija para escritorio */
+}
+/* En móviles, altura más pequeña */
+@media (max-width: 768px) {
+    .miniatures-container {
+        max-height: 250px;
+    }
+
+    .generator-modal {
+        max-width: 95%;
+        max-height: 90vh;
+    }
+}
+.miniatures-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 10px;
+    padding-bottom: 10px;
 }
 .current-card-panel {
     flex: 1;

@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lotería Mexicana</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <!-- Topbar -->
     <header class="topbar">
@@ -101,13 +103,14 @@
                 <div class="miniatures-container">
                     <div id="miniatures-grid" class="miniatures-grid"></div>
                 </div>
-                <!-- Contadores -->
-                <div class="card-counters">
-                    <span id="cards-generated-count">0</span> / <span id="cards-remaining-count">54</span>
-                </div>
+
                 <!-- Panel derecho: carta actual + botones -->
                 <div class="current-card-panel">
                     <div class="current-card-display">
+                        <!-- Contadores -->
+                        <div class="card-counters">
+                            <span id="cards-generated-count">0</span> / <span id="cards-remaining-count">54</span>
+                        </div>
                         <div id="generator-placeholder" class="generator-placeholder">
                             Pulse "Siguiente carta" para comenzar
                         </div>
@@ -132,12 +135,13 @@
                         </label>
                         <input type="text" id="xat-group-name" value="Viciososymas" placeholder="Ej: Viciososymas"
                             style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; margin-bottom:8px;">
-                        <button id="redirect-to-xat-btn" style="width:100%; padding:10px; background:#673AB7; color:white; border:none; border-radius:6px; font-weight:bold;">
+                        <button id="redirect-to-xat-btn"
+                            style="width:100%; padding:10px; background:#673AB7; color:white; border:none; border-radius:6px; font-weight:bold;">
                             ➡️ Redirigir al xat
                         </button>
                     </div>
                 </div>
-                
+
             </div>
             <!-- Última carta generada -->
             <div class="last-card-section">
@@ -200,4 +204,5 @@
     <script src="loteria.js"></script>
     <script src="auth.js"></script>
 </body>
+
 </html>

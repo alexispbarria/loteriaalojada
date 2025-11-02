@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lotería Mexicana</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
     <!-- Topbar -->
     <header class="topbar">
@@ -15,7 +13,6 @@
         <h1>Lotería Mexicana</h1>
         <div id="auth-container">
             <button id="auth-btn">Iniciar sesión / Registrarse</button>
-            <!-- Menú de usuario (oculto inicialmente) -->
             <div id="user-menu" class="hidden user-menu">
                 <button id="user-name-btn" class="user-name-btn">Usuario</button>
                 <div id="user-dropdown" class="user-dropdown hidden">
@@ -99,14 +96,10 @@
         <div class="modal-content generator-modal">
             <span class="close">&times;</span>
             <h2>Generador de Cartas - Lotería Mexicana</h2>
-
             <div class="generator-main">
-                <!-- Área de miniaturas -->
                 <div class="miniatures-container">
                     <div id="miniatures-grid" class="miniatures-grid"></div>
                 </div>
-
-                <!-- Panel derecho: carta actual + botón -->
                 <div class="current-card-panel">
                     <div class="current-card-display">
                         <div id="generator-placeholder" class="generator-placeholder">
@@ -117,9 +110,6 @@
                         </div>
                         <img id="current-card-img" src="" alt="Carta actual" style="display:none;">
                         <p id="current-card-name" class="current-card-name" style="display:none;">—</p>
-                        <div class="card-counters">
-                            <span id="cards-generated-count">0</span> / <span id="cards-remaining-count">54</span>
-                        </div>
                     </div>
                     <button id="next-card-btn" class="next-card-btn">Siguiente carta 🎲</button>
                     <button id="copy-current-card" class="copy-btn">📋 Copiar nombre</button>
@@ -129,10 +119,19 @@
                         <input type="text" id="screenshot-link" class="screenshot-link-input" readonly>
                         <button id="copy-screenshot-link" class="copy-link-btn">📋 Copiar</button>
                     </div>
+                    <!-- ✅ NUEVO: Input y botón para xat -->
+                    <div style="margin-top: 15px;">
+                        <label style="font-weight:bold; font-size:0.9rem; display:block; margin-bottom:5px;">
+                            Nombre del grupo xat:
+                        </label>
+                        <input type="text" id="xat-group-name" value="Viciososymas" placeholder="Ej: Viciososymas"
+                            style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; margin-bottom:8px;">
+                        <button id="redirect-to-xat-btn" style="width:100%; padding:10px; background:#673AB7; color:white; border:none; border-radius:6px; font-weight:bold;">
+                            ➡️ Redirigir al xat
+                        </button>
+                    </div>
                 </div>
             </div>
-
-            <!-- Última carta generada (transparencia) -->
             <div class="last-card-section">
                 <h3>Última carta generada:</h3>
                 <div id="last-card-display" class="last-card-display">
@@ -140,9 +139,6 @@
                 </div>
             </div>
         </div>
-
-
-
     </div>
 
     <!-- Mini modal de confirmación de reinicio -->
@@ -158,32 +154,14 @@
         </div>
     </div>
 
-    <!-- Modal: advertencia al intentar reducir cartas por usuario -->
-    <div id="cards-reduction-modal" class="modal hidden">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>⚠️ Acción no permitida</h2>
-            <p>Ya existen usuarios con 2 cartas seleccionadas. No puedes reducir el límite a 1 carta por usuario.</p>
-            <button id="close-reduction-modal"
-                style="width:100%; padding:10px; background:#ff9800; color:white; border:none; border-radius:6px; font-weight:bold; margin-top:15px;">
-                Entendido
-            </button>
-        </div>
-    </div>
-
     <!-- Tabla principal -->
     <div class="bingo-container">
         <div class="desktop-table"></div>
         <div class="mobile-table"></div>
-        <div class="table-counters">
-            <span id="cards-selected-count">0</span> / <span id="cards-available-count">54</span>
-        </div>
     </div>
 
     <!-- Panel de admin -->
-    <div id="admin-panel" class="hidden admin-panel">
-        <!-- Los botones se crearán dinámicamente -->
-    </div>
+    <div id="admin-panel" class="hidden admin-panel"></div>
 
     <!-- Botón de confirmación de selección -->
     <div id="confirm-selection" class="hidden confirm-selection">
@@ -191,11 +169,9 @@
         <button id="confirm-btn">✅ Seleccionar cartas</button>
     </div>
 
-    <!-- Al final del <body>, antes de tus scripts -->
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <script src="config.js"></script>
     <script src="loteria.js"></script>
     <script src="auth.js"></script>
 </body>
-
 </html>

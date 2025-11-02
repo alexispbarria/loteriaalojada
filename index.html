@@ -11,7 +11,6 @@
             margin: 0;
             padding: 0;
         }
-
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f0f0f0;
@@ -25,7 +24,6 @@
             padding: 0;
             color: #333;
         }
-
         /* ===== TOPBAR ===== */
         .topbar {
             background: #e91e63;
@@ -39,13 +37,11 @@
             z-index: 100;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
         }
-
         .topbar h1 {
             font-size: 1.4rem;
             font-weight: bold;
         }
-
-        #auth-btn {
+        #auth-btn, #user-display {
             background: white;
             color: #e91e63;
             border: none;
@@ -56,11 +52,13 @@
             font-size: 1rem;
             transition: background 0.2s;
         }
-
         #auth-btn:hover {
             background: #f5f5f5;
         }
-
+        #user-display {
+            cursor: default;
+            pointer-events: none;
+        }
         /* ===== CONTENEDOR PRINCIPAL ===== */
         .main-content {
             flex: 1;
@@ -71,13 +69,11 @@
             padding: 20px;
             text-align: center;
         }
-
         .main-content h2 {
             color: #e91e63;
             margin-bottom: 40px;
             font-size: 2rem;
         }
-
         /* ===== BOTONES DE JUEGOS ===== */
         .games-container {
             display: flex;
@@ -86,7 +82,6 @@
             width: 90%;
             max-width: 500px;
         }
-
         .game-btn {
             background: #4CAF50;
             color: white;
@@ -99,44 +94,35 @@
             transition: all 0.3s;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
-
         .game-btn:hover {
             background: #45a049;
             transform: translateY(-2px);
             box-shadow: 0 6px 12px rgba(0,0,0,0.3);
         }
-
         .game-btn:disabled {
             background: #cccccc;
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
         }
-
         .game-btn.lottery {
             background: #e91e63;
         }
-
         .game-btn.lottery:hover {
             background: #d81b60;
         }
-
         .game-btn.bingo-invertido {
             background: #2196F3;
         }
-
         .game-btn.bingo-invertido:hover {
             background: #1976D2;
         }
-
         .game-btn.bingo-50 {
             background: #FF9800;
         }
-
         .game-btn.bingo-50:hover {
             background: #F57C00;
         }
-
         /* ===== MODAL DE LOGIN ===== */
         .modal {
             position: fixed;
@@ -150,7 +136,6 @@
             align-items: center;
             z-index: 200;
         }
-
         .modal-content {
             background: white;
             padding: 24px;
@@ -160,7 +145,6 @@
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
             position: relative;
         }
-
         .close {
             position: absolute;
             top: 12px;
@@ -170,33 +154,27 @@
             color: #aaa;
             cursor: pointer;
         }
-
         .close:hover {
             color: #333;
         }
-
         /* ===== UTILIDADES ===== */
         .hidden {
             display: none !important;
         }
-
         /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             .topbar h1 {
                 font-size: 1.2rem;
             }
-
             .main-content h2 {
                 font-size: 1.6rem;
                 margin-bottom: 30px;
             }
-
             .game-btn {
                 padding: 16px;
                 font-size: 1.1rem;
             }
         }
-
         @media (max-width: 480px) {
             .game-btn {
                 padding: 14px;
@@ -209,7 +187,10 @@
     <!-- Topbar -->
     <header class="topbar">
         <h1>Selector de Juegos</h1>
-        <button id="auth-btn">Iniciar sesión / Registrarse</button>
+        <div id="auth-container">
+            <button id="auth-btn">Iniciar sesión / Registrarse</button>
+            <div id="user-display" class="hidden"></div>
+        </div>
     </header>
 
     <!-- Modal de login (simplificado - redirige a Lotería) -->
@@ -241,17 +222,39 @@
     </div>
 
     <script>
-        // Manejo del modal de login
-        document.getElementById('auth-btn').addEventListener('click', () => {
-            document.getElementById('auth-modal').classList.remove('hidden');
-        });
+        // Verificar si hay sesión activa al cargar
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedUser = localStorage.getItem('loteriaUser');
+            const authBtn = document.getElementById('auth-btn');
+            const userDisplay = document.getElementById('user-display');
+            const authContainer = document.getElementById('auth-container');
 
-        document.querySelector('.close').addEventListener('click', () => {
-            document.getElementById('auth-modal').classList.add('hidden');
-        });
+            if (savedUser) {
+                try {
+                    const { nickname } = JSON.parse(savedUser);
+                    // Ocultar botón de login
+                    authBtn.classList.add('hidden');
+                    // Mostrar nombre del usuario
+                    userDisplay.textContent = nickname;
+                    userDisplay.classList.remove('hidden');
+                } catch (e) {
+                    console.error('Sesión corrupta:', e);
+                    localStorage.removeItem('loteriaUser');
+                }
+            }
 
-        document.getElementById('go-to-loteria-btn').addEventListener('click', () => {
-            window.location.href = 'loteria/';
+            // Eventos
+            authBtn.addEventListener('click', () => {
+                document.getElementById('auth-modal').classList.remove('hidden');
+            });
+
+            document.querySelector('.close')?.addEventListener('click', () => {
+                document.getElementById('auth-modal').classList.add('hidden');
+            });
+
+            document.getElementById('go-to-loteria-btn')?.addEventListener('click', () => {
+                window.location.href = 'loteria/';
+            });
         });
     </script>
 </body>

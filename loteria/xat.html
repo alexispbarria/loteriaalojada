@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Xat</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            background-image: url("https://i.ibb.co/p6TP6bqP/5c5533de-original.gif");
+            background-repeat: repeat;
+            background-position: center center;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+        .xat-container {
+            display: flex;
+            width: 95%;
+            max-width: 1200px;
+            height: 80vh;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .left-panel {
+            width: 30%;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #aaa;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 20px;
+        }
+        .right-panel {
+            width: 70%;
+            background: #111;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .chat-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 8px;
+        }
+        @media (max-width: 768px) {
+            .xat-container {
+                flex-direction: column;
+                height: auto;
+                max-height: 90vh;
+            }
+            .left-panel,
+            .right-panel {
+                width: 100%;
+                height: 50vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="xat-container">
+        <div class="left-panel">
+            Panel de moderación<br>(próximamente)
+        </div>
+        <div class="right-panel">
+            <iframe 
+                id="xat-chat" 
+                class="chat-frame"
+                frameborder="0"
+                scrolling="no"
+                src=""
+                title="Chat xat">
+            </iframe>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const groupName = urlParams.get('group') || 'Viciososymas';
+        const chatUrl = `https://xat.com/embed/chat.php#id=220527281&gn=${encodeURIComponent(groupName)}`;
+        document.getElementById('xat-chat').src = chatUrl;
+    </script>
+</body>
+</html>

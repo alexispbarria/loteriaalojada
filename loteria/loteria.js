@@ -707,6 +707,56 @@ function inicializarGenerador() {
         const captureBtn = document.getElementById('capture-screenshot-btn');
         captureBtn.parentNode.insertBefore(container, captureBtn);
     }
+
+    // ✅ NUEVO: Redirección a xat
+    const xatBtn = document.getElementById('redirect-to-xat-btn');
+    if (!xatBtn) {
+        const xatContainer = document.createElement('div');
+        xatContainer.style.display = 'flex';
+        xatContainer.style.flexDirection = 'column';
+        xatContainer.style.gap = '8px';
+        xatContainer.style.marginTop = '15px';
+        xatContainer.style.width = '100%';
+
+        const xatLabel = document.createElement('span');
+        xatLabel.textContent = 'Nombre del grupo xat:';
+        xatLabel.style.fontWeight = 'bold';
+        xatLabel.style.fontSize = '0.9rem';
+
+        const xatInput = document.createElement('input');
+        xatInput.id = 'xat-group-name';
+        xatInput.type = 'text';
+        xatInput.value = 'Viciososymas';
+        xatInput.placeholder = 'Ej: Viciososymas';
+        xatInput.style.padding = '8px';
+        xatInput.style.borderRadius = '4px';
+        xatInput.style.border = '1px solid #ccc';
+        xatInput.style.width = '100%';
+
+        const btn = document.createElement('button');
+        btn.id = 'redirect-to-xat-btn';
+        btn.textContent = '➡️ Redirigir al xat';
+        btn.style.background = '#673AB7';
+        btn.style.color = 'white';
+        btn.style.border = 'none';
+        btn.style.padding = '10px';
+        btn.style.borderRadius = '6px';
+        btn.style.cursor = 'pointer';
+        btn.style.fontWeight = 'bold';
+        btn.style.width = '100%';
+
+        btn.addEventListener('click', () => {
+            const groupName = xatInput.value.trim() || 'Viciososymas';
+            window.open(`xat.html?group=${encodeURIComponent(groupName)}`, '_blank');
+        });
+
+        xatContainer.appendChild(xatLabel);
+        xatContainer.appendChild(xatInput);
+        xatContainer.appendChild(btn);
+
+        const captureBtn = document.getElementById('capture-screenshot-btn');
+        captureBtn.parentNode.insertBefore(xatContainer, captureBtn.nextSibling);
+    }
 }
 
 // === INICIALIZACIÓN ===

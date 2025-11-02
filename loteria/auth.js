@@ -7,6 +7,15 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('auth-modal').classList.remove('hidden');
         });
     }
+
+    // ✅ NUEVO: Botón de retroceso
+    const backToHomeBtn = document.getElementById('back-to-home-btn');
+    if (backToHomeBtn) {
+        backToHomeBtn.addEventListener('click', () => {
+            window.location.href = '../'; // Vuelve al index raíz SIN cerrar sesión
+        });
+    }
+
     document.querySelectorAll('.close').forEach(el => {
         el.addEventListener('click', () => {
             document.querySelectorAll('.modal').forEach(m => m.classList.add('hidden'));

@@ -582,6 +582,7 @@ function inicializarGenerador() {
     reiniciarMazo();
     cartasGeneradas = [];
     ultimaCarta = null;
+
     const placeholder = document.getElementById('generator-placeholder');
     const img = document.getElementById('current-card-img');
     const name = document.getElementById('current-card-name');
@@ -592,13 +593,16 @@ function inicializarGenerador() {
     if (name) name.style.display = 'none';
     if (lastText) lastText.textContent = 'Ninguna';
     if (finJuego) finJuego.style.display = 'none';
+
     // ✅ Resetear contadores
     document.getElementById('cards-generated-count').textContent = '0';
     document.getElementById('cards-remaining-count').textContent = '54';
+
     document.querySelector('#card-generator-modal .close')?.addEventListener('click', () => {
         document.getElementById('card-generator-modal').classList.add('hidden');
         detenerGeneradorAutomatico();
     });
+
     document.getElementById('next-card-btn')?.addEventListener('click', () => {
         if (generadorAutoActivo) return;
         const carta = obtenerSiguienteCarta();
@@ -613,6 +617,7 @@ function inicializarGenerador() {
         document.getElementById('cards-generated-count').textContent = cartasGeneradas.length;
         document.getElementById('cards-remaining-count').textContent = 54 - cartasGeneradas.length;
     });
+
     document.getElementById('copy-current-card')?.addEventListener('click', () => {
         if (ultimaCarta) {
             navigator.clipboard.writeText(ultimaCarta).then(() => {
@@ -624,13 +629,16 @@ function inicializarGenerador() {
             });
         }
     });
+
     document.getElementById('reset-generator-btn')?.addEventListener('click', () => {
         document.getElementById('reset-confirm-modal').classList.remove('hidden');
     });
+
     document.getElementById('capture-screenshot-btn')?.addEventListener('click', () => {
         subirCapturaCartas();
     });
-    // === AGREGAR CONTROL AUTOMÁTICO ===
+
+    // === CONTROL AUTOMÁTICO ===
     const autoContainer = document.getElementById('auto-generator-container');
     if (!autoContainer) {
         const container = document.createElement('div');
@@ -640,16 +648,19 @@ function inicializarGenerador() {
         container.style.gap = '10px';
         container.style.width = '100%';
         container.style.marginTop = '15px';
+
         const label = document.createElement('span');
         label.textContent = 'Generador automático:';
         label.style.fontWeight = 'bold';
         label.style.fontSize = '0.95rem';
+
         const select = document.createElement('select');
         select.id = 'auto-speed-select';
         select.style.padding = '8px';
         select.style.borderRadius = '4px';
         select.style.border = '1px solid #ccc';
         select.style.width = '100%';
+
         const options = [
             { text: 'Lento (8s)', value: 8000 },
             { text: 'Normal (5s)', value: 5000 },
@@ -661,6 +672,7 @@ function inicializarGenerador() {
             el.textContent = opt.text;
             select.appendChild(el);
         });
+
         const controlBtn = document.createElement('button');
         controlBtn.id = 'auto-control-btn';
         controlBtn.textContent = '▶️ Iniciar';
@@ -672,6 +684,7 @@ function inicializarGenerador() {
         controlBtn.style.cursor = 'pointer';
         controlBtn.style.fontWeight = 'bold';
         controlBtn.style.width = '100%';
+
         controlBtn.addEventListener('click', () => {
             if (generadorAutoActivo) {
                 detenerGeneradorAutomatico();
@@ -684,13 +697,16 @@ function inicializarGenerador() {
                 controlBtn.style.background = '#ff9800';
             }
         });
+
         container.appendChild(label);
         container.appendChild(select);
         container.appendChild(controlBtn);
+
         const captureBtn = document.getElementById('capture-screenshot-btn');
         captureBtn.parentNode.insertBefore(container, captureBtn);
     }
-    // ✅ NUEVO: Redirección a xat
+
+    // ✅ NUEVO: Redirección a xat — Versión robusta
     const xatBtn = document.getElementById('redirect-to-xat-btn');
     if (!xatBtn) {
         const xatContainer = document.createElement('div');
@@ -699,10 +715,12 @@ function inicializarGenerador() {
         xatContainer.style.gap = '8px';
         xatContainer.style.marginTop = '15px';
         xatContainer.style.width = '100%';
+
         const xatLabel = document.createElement('span');
         xatLabel.textContent = 'Nombre del grupo xat:';
         xatLabel.style.fontWeight = 'bold';
         xatLabel.style.fontSize = '0.9rem';
+
         const xatInput = document.createElement('input');
         xatInput.id = 'xat-group-name';
         xatInput.type = 'text';
@@ -712,6 +730,7 @@ function inicializarGenerador() {
         xatInput.style.borderRadius = '4px';
         xatInput.style.border = '1px solid #ccc';
         xatInput.style.width = '100%';
+
         const btn = document.createElement('button');
         btn.id = 'redirect-to-xat-btn';
         btn.textContent = '➡️ Redirigir al xat';
@@ -723,13 +742,17 @@ function inicializarGenerador() {
         btn.style.cursor = 'pointer';
         btn.style.fontWeight = 'bold';
         btn.style.width = '100%';
+
+        // ✅ Asignar evento directamente
         btn.addEventListener('click', () => {
             const groupName = xatInput.value.trim() || 'Viciososymas';
             window.open(`xat.html?group=${encodeURIComponent(groupName)}`, '_blank');
         });
+
         xatContainer.appendChild(xatLabel);
         xatContainer.appendChild(xatInput);
         xatContainer.appendChild(btn);
+
         const captureBtn = document.getElementById('capture-screenshot-btn');
         captureBtn.parentNode.insertBefore(xatContainer, captureBtn.nextSibling);
     }

@@ -490,15 +490,16 @@ th {
     border: 1px solid #ddd;
     border-radius: 6px;
     padding: 6px 4px;
-    font-size: 0.65rem;
+    font-size: 0.65rem; /* Texto más pequeño */
     font-weight: bold;
     min-width: 80px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    flex-shrink: 0; /* Evita que se contraigan */
+    flex-shrink: 0;
+    word-break: break-word; /* Rompe palabras largas */
+    line-height: 1.2;
 }
-
 .miniature-card img {
     width: 60px;
     height: 60px;

@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.modal').forEach(m => m.classList.add('hidden'));
         });
     });
+
     const goToLoginBtn = document.getElementById('go-to-login-btn');
     if (goToLoginBtn) {
         goToLoginBtn.addEventListener('click', () => {
@@ -28,18 +29,21 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('auth-modal').classList.remove('hidden');
         });
     }
+
     const closeLockedModal = document.getElementById('close-locked-modal');
     if (closeLockedModal) {
         closeLockedModal.addEventListener('click', () => {
             document.getElementById('cards-locked-modal').classList.add('hidden');
         });
     }
+
     const closeTableModal = document.getElementById('close-table-modal');
     if (closeTableModal) {
         closeTableModal.addEventListener('click', () => {
             document.getElementById('table-closed-modal').classList.add('hidden');
         });
     }
+
     const userNameBtn = document.getElementById('user-name-btn');
     if (userNameBtn) {
         userNameBtn.addEventListener('click', () => {
@@ -47,6 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
             dropdown.classList.toggle('hidden');
         });
     }
+
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
@@ -59,6 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
             window.loteria.stopPolling(); // Detener polling
         });
     }
+
     const changePasswordBtn = document.getElementById('change-password-btn');
     if (changePasswordBtn) {
         changePasswordBtn.addEventListener('click', () => {
@@ -66,18 +72,22 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('password-modal').classList.remove('hidden');
         });
     }
+
     const authForm = document.getElementById('auth-form');
     if (authForm) {
         authForm.addEventListener('submit', handleLogin);
     }
+
     const passwordForm = document.getElementById('password-form');
     if (passwordForm) {
         passwordForm.addEventListener('submit', handleChangePassword);
     }
+
     const confirmBtn = document.getElementById('confirm-btn');
     if (confirmBtn) {
         confirmBtn.addEventListener('click', window.loteria.confirmSelection);
     }
+
     const closeReductionModal = document.getElementById('close-reduction-modal');
     if (closeReductionModal) {
         closeReductionModal.addEventListener('click', () => {

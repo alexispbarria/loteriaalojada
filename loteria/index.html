@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lotería Mexicana</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
     <!-- Topbar -->
     <header class="topbar">
@@ -99,8 +97,12 @@
             <span class="close">&times;</span>
             <h2>Generador de Cartas - Lotería Mexicana</h2>
             <div class="generator-main">
-                <!-- Panel izquierdo: miniaturas y carta actual -->
-                <div class="left-panel">
+                <!-- Área de miniaturas -->
+                <div class="miniatures-container">
+                    <div id="miniatures-grid" class="miniatures-grid"></div>
+                </div>
+                <!-- Panel derecho: carta actual + botones -->
+                <div class="current-card-panel">
                     <div class="current-card-display">
                         <div id="generator-placeholder" class="generator-placeholder">
                             Pulse "Siguiente carta" para comenzar
@@ -111,13 +113,6 @@
                         <img id="current-card-img" src="" alt="Carta actual" style="display:none;">
                         <p id="current-card-name" class="current-card-name" style="display:none;">—</p>
                     </div>
-                    <!-- Miniaturas (fila horizontal) -->
-                    <div class="miniatures-container">
-                        <div id="miniatures-grid" class="miniatures-grid"></div>
-                    </div>
-                </div>
-                <!-- Panel derecho: botones y controles -->
-                <div class="right-panel">
                     <button id="next-card-btn" class="next-card-btn">Siguiente carta 🎲</button>
                     <button id="copy-current-card" class="copy-btn">📋 Copiar nombre</button>
                     <button id="reset-generator-btn" class="reset-btn">🔄 Reiniciar Bingo</button>
@@ -126,28 +121,21 @@
                         <input type="text" id="screenshot-link" class="screenshot-link-input" readonly>
                         <button id="copy-screenshot-link" class="copy-link-btn">📋 Copiar</button>
                     </div>
-                    <!-- Generador automático -->
-                    <div class="auto-generator-section">
-                        <label>Generador automático:</label>
-                        <select id="auto-speed-select">
-                            <option value="8000">Lento (8s)</option>
-                            <option value="5000">Normal (5s)</option>
-                            <option value="2500">Veloz (2.5s)</option>
-                        </select>
-                        <button id="auto-control-btn" class="auto-control-btn">▶️ Iniciar</button>
+                    <!-- ✅ NUEVO: Input y botón para xat -->
+                    <div style="margin-top: 15px;">
+                        <label style="font-weight:bold; font-size:0.9rem; display:block; margin-bottom:5px;">
+                            Nombre del grupo xat:
+                        </label>
+                        <input type="text" id="xat-group-name" value="Viciososymas" placeholder="Ej: Viciososymas"
+                            style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; margin-bottom:8px;">
+                        <button id="redirect-to-xat-btn" style="width:100%; padding:10px; background:#673AB7; color:white; border:none; border-radius:6px; font-weight:bold;">
+                            ➡️ Redirigir al xat
+                        </button>
                     </div>
-                    <!-- Contadores -->
-                    <div class="counters-section">
-                        <div class="card-counters">
-                            <span id="cards-generated-count">0</span> / <span id="cards-remaining-count">54</span>
-                        </div>
-                    </div>
-                    <!-- Input y botón para xat -->
-                    <div class="xat-section">
-                        <label>Nombre del grupo xat:</label>
-                        <input type="text" id="xat-group-name" value="Viciososymas" placeholder="Ej: Viciososymas">
-                        <button id="redirect-to-xat-btn" class="xat-btn">➡️ Redirigir al xat</button>
-                    </div>
+                </div>
+                <!-- Contadores -->
+                <div class="card-counters">
+                    <span id="cards-generated-count">0</span> / <span id="cards-remaining-count">54</span>
                 </div>
             </div>
             <!-- Última carta generada -->
@@ -173,18 +161,32 @@
         </div>
     </div>
 
+    <!-- Modal: advertencia al intentar reducir cartas por usuario -->
+    <div id="cards-reduction-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>⚠️ Acción no permitida</h2>
+            <p>Ya existen usuarios con 2 cartas seleccionadas. No puedes reducir el límite a 1 carta por usuario.</p>
+            <button id="close-reduction-modal"
+                style="width:100%; padding:10px; background:#ff9800; color:white; border:none; border-radius:6px; font-weight:bold; margin-top:15px;">
+                Entendido
+            </button>
+        </div>
+    </div>
+
     <!-- Tabla principal -->
     <div class="bingo-container">
         <div class="desktop-table"></div>
         <div class="mobile-table"></div>
-        <!-- Contadores de tabla principal -->
         <div class="table-counters">
             <span id="cards-selected-count">0</span> / <span id="cards-available-count">54</span>
         </div>
     </div>
 
     <!-- Panel de admin -->
-    <div id="admin-panel" class="hidden admin-panel"></div>
+    <div id="admin-panel" class="hidden admin-panel">
+        <!-- Los botones se crearán dinámicamente -->
+    </div>
 
     <!-- Botón de confirmación de selección -->
     <div id="confirm-selection" class="hidden confirm-selection">
@@ -197,5 +199,4 @@
     <script src="loteria.js"></script>
     <script src="auth.js"></script>
 </body>
-
 </html>

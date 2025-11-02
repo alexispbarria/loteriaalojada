@@ -184,7 +184,6 @@ function renderTable() {
         });
     }
     updateConfirmButton();
-
     // ✅ Actualizar contadores de tabla
     const selectedCount = Object.keys(selecciones).filter(carta => selecciones[carta] !== undefined && selecciones[carta] !== null).length;
     document.getElementById('cards-selected-count').textContent = selectedCount;
@@ -362,13 +361,8 @@ function handleRemove(e) {
 function updateConfirmButton() {
     const confirmDiv = document.getElementById('confirm-selection');
     const display = document.getElementById('selected-cards-display');
-
-    // ✅ Protección: si no existen los elementos, salir
-    if (!confirmDiv || !display) return;
-
     const savedCount = getSavedCardsCount();
     const totalSelected = savedCount + tempSelections.size;
-
     if (tempSelections.size > 0 && window.appState.currentUser && !window.appState.userHasConfirmed) {
         const allSelected = Array.from(tempSelections);
         Object.entries(selecciones).forEach(([carta, owner]) => {
@@ -481,7 +475,6 @@ function agregarMiniatura(carta) {
         <img src="${CARTAS_IMAGENES[carta]}" alt="${carta}">
         <div>${carta}</div>
     `;
-    // Insertar al principio (la última carta queda primero)
     grid.prepend(miniatura);
 }
 
@@ -589,7 +582,6 @@ function inicializarGenerador() {
     reiniciarMazo();
     cartasGeneradas = [];
     ultimaCarta = null;
-
     const placeholder = document.getElementById('generator-placeholder');
     const img = document.getElementById('current-card-img');
     const name = document.getElementById('current-card-name');
@@ -600,16 +592,13 @@ function inicializarGenerador() {
     if (name) name.style.display = 'none';
     if (lastText) lastText.textContent = 'Ninguna';
     if (finJuego) finJuego.style.display = 'none';
-
     // ✅ Resetear contadores
     document.getElementById('cards-generated-count').textContent = '0';
     document.getElementById('cards-remaining-count').textContent = '54';
-
     document.querySelector('#card-generator-modal .close')?.addEventListener('click', () => {
         document.getElementById('card-generator-modal').classList.add('hidden');
         detenerGeneradorAutomatico();
     });
-
     document.getElementById('next-card-btn')?.addEventListener('click', () => {
         if (generadorAutoActivo) return;
         const carta = obtenerSiguienteCarta();
@@ -624,7 +613,6 @@ function inicializarGenerador() {
         document.getElementById('cards-generated-count').textContent = cartasGeneradas.length;
         document.getElementById('cards-remaining-count').textContent = 54 - cartasGeneradas.length;
     });
-
     document.getElementById('copy-current-card')?.addEventListener('click', () => {
         if (ultimaCarta) {
             navigator.clipboard.writeText(ultimaCarta).then(() => {
@@ -636,40 +624,114 @@ function inicializarGenerador() {
             });
         }
     });
-
     document.getElementById('reset-generator-btn')?.addEventListener('click', () => {
         document.getElementById('reset-confirm-modal').classList.remove('hidden');
     });
-
     document.getElementById('capture-screenshot-btn')?.addEventListener('click', () => {
         subirCapturaCartas();
     });
-
-    // === CONTROL AUTOMÁTICO ===
-    const speedSelect = document.getElementById('auto-speed-select');
-    const controlBtn = document.getElementById('auto-control-btn');
-
-    controlBtn.addEventListener('click', () => {
-        if (generadorAutoActivo) {
-            detenerGeneradorAutomatico();
-            controlBtn.textContent = '▶️ Retomar';
-            controlBtn.style.background = '#4CAF50';
-        } else {
-            const delay = parseInt(speedSelect.value);
-            iniciarGeneradorAutomatico(delay);
-            controlBtn.textContent = '⏸ Pausa';
-            controlBtn.style.background = '#ff9800';
-        }
-    });
-
-    // ✅ REDIRECCIÓN A XAT
+    // === AGREGAR CONTROL AUTOMÁTICO ===
+    const autoContainer = document.getElementById('auto-generator-container');
+    if (!autoContainer) {
+        const container = document.createElement('div');
+        container.id = 'auto-generator-container';
+        container.style.display = 'flex';
+        container.style.flexDirection = 'column';
+        container.style.gap = '10px';
+        container.style.width = '100%';
+        container.style.marginTop = '15px';
+        const label = document.createElement('span');
+        label.textContent = 'Generador automático:';
+        label.style.fontWeight = 'bold';
+        label.style.fontSize = '0.95rem';
+        const select = document.createElement('select');
+        select.id = 'auto-speed-select';
+        select.style.padding = '8px';
+        select.style.borderRadius = '4px';
+        select.style.border = '1px solid #ccc';
+        select.style.width = '100%';
+        const options = [
+            { text: 'Lento (8s)', value: 8000 },
+            { text: 'Normal (5s)', value: 5000 },
+            { text: 'Veloz (2.5s)', value: 2500 }
+        ];
+        options.forEach(opt => {
+            const el = document.createElement('option');
+            el.value = opt.value;
+            el.textContent = opt.text;
+            select.appendChild(el);
+        });
+        const controlBtn = document.createElement('button');
+        controlBtn.id = 'auto-control-btn';
+        controlBtn.textContent = '▶️ Iniciar';
+        controlBtn.style.background = '#4CAF50';
+        controlBtn.style.color = 'white';
+        controlBtn.style.border = 'none';
+        controlBtn.style.padding = '10px';
+        controlBtn.style.borderRadius = '6px';
+        controlBtn.style.cursor = 'pointer';
+        controlBtn.style.fontWeight = 'bold';
+        controlBtn.style.width = '100%';
+        controlBtn.addEventListener('click', () => {
+            if (generadorAutoActivo) {
+                detenerGeneradorAutomatico();
+                controlBtn.textContent = '▶️ Retomar';
+                controlBtn.style.background = '#4CAF50';
+            } else {
+                const delay = parseInt(select.value);
+                iniciarGeneradorAutomatico(delay);
+                controlBtn.textContent = '⏸ Pausa';
+                controlBtn.style.background = '#ff9800';
+            }
+        });
+        container.appendChild(label);
+        container.appendChild(select);
+        container.appendChild(controlBtn);
+        const captureBtn = document.getElementById('capture-screenshot-btn');
+        captureBtn.parentNode.insertBefore(container, captureBtn);
+    }
+    // ✅ NUEVO: Redirección a xat
     const xatBtn = document.getElementById('redirect-to-xat-btn');
-    const xatInput = document.getElementById('xat-group-name');
-    if (xatBtn && xatInput) {
-        xatBtn.addEventListener('click', () => {
+    if (!xatBtn) {
+        const xatContainer = document.createElement('div');
+        xatContainer.style.display = 'flex';
+        xatContainer.style.flexDirection = 'column';
+        xatContainer.style.gap = '8px';
+        xatContainer.style.marginTop = '15px';
+        xatContainer.style.width = '100%';
+        const xatLabel = document.createElement('span');
+        xatLabel.textContent = 'Nombre del grupo xat:';
+        xatLabel.style.fontWeight = 'bold';
+        xatLabel.style.fontSize = '0.9rem';
+        const xatInput = document.createElement('input');
+        xatInput.id = 'xat-group-name';
+        xatInput.type = 'text';
+        xatInput.value = 'Viciososymas';
+        xatInput.placeholder = 'Ej: Viciososymas';
+        xatInput.style.padding = '8px';
+        xatInput.style.borderRadius = '4px';
+        xatInput.style.border = '1px solid #ccc';
+        xatInput.style.width = '100%';
+        const btn = document.createElement('button');
+        btn.id = 'redirect-to-xat-btn';
+        btn.textContent = '➡️ Redirigir al xat';
+        btn.style.background = '#673AB7';
+        btn.style.color = 'white';
+        btn.style.border = 'none';
+        btn.style.padding = '10px';
+        btn.style.borderRadius = '6px';
+        btn.style.cursor = 'pointer';
+        btn.style.fontWeight = 'bold';
+        btn.style.width = '100%';
+        btn.addEventListener('click', () => {
             const groupName = xatInput.value.trim() || 'Viciososymas';
             window.open(`xat.html?group=${encodeURIComponent(groupName)}`, '_blank');
         });
+        xatContainer.appendChild(xatLabel);
+        xatContainer.appendChild(xatInput);
+        xatContainer.appendChild(btn);
+        const captureBtn = document.getElementById('capture-screenshot-btn');
+        captureBtn.parentNode.insertBefore(xatContainer, captureBtn.nextSibling);
     }
 }
 
@@ -770,7 +832,6 @@ function updateAdminPanel() {
     const panel = document.getElementById('admin-panel');
     if (window.appState.isAdmin) {
         panel.classList.remove('hidden');
-
         // Botón: Cerrar/Abrir tabla
         let toggleBtn = document.getElementById('toggle-table-btn');
         if (!toggleBtn) {
@@ -787,7 +848,6 @@ function updateAdminPanel() {
         } else {
             toggleBtn.textContent = config.tablaCerrada ? '🔓 Abrir tabla' : '🔒 Cerrar tabla';
         }
-
         // Botón: Vaciar todas las cartas
         let clearBtn = document.getElementById('clear-all');
         if (!clearBtn) {
@@ -807,7 +867,6 @@ function updateAdminPanel() {
             };
             panel.appendChild(clearBtn);
         }
-
         // Botón: Generar cartas
         let generatorBtn = document.getElementById('generator-btn');
         if (!generatorBtn) {
@@ -820,7 +879,6 @@ function updateAdminPanel() {
             };
             panel.appendChild(generatorBtn);
         }
-
         // ✅ Selector: Cartas por usuario (con validación)
         let cardsPerUserContainer = document.getElementById('cards-per-user-container');
         if (!cardsPerUserContainer) {
@@ -830,18 +888,15 @@ function updateAdminPanel() {
             cardsPerUserContainer.style.gap = '8px';
             cardsPerUserContainer.style.alignItems = 'center';
             cardsPerUserContainer.style.marginTop = '10px';
-
             const label = document.createElement('span');
             label.textContent = 'Cartas por usuario:';
             label.style.fontWeight = 'bold';
             label.style.fontSize = '0.9rem';
-
             const select = document.createElement('select');
             select.id = 'cards-per-user-select';
             select.style.padding = '6px';
             select.style.borderRadius = '4px';
             select.style.border = '1px solid #ccc';
-
             [1, 2].forEach(num => {
                 const opt = document.createElement('option');
                 opt.value = num;
@@ -849,11 +904,9 @@ function updateAdminPanel() {
                 if ((config.cartasPorUsuario || 2) === num) opt.selected = true;
                 select.appendChild(opt);
             });
-
             select.addEventListener('change', async () => {
                 const newValue = parseInt(select.value);
                 const currentValue = config.cartasPorUsuario || 2;
-
                 // Si intenta reducir de 2 a 1
                 if (newValue === 1 && currentValue === 2) {
                     // Verificar si algún usuario tiene 2 cartas
@@ -864,7 +917,6 @@ function updateAdminPanel() {
                         }
                     }
                     const hasUserWithTwoCards = Object.values(userCardCounts).some(count => count >= 2);
-
                     if (hasUserWithTwoCards) {
                         // Mostrar modal y revertir selección
                         select.value = 2;
@@ -872,7 +924,6 @@ function updateAdminPanel() {
                         return;
                     }
                 }
-
                 // Si pasa la validación, guardar
                 config.cartasPorUsuario = newValue;
                 await saveConfig();
@@ -886,7 +937,6 @@ function updateAdminPanel() {
                     updateConfirmButton();
                 }
             });
-
             cardsPerUserContainer.appendChild(label);
             cardsPerUserContainer.appendChild(select);
             panel.appendChild(cardsPerUserContainer);

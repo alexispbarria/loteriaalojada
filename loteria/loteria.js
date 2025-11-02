@@ -481,6 +481,7 @@ function agregarMiniatura(carta) {
         <img src="${CARTAS_IMAGENES[carta]}" alt="${carta}">
         <div>${carta}</div>
     `;
+    // Insertar al principio (la última carta queda primero)
     grid.prepend(miniatura);
 }
 

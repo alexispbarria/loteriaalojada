@@ -99,7 +99,7 @@
             <span class="close">&times;</span>
             <h2>Generador de Cartas - Lotería Mexicana</h2>
             <div class="generator-main">
-                <!-- Panel izquierdo: carta actual + miniaturas -->
+                <!-- Panel izquierdo: miniaturas y carta actual -->
                 <div class="left-panel">
                     <div class="current-card-display">
                         <div id="generator-placeholder" class="generator-placeholder">
@@ -111,21 +111,20 @@
                         <img id="current-card-img" src="" alt="Carta actual" style="display:none;">
                         <p id="current-card-name" class="current-card-name" style="display:none;">—</p>
                     </div>
+                    <!-- Miniaturas (fila horizontal) -->
                     <div class="miniatures-container">
                         <div id="miniatures-grid" class="miniatures-grid"></div>
                     </div>
                 </div>
                 <!-- Panel derecho: botones y controles -->
                 <div class="right-panel">
-                    <div class="controls-section">
-                        <button id="next-card-btn" class="next-card-btn">Siguiente carta 🎲</button>
-                        <button id="copy-current-card" class="copy-btn">📋 Copiar nombre</button>
-                        <button id="reset-generator-btn" class="reset-btn">🔄 Reiniciar Bingo</button>
-                        <button id="capture-screenshot-btn" class="capture-btn">📤 Captura de Cartas</button>
-                        <div id="screenshot-link-container" class="screenshot-link-container hidden">
-                            <input type="text" id="screenshot-link" class="screenshot-link-input" readonly>
-                            <button id="copy-screenshot-link" class="copy-link-btn">📋 Copiar</button>
-                        </div>
+                    <button id="next-card-btn" class="next-card-btn">Siguiente carta 🎲</button>
+                    <button id="copy-current-card" class="copy-btn">📋 Copiar nombre</button>
+                    <button id="reset-generator-btn" class="reset-btn">🔄 Reiniciar Bingo</button>
+                    <button id="capture-screenshot-btn" class="capture-btn">📤 Captura de Cartas</button>
+                    <div id="screenshot-link-container" class="screenshot-link-container hidden">
+                        <input type="text" id="screenshot-link" class="screenshot-link-input" readonly>
+                        <button id="copy-screenshot-link" class="copy-link-btn">📋 Copiar</button>
                     </div>
                     <!-- Generador automático -->
                     <div class="auto-generator-section">
@@ -151,7 +150,7 @@
                     </div>
                 </div>
             </div>
-            <!-- Última carta generada (transparencia) -->
+            <!-- Última carta generada -->
             <div class="last-card-section">
                 <h3>Última carta generada:</h3>
                 <div id="last-card-display" class="last-card-display">

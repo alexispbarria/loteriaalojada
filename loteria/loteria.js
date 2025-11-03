@@ -476,6 +476,14 @@ function agregarMiniatura(carta) {
         <div>${carta}</div>
     `;
     grid.prepend(miniatura);
+
+    // ✅ Guardar estado del generador
+    cartasGeneradas.push(carta);
+    ultimaCarta = carta;
+    localStorage.setItem('loteriaGenerador', JSON.stringify({
+        cartasGeneradas: cartasGeneradas,
+        ultimaCarta: ultimaCarta
+    }));
 }
 
 async function subirCapturaCartas() {
@@ -550,6 +558,8 @@ function reiniciarGenerador() {
     // ✅ Resetear contadores
     document.getElementById('cards-generated-count').textContent = '0';
     document.getElementById('cards-remaining-count').textContent = '54';
+    // ✅ Limpiar localStorage
+    localStorage.removeItem('loteriaGenerador');
 }
 
 function detenerGeneradorAutomatico() {
@@ -579,6 +589,15 @@ function iniciarGeneradorAutomatico(delay) {
 function inicializarGenerador() {
     if (generadorInicializado) return;
     generadorInicializado = true;
+
+    // ✅ Solo reiniciar si no hay estado guardado
+    const generadorGuardado = localStorage.getItem('loteriaGenerador');
+    if (!generadorGuardado) {
+        reiniciarMazo();
+        cartasGeneradas = [];
+        ultimaCarta = null;
+    }
+
     reiniciarMazo();
     cartasGeneradas = [];
     ultimaCarta = null;
@@ -709,7 +728,7 @@ function inicializarGenerador() {
     // ✅ NUEVO: Redirección a xat — Versión robusta
     const xatBtn = document.getElementById('redirect-to-xat-btn');
     if (!xatBtn) {
-        
+
     }
 }
 
@@ -748,10 +767,55 @@ async function initLoteria() {
         document.querySelector('.desktop-table').textContent = '⚠️ Error de conexión';
         document.querySelector('.mobile-table').textContent = '⚠️ Error de conexión';
     }
+
+    // ✅ Restaurar estado del generador
+    const generadorGuardado = localStorage.getItem('loteriaGenerador');
+    if (generadorGuardado) {
+        try {
+            const { cartasGeneradas: guardadas, ultimaCarta: ultima } = JSON.parse(generadorGuardado);
+            // Reconstruir el mazo en el mismo orden
+            reiniciarMazo();
+            // Avanzar el índice hasta donde se quedó
+            cartasGeneradas = guardadas;
+            ultimaCarta = ultima;
+            // Mostrar las miniaturas guardadas
+            const grid = document.getElementById('miniatures-grid');
+            if (grid) {
+                grid.innerHTML = '';
+                // Prepend en orden inverso para mantener el orden correcto
+                [...cartasGeneradas].reverse().forEach(carta => {
+                    const miniatura = document.createElement('div');
+                    miniatura.className = 'miniature-card';
+                    miniatura.innerHTML = `
+                    <img src="${CARTAS_IMAGENES[carta]}" alt="${carta}">
+                    <div>${carta}</div>
+                `;
+                    grid.appendChild(miniatura);
+                });
+            }
+            // Actualizar la carta actual si existe
+            if (ultimaCarta) {
+                document.getElementById('current-card-img').src = CARTAS_IMAGENES[ultimaCarta];
+                document.getElementById('current-card-img').style.display = 'block';
+                document.getElementById('current-card-name').textContent = ultimaCarta;
+                document.getElementById('current-card-name').style.display = 'block';
+                document.getElementById('generator-placeholder').style.display = 'none';
+                document.getElementById('last-card-text').textContent = ultimaCarta;
+            }
+            // Actualizar contadores
+            document.getElementById('cards-generated-count').textContent = cartasGeneradas.length;
+            document.getElementById('cards-remaining-count').textContent = 54 - cartasGeneradas.length;
+            // Avanzar el índice del mazo
+            indiceCartaActual = cartasGeneradas.length;
+        } catch (e) {
+            console.error('Error al restaurar generador:', e);
+            localStorage.removeItem('loteriaGenerador');
+        }
+    }
 }
 
 // ✅ Asignar evento al botón "Redirigir al xat" (estático en HTML)
-document.addEventListener('click', function(e) {
+document.addEventListener('click', function (e) {
     if (e.target.id === 'redirect-to-xat-btn') {
         const input = document.getElementById('xat-group-name');
         const groupName = input.value.trim() || 'Viciososymas';

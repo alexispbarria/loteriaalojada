@@ -22,25 +22,22 @@
         .xat-container {
             display: flex;
             width: 95%;
-            max-width: 1200px;
-            height: 80vh;
-            background: rgba(0, 0, 0, 0.7);
+            max-width: 1400px;
+            height: 85vh;
+            background: rgba(0, 0, 0, 0.8);
             border-radius: 12px;
             overflow: hidden;
         }
-        .left-panel {
-            width: 30%;
-            background: #000;
+        .generator-panel {
+            width: 40%;
+            background: #222;
+            padding: 15px;
+            overflow-y: auto;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #aaa;
-            font-size: 1.2rem;
-            text-align: center;
-            padding: 20px;
+            flex-direction: column;
         }
-        .right-panel {
-            width: 70%;
+        .chat-panel {
+            width: 60%;
             background: #111;
             display: flex;
             justify-content: center;
@@ -53,26 +50,223 @@
             border: none;
             border-radius: 8px;
         }
-        @media (max-width: 768px) {
+        /* ===== ESTILOS DEL GENERADOR (copiados de loteria) ===== */
+        .miniatures-container {
+            flex: 2;
+            background: #f5f5f5;
+            border-radius: 8px;
+            padding: 12px;
+            overflow-y: auto;
+            max-height: 200px;
+            margin-bottom: 15px;
+        }
+        .miniatures-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 4px 0;
+            min-width: 100%;
+        }
+        .miniature-card {
+            text-align: center;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 6px 4px;
+            font-size: 0.65rem;
+            font-weight: bold;
+            min-width: 80px;
+            width: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        .miniature-card div {
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 0 2px;
+        }
+        .miniature-card img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            margin-bottom: 4px;
+        }
+        .current-card-display {
+            text-align: center;
+            margin-bottom: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .current-card-display img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            background: white;
+            padding: 8px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .current-card-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #e91e63;
+            margin: 0;
+        }
+        .generator-placeholder,
+        .fin-juego {
+            font-size: 1rem;
+            color: #666;
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .fin-juego {
+            color: #4CAF50;
+            font-weight: bold;
+            font-style: normal;
+        }
+        .card-counters {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin: 10px 0;
+            font-size: 0.9rem;
+            color: #555;
+            font-weight: bold;
+        }
+        .card-counters span {
+            background: #f0f0f0;
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+        .generator-btn {
+            background: #e91e63;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            cursor: pointer;
+            margin: 6px 0;
+            width: 100%;
+            transition: background 0.2s;
+        }
+        .generator-btn:hover {
+            background: #d81b60;
+        }
+        .auto-section, .xat-section {
+            background: #f9f9f9;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+        .auto-section label,
+        .xat-section label {
+            font-weight: bold;
+            margin-bottom: 6px;
+            display: block;
+        }
+        .auto-section select,
+        .xat-section input,
+        .auto-section button,
+        .xat-section button {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-top: 4px;
+        }
+        .last-card-section {
+            margin-top: auto;
+            padding-top: 16px;
+            border-top: 1px solid #eee;
+            text-align: center;
+            width: 100%;
+        }
+        .last-card-display {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #4CAF50;
+            margin-top: 10px;
+            padding: 8px;
+            background: #f9f9f9;
+            border-radius: 6px;
+            display: inline-block;
+        }
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
             .xat-container {
                 flex-direction: column;
                 height: auto;
                 max-height: 90vh;
             }
-            .left-panel,
-            .right-panel {
+            .generator-panel,
+            .chat-panel {
                 width: 100%;
-                height: 50vh;
+                height: auto;
+            }
+            .generator-panel {
+                max-height: 400px;
             }
         }
     </style>
 </head>
 <body>
     <div class="xat-container">
-        <div class="left-panel">
-            Panel de moderación<br>(próximamente)
+        <!-- Panel izquierdo: Generador de cartas -->
+        <div class="generator-panel" id="generator-embedded">
+            <h3 style="color: white; text-align: center; margin-bottom: 15px;">Generador de Cartas</h3>
+            <div class="current-card-display">
+                <div id="generator-placeholder" class="generator-placeholder">
+                    Pulse "Siguiente carta" para comenzar
+                </div>
+                <div id="fin-juego" class="fin-juego" style="display:none;">
+                    🎉 Fin del Juego
+                </div>
+                <img id="current-card-img" src="" alt="Carta actual" style="display:none;">
+                <p id="current-card-name" class="current-card-name" style="display:none;">—</p>
+            </div>
+            <div class="miniatures-container">
+                <div id="miniatures-grid" class="miniatures-grid"></div>
+            </div>
+            <div class="card-counters">
+                <span id="cards-generated-count">0</span> / <span id="cards-remaining-count">54</span>
+            </div>
+            <button id="next-card-btn" class="generator-btn">Siguiente carta 🎲</button>
+            <button id="copy-current-card" class="generator-btn" style="background:#2196F3;">📋 Copiar nombre</button>
+            <button id="reset-generator-btn" class="generator-btn" style="background:#ff5722;">🔄 Reiniciar Bingo</button>
+            <div class="auto-section">
+                <label>Generador automático:</label>
+                <select id="auto-speed-select">
+                    <option value="8000">Lento (8s)</option>
+                    <option value="5000">Normal (5s)</option>
+                    <option value="2500">Veloz (2.5s)</option>
+                </select>
+                <button id="auto-control-btn" class="generator-btn" style="background:#4CAF50;">
+                    ▶️ Iniciar
+                </button>
+            </div>
+            <div class="last-card-section">
+                <h4>Última carta generada:</h4>
+                <div id="last-card-display" class="last-card-display">
+                    <span id="last-card-text">Ninguna</span>
+                </div>
+            </div>
         </div>
-        <div class="right-panel">
+
+        <!-- Panel derecho: Chat xat -->
+        <div class="chat-panel">
             <iframe 
                 id="xat-chat" 
                 class="chat-frame"
@@ -83,11 +277,274 @@
             </iframe>
         </div>
     </div>
+
     <script>
+        // === CONFIGURACIÓN DEL CHAT XAT ===
         const urlParams = new URLSearchParams(window.location.search);
         const groupName = urlParams.get('group') || 'Viciososymas';
         const chatUrl = `https://xat.com/embed/chat.php#id=220527281&gn=${encodeURIComponent(groupName)}`;
         document.getElementById('xat-chat').src = chatUrl;
+
+        // === CONFIGURACIÓN DEL GENERADOR (código reutilizado de loteria.js) ===
+        const CARTAS_IMAGENES = {
+            "EL GALLO": "https://i.ibb.co/yBm513qg/EL-GALLO.jpg",
+            "LA PERA": "https://i.ibb.co/Y457kCNQ/LA-PERA.jpg",
+            "EL TAMBOR": "https://i.ibb.co/bnHSkK2/EL-TAMBOR.jpg",
+            "LA CAMPANA": "https://i.ibb.co/spmj2QyD/LA-CAMPANA.jpg",
+            "EL DIABLITO": "https://i.ibb.co/HDmwQ13k/EL-DIABLITO.jpg",
+            "LA BANDERA": "https://i.ibb.co/G3tcJ3Qw/LA-BANDERA.jpg",
+            "EL CAMARÓN": "https://i.ibb.co/SXJZQqHZ/EL-CAMARON.jpg",
+            "EL CANTARITO": "https://i.ibb.co/3mXs4sm9/EL-CANTARITO.jpg",
+            "LA DAMA": "https://i.ibb.co/C3WSD6yS/LA-DAMA.jpg",
+            "EL BANDOLÓN": "https://i.ibb.co/KpHm1GkK/EL-BANDOLON.jpg",
+            "LAS JARAS": "https://i.ibb.co/Dfs1s58B/LAS-JARAS.jpg",
+            "EL VENADO": "https://i.ibb.co/230HbZTV/EL-VENADO.jpg",
+            "EL CATRÍN": "https://i.ibb.co/YBqWdDRW/EL-CATRIN.jpg",
+            "EL VIOLONCELLO": "https://i.ibb.co/HLzgXxS6/EL-VIOLONCELLO.jpg",
+            "EL MÚSICO": "https://i.ibb.co/ycn2bV6h/EL-MUSICO.jpg",
+            "EL SOL": "https://i.ibb.co/93n4gWJX/EL-SOL.jpg",
+            "EL PARAGUAS": "https://i.ibb.co/mC2fg5CM/EL-PARAGUAS.jpg",
+            "LA GARZA": "https://i.ibb.co/gZD5skcB/LA-GARZA.jpg",
+            "LA ARAÑA": "https://i.ibb.co/HTqD8pP2/LA-ARANA.jpg",
+            "LA CORONA": "https://i.ibb.co/6cTj706Z/LA-CORONA.jpg",
+            "LA SIRENA": "https://i.ibb.co/Q7kpqBrR/LA-SIRENA.jpg",
+            "EL PÁJARO": "https://i.ibb.co/NdNXvFTk/EL-PAJARO.jpg",
+            "EL SOLDADO": "https://i.ibb.co/NgCgJ8Tf/EL-SOLDADO.jpg",
+            "LA CHALUPA": "https://i.ibb.co/1fwcH0zr/LA-CHALUPA.jpg",
+            "LA ESCALERA": "https://i.ibb.co/Kx6Wns7Y/LA-ESCALERA.jpg",
+            "LA MANO": "https://i.ibb.co/PZb49PXB/LA-MANO.jpg",
+            "LA ESTRELLA": "https://i.ibb.co/cKSXjW7f/LA-ESTRELLA.jpg",
+            "EL PINO": "https://i.ibb.co/QFbCyN9r/EL-PINO.jpg",
+            "LA BOTELLA": "https://i.ibb.co/TB6PjFPK/LA-BOTELLA.jpg",
+            "LA BOTA": "https://i.ibb.co/5X203xH2/LA-BOTA.jpg",
+            "EL CAZO": "https://i.ibb.co/CKq5fyqf/EL-CAZO.jpg",
+            "EL PESCADO": "https://i.ibb.co/5XPM1dgX/EL-PESCADO.jpg",
+            "EL BARRIL": "https://i.ibb.co/0yy6DVSH/EL-BARRIL.jpg",
+            "LA LUNA": "https://i.ibb.co/ks4NMj32/LA-LUNA.jpg",
+            "EL MUNDO": "https://i.ibb.co/4ZByNtVL/EL-MUNDO.jpg",
+            "LA PALMA": "https://i.ibb.co/8WLRx7X/LA-PALMA.jpg",
+            "EL ÁRBOL": "https://i.ibb.co/8nYD2XY3/EL-ARBOL.jpg",
+            "EL COTORRO": "https://i.ibb.co/WNvSBZ8f/EL-COTORRO.jpg",
+            "EL APACHE": "https://i.ibb.co/C3DJDfDV/EL-APACHE.jpg",
+            "LA MACETA": "https://i.ibb.co/Gf42NhM8/LA-MACETA.jpg",
+            "EL MELÓN": "https://i.ibb.co/KzbwgZFW/EL-MELON.jpg",
+            "EL BORRACHO": "https://i.ibb.co/b5HkZFVR/EL-BORRACHO.jpg",
+            "EL NOPAL": "https://i.ibb.co/HpXZYDgJ/EL-NOPAL.jpg",
+            "EL ARPA": "https://i.ibb.co/35Jxddt7/EL-ARPA.jpg",
+            "EL VALIENTE": "https://i.ibb.co/JRcbyDdM/EL-VALIENTE.jpg",
+            "EL NEGRITO": "https://i.ibb.co/cKkDqtFm/EL-NEGRITO.jpg",
+            "EL ALACRÁN": "https://i.ibb.co/23FFxH87/EL-ALACRAN.jpg",
+            "LA RANA": "https://i.ibb.co/SXhZF4Vr/LA-RANA.jpg",
+            "EL GORRITO": "https://i.ibb.co/gZHw0X3k/EL-GORRITO.jpg",
+            "EL CORAZÓN": "https://i.ibb.co/W4f2Yg6H/EL-CORAZON.jpg",
+            "LA ROSA": "https://i.ibb.co/ccRdZLqy/LA-ROSA.jpg",
+            "LA MUERTE": "https://i.ibb.co/FqJq6Z63/LA-MUERTE.jpg",
+            "LA SANDÍA": "https://i.ibb.co/tTvKjmty/LA-SANDIA.jpg",
+            "LA CALAVERA": "https://i.ibb.co/qYNV3ZYW/LA-CALAVERA.jpg"
+        };
+
+        // === VARIABLES DEL GENERADOR ===
+        let mazoMezclado = [];
+        let indiceCartaActual = 0;
+        let cartasGeneradas = [];
+        let ultimaCarta = null;
+        let generadorAutoInterval = null;
+        let generadorAutoActivo = false;
+
+        function reiniciarMazo() {
+            const cartas = Object.keys(CARTAS_IMAGENES);
+            for (let i = cartas.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [cartas[i], cartas[j]] = [cartas[j], cartas[i]];
+            }
+            mazoMezclado = cartas;
+            indiceCartaActual = 0;
+        }
+
+        function obtenerSiguienteCarta() {
+            if (indiceCartaActual >= mazoMezclado.length) return null;
+            return mazoMezclado[indiceCartaActual++];
+        }
+
+        function mostrarCartaActual(carta) {
+            const img = document.getElementById('current-card-img');
+            const name = document.getElementById('current-card-name');
+            const placeholder = document.getElementById('generator-placeholder');
+            const finJuego = document.getElementById('fin-juego');
+            img.src = CARTAS_IMAGENES[carta];
+            img.alt = carta;
+            img.style.display = 'block';
+            name.textContent = carta;
+            name.style.display = 'block';
+            placeholder.style.display = 'none';
+            finJuego.style.display = 'none';
+            ultimaCarta = carta;
+            document.getElementById('last-card-text').textContent = carta;
+        }
+
+        function mostrarFinJuego() {
+            const placeholder = document.getElementById('generator-placeholder');
+            const finJuego = document.getElementById('fin-juego');
+            placeholder.style.display = 'none';
+            finJuego.style.display = 'block';
+        }
+
+        function agregarMiniatura(carta) {
+            const grid = document.getElementById('miniatures-grid');
+            const miniatura = document.createElement('div');
+            miniatura.className = 'miniature-card';
+            miniatura.innerHTML = `
+                <img src="${CARTAS_IMAGENES[carta]}" alt="${carta}">
+                <div>${carta}</div>
+            `;
+            grid.prepend(miniatura);
+        }
+
+        function reiniciarGenerador() {
+            if (generadorAutoInterval) clearInterval(generadorAutoInterval);
+            generadorAutoActivo = false;
+            reiniciarMazo();
+            cartasGeneradas = [];
+            ultimaCarta = null;
+            document.getElementById('miniatures-grid').innerHTML = '';
+            document.getElementById('generator-placeholder').style.display = 'block';
+            document.getElementById('current-card-img').style.display = 'none';
+            document.getElementById('current-card-name').style.display = 'none';
+            document.getElementById('fin-juego').style.display = 'none';
+            document.getElementById('last-card-text').textContent = 'Ninguna';
+            document.getElementById('cards-generated-count').textContent = '0';
+            document.getElementById('cards-remaining-count').textContent = '54';
+            localStorage.removeItem('xatGenerador');
+        }
+
+        function iniciarGeneradorAutomatico(delay) {
+            if (generadorAutoInterval) clearInterval(generadorAutoInterval);
+            generadorAutoActivo = true;
+            generadorAutoInterval = setInterval(() => {
+                const carta = obtenerSiguienteCarta();
+                if (carta === null) {
+                    mostrarFinJuego();
+                    if (generadorAutoInterval) clearInterval(generadorAutoInterval);
+                    generadorAutoActivo = false;
+                    return;
+                }
+                mostrarCartaActual(carta);
+                agregarMiniatura(carta);
+                cartasGeneradas.push(carta);
+                localStorage.setItem('xatGenerador', JSON.stringify({
+                    cartasGeneradas: cartasGeneradas,
+                    ultimaCarta: ultimaCarta,
+                    mazoMezclado: mazoMezclado,
+                    indiceCartaActual: indiceCartaActual
+                }));
+                document.getElementById('cards-generated-count').textContent = cartasGeneradas.length;
+                document.getElementById('cards-remaining-count').textContent = 54 - cartasGeneradas.length;
+            }, delay);
+        }
+
+        // === INICIALIZAR ===
+        function inicializarGenerador() {
+            // Intentar restaurar estado
+            const guardado = localStorage.getItem('xatGenerador');
+            if (guardado) {
+                try {
+                    const { cartasGeneradas: g, ultimaCarta: u, mazoMezclado: m, indiceCartaActual: i } = JSON.parse(guardado);
+                    cartasGeneradas = g;
+                    ultimaCarta = u;
+                    mazoMezclado = m;
+                    indiceCartaActual = i;
+                    // Mostrar miniaturas
+                    const grid = document.getElementById('miniatures-grid');
+                    grid.innerHTML = '';
+                    [...cartasGeneradas].reverse().forEach(c => agregarMiniatura(c));
+                    // Mostrar última carta
+                    if (ultimaCarta) {
+                        document.getElementById('current-card-img').src = CARTAS_IMAGENES[ultimaCarta];
+                        document.getElementById('current-card-img').style.display = 'block';
+                        document.getElementById('current-card-name').textContent = ultimaCarta;
+                        document.getElementById('current-card-name').style.display = 'block';
+                        document.getElementById('generator-placeholder').style.display = 'none';
+                        document.getElementById('last-card-text').textContent = ultimaCarta;
+                    }
+                    document.getElementById('cards-generated-count').textContent = cartasGeneradas.length;
+                    document.getElementById('cards-remaining-count').textContent = 54 - cartasGeneradas.length;
+                    return;
+                } catch (e) {
+                    console.error('Error al restaurar generador en xat:', e);
+                    localStorage.removeItem('xatGenerador');
+                }
+            }
+            // Nuevo juego
+            reiniciarMazo();
+            cartasGeneradas = [];
+            ultimaCarta = null;
+            document.getElementById('cards-generated-count').textContent = '0';
+            document.getElementById('cards-remaining-count').textContent = '54';
+        }
+
+        // === EVENTOS ===
+        document.getElementById('next-card-btn').addEventListener('click', () => {
+            if (generadorAutoActivo) return;
+            const carta = obtenerSiguienteCarta();
+            if (carta === null) {
+                mostrarFinJuego();
+                return;
+            }
+            mostrarCartaActual(carta);
+            agregarMiniatura(carta);
+            cartasGeneradas.push(carta);
+            localStorage.setItem('xatGenerador', JSON.stringify({
+                cartasGeneradas: cartasGeneradas,
+                ultimaCarta: ultimaCarta,
+                mazoMezclado: mazoMezclado,
+                indiceCartaActual: indiceCartaActual
+            }));
+            document.getElementById('cards-generated-count').textContent = cartasGeneradas.length;
+            document.getElementById('cards-remaining-count').textContent = 54 - cartasGeneradas.length;
+        });
+
+        document.getElementById('copy-current-card').addEventListener('click', () => {
+            if (ultimaCarta) {
+                navigator.clipboard.writeText(ultimaCarta).then(() => {
+                    const btn = document.getElementById('copy-current-card');
+                    btn.textContent = '✅ ¡Copiado!';
+                    setTimeout(() => btn.textContent = '📋 Copiar nombre', 2000);
+                });
+            }
+        });
+
+        document.getElementById('reset-generator-btn').addEventListener('click', () => {
+            if (confirm('¿Reiniciar Bingo?')) {
+                reiniciarGenerador();
+            }
+        });
+
+        const autoBtn = document.getElementById('auto-control-btn');
+        document.getElementById('auto-speed-select').addEventListener('change', () => {
+            if (!generadorAutoActivo) return;
+            const delay = parseInt(document.getElementById('auto-speed-select').value);
+            autoBtn.textContent = '⏸ Pausa';
+            iniciarGeneradorAutomatico(delay);
+        });
+
+        autoBtn.addEventListener('click', () => {
+            if (generadorAutoActivo) {
+                clearInterval(generadorAutoInterval);
+                generadorAutoInterval = null;
+                generadorAutoActivo = false;
+                autoBtn.textContent = '▶️ Retomar';
+                autoBtn.style.background = '#4CAF50';
+            } else {
+                const delay = parseInt(document.getElementById('auto-speed-select').value);
+                autoBtn.textContent = '⏸ Pausa';
+                autoBtn.style.background = '#ff9800';
+                iniciarGeneradorAutomatico(delay);
+            }
+        });
+
+        // === INICIAR ===
+        reiniciarMazo();
+        inicializarGenerador();
     </script>
 </body>
 </html>

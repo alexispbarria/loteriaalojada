@@ -29,7 +29,7 @@
             overflow: hidden;
         }
         .generator-panel {
-            width: 40%;
+            width: 50%;
             background: #222;
             padding: 15px;
             overflow-y: auto;
@@ -37,7 +37,7 @@
             flex-direction: column;
         }
         .chat-panel {
-            width: 60%;
+            width: 50%;
             background: #111;
             display: flex;
             justify-content: center;
@@ -50,14 +50,15 @@
             border: none;
             border-radius: 8px;
         }
-        /* ===== ESTILOS DEL GENERADOR (copiados de loteria) ===== */
+
+        /* ===== COPIA EXACTA DE STYLES.CSS (GENERADOR) ===== */
         .miniatures-container {
             flex: 2;
             background: #f5f5f5;
             border-radius: 8px;
             padding: 12px;
             overflow-y: auto;
-            max-height: 200px;
+            max-height: 300px;
             margin-bottom: 15px;
         }
         .miniatures-grid {
@@ -103,29 +104,30 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+            width: 100%;
         }
         .current-card-display img {
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
             object-fit: contain;
             background: white;
-            padding: 8px;
+            padding: 10px;
             border-radius: 8px;
             margin-bottom: 10px;
         }
         .current-card-name {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: bold;
             color: #e91e63;
             margin: 0;
         }
         .generator-placeholder,
         .fin-juego {
-            font-size: 1rem;
+            font-size: 1.1rem;
             color: #666;
             font-style: italic;
             text-align: center;
-            padding: 20px;
+            padding: 40px 20px;
             background: #f9f9f9;
             border-radius: 8px;
             margin-bottom: 20px;
@@ -139,8 +141,8 @@
             display: flex;
             justify-content: space-between;
             width: 100%;
-            margin: 10px 0;
-            font-size: 0.9rem;
+            margin-top: 15px;
+            font-size: 0.95rem;
             color: #555;
             font-weight: bold;
         }
@@ -153,17 +155,35 @@
             background: #e91e63;
             color: white;
             border: none;
-            padding: 10px;
+            padding: 12px;
             border-radius: 6px;
             font-weight: bold;
-            font-size: 0.95rem;
+            font-size: 1rem;
             cursor: pointer;
-            margin: 6px 0;
+            margin: 8px 0;
             width: 100%;
             transition: background 0.2s;
         }
         .generator-btn:hover {
             background: #d81b60;
+        }
+        .copy-btn {
+            background: #2196F3;
+        }
+        .copy-btn:hover {
+            background: #1976D2;
+        }
+        .reset-btn {
+            background: #ff5722;
+        }
+        .reset-btn:hover {
+            background: #e64a19;
+        }
+        .capture-btn {
+            background: #9c27b0;
+        }
+        .capture-btn:hover {
+            background: #7b1fa2;
         }
         .auto-section, .xat-section {
             background: #f9f9f9;
@@ -195,11 +215,11 @@
             width: 100%;
         }
         .last-card-display {
-            font-size: 1.1rem;
+            font-size: 1.3rem;
             font-weight: bold;
             color: #4CAF50;
             margin-top: 10px;
-            padding: 8px;
+            padding: 10px;
             background: #f9f9f9;
             border-radius: 6px;
             display: inline-block;
@@ -224,39 +244,53 @@
 </head>
 <body>
     <div class="xat-container">
-        <!-- Panel izquierdo: Generador de cartas -->
+        <!-- Panel izquierdo: Generador de cartas (estructura idéntica al original) -->
         <div class="generator-panel" id="generator-embedded">
             <h3 style="color: white; text-align: center; margin-bottom: 15px;">Generador de Cartas</h3>
-            <div class="current-card-display">
-                <div id="generator-placeholder" class="generator-placeholder">
-                    Pulse "Siguiente carta" para comenzar
+            <div class="generator-main">
+                <!-- Área de miniaturas -->
+                <div class="miniatures-container">
+                    <div id="miniatures-grid" class="miniatures-grid"></div>
                 </div>
-                <div id="fin-juego" class="fin-juego" style="display:none;">
-                    🎉 Fin del Juego
+                <!-- Panel derecho: carta actual + botones -->
+                <div class="current-card-panel">
+                    <div class="current-card-display">
+                        <div id="generator-placeholder" class="generator-placeholder">
+                            Pulse "Siguiente carta" para comenzar
+                        </div>
+                        <div id="fin-juego" class="fin-juego" style="display:none;">
+                            🎉 Fin del Juego
+                        </div>
+                        <img id="current-card-img" src="" alt="Carta actual" style="display:none;">
+                        <p id="current-card-name" class="current-card-name" style="display:none;">—</p>
+                    </div>
+                    <button id="next-card-btn" class="generator-btn">Siguiente carta 🎲</button>
+                    <button id="copy-current-card" class="generator-btn copy-btn">📋 Copiar nombre</button>
+                    <button id="reset-generator-btn" class="generator-btn reset-btn">🔄 Reiniciar Bingo</button>
+                    <button id="capture-screenshot-btn" class="generator-btn capture-btn">📤 Captura de Cartas</button>
+                    <div id="screenshot-link-container" class="screenshot-link-container hidden">
+                        <input type="text" id="screenshot-link" class="screenshot-link-input" readonly>
+                        <button id="copy-screenshot-link" class="generator-btn copy-btn" style="margin-top:8px;">📋 Copiar</button>
+                    </div>
+                    <!-- Contadores -->
+                    <div class="card-counters">
+                        <span id="cards-generated-count">0</span> / <span id="cards-remaining-count">54</span>
+                    </div>
+                    <!-- Generador automático -->
+                    <div class="auto-section">
+                        <label>Generador automático:</label>
+                        <select id="auto-speed-select">
+                            <option value="8000">Lento (8s)</option>
+                            <option value="5000">Normal (5s)</option>
+                            <option value="2500">Veloz (2.5s)</option>
+                        </select>
+                        <button id="auto-control-btn" class="generator-btn" style="background:#4CAF50;">
+                            ▶️ Iniciar
+                        </button>
+                    </div>
                 </div>
-                <img id="current-card-img" src="" alt="Carta actual" style="display:none;">
-                <p id="current-card-name" class="current-card-name" style="display:none;">—</p>
             </div>
-            <div class="miniatures-container">
-                <div id="miniatures-grid" class="miniatures-grid"></div>
-            </div>
-            <div class="card-counters">
-                <span id="cards-generated-count">0</span> / <span id="cards-remaining-count">54</span>
-            </div>
-            <button id="next-card-btn" class="generator-btn">Siguiente carta 🎲</button>
-            <button id="copy-current-card" class="generator-btn" style="background:#2196F3;">📋 Copiar nombre</button>
-            <button id="reset-generator-btn" class="generator-btn" style="background:#ff5722;">🔄 Reiniciar Bingo</button>
-            <div class="auto-section">
-                <label>Generador automático:</label>
-                <select id="auto-speed-select">
-                    <option value="8000">Lento (8s)</option>
-                    <option value="5000">Normal (5s)</option>
-                    <option value="2500">Veloz (2.5s)</option>
-                </select>
-                <button id="auto-control-btn" class="generator-btn" style="background:#4CAF50;">
-                    ▶️ Iniciar
-                </button>
-            </div>
+            <!-- Última carta generada -->
             <div class="last-card-section">
                 <h4>Última carta generada:</h4>
                 <div id="last-card-display" class="last-card-display">
@@ -278,6 +312,7 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <script>
         // === CONFIGURACIÓN DEL CHAT XAT ===
         const urlParams = new URLSearchParams(window.location.search);
@@ -285,7 +320,7 @@
         const chatUrl = `https://xat.com/embed/chat.php#id=220527281&gn=${encodeURIComponent(groupName)}`;
         document.getElementById('xat-chat').src = chatUrl;
 
-        // === CONFIGURACIÓN DEL GENERADOR (código reutilizado de loteria.js) ===
+        // === CARTAS (igual que en loteria.js) ===
         const CARTAS_IMAGENES = {
             "EL GALLO": "https://i.ibb.co/yBm513qg/EL-GALLO.jpg",
             "LA PERA": "https://i.ibb.co/Y457kCNQ/LA-PERA.jpg",
@@ -414,7 +449,57 @@
             document.getElementById('last-card-text').textContent = 'Ninguna';
             document.getElementById('cards-generated-count').textContent = '0';
             document.getElementById('cards-remaining-count').textContent = '54';
+            document.getElementById('screenshot-link-container').classList.add('hidden');
             localStorage.removeItem('xatGenerador');
+        }
+
+        // === CAPTURA DE PANTALLA ===
+        async function subirCapturaCartas() {
+            const grid = document.getElementById('miniatures-grid');
+            if (!grid || grid.children.length === 0) {
+                alert('No hay cartas generadas para subir.');
+                return;
+            }
+            const linkContainer = document.getElementById('screenshot-link-container');
+            const linkInput = document.getElementById('screenshot-link');
+            const copyBtn = document.getElementById('copy-screenshot-link');
+            const captureBtn = document.getElementById('capture-screenshot-btn');
+            try {
+                captureBtn.disabled = true;
+                captureBtn.textContent = '📤 Subiendo...';
+                const canvas = await html2canvas(grid, {
+                    backgroundColor: '#f5f5f5',
+                    scale: 2,
+                    useCORS: true
+                });
+                canvas.toBlob(async (blob) => {
+                    const formData = new FormData();
+                    formData.append('image', blob, 'cartas-loteria.png');
+                    const response = await fetch('https://api.imgbb.com/1/upload?key=9979891f16223fc79a7d5dfa7a42d526', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        const imageUrl = result.data.url;
+                        linkInput.value = imageUrl;
+                        linkContainer.classList.remove('hidden');
+                        copyBtn.onclick = async () => {
+                            await navigator.clipboard.writeText(imageUrl);
+                            copyBtn.textContent = '✅ ¡Copiado!';
+                            setTimeout(() => copyBtn.textContent = '📋 Copiar', 2000);
+                        };
+                    } else {
+                        throw new Error(result.error?.message || 'Error al subir');
+                    }
+                }, 'image/png');
+            } catch (err) {
+                console.error('Error:', err);
+                alert('❌ Error al subir la imagen: ' + (err.message || 'intente nuevamente'));
+            } finally {
+                captureBtn.disabled = false;
+                captureBtn.textContent = '📤 Captura de Cartas';
+            }
         }
 
         function iniciarGeneradorAutomatico(delay) {
@@ -444,7 +529,6 @@
 
         // === INICIALIZAR ===
         function inicializarGenerador() {
-            // Intentar restaurar estado
             const guardado = localStorage.getItem('xatGenerador');
             if (guardado) {
                 try {
@@ -470,7 +554,7 @@
                     document.getElementById('cards-remaining-count').textContent = 54 - cartasGeneradas.length;
                     return;
                 } catch (e) {
-                    console.error('Error al restaurar generador en xat:', e);
+                    console.error('Error al restaurar:', e);
                     localStorage.removeItem('xatGenerador');
                 }
             }
@@ -517,6 +601,10 @@
             if (confirm('¿Reiniciar Bingo?')) {
                 reiniciarGenerador();
             }
+        });
+
+        document.getElementById('capture-screenshot-btn').addEventListener('click', () => {
+            subirCapturaCartas();
         });
 
         const autoBtn = document.getElementById('auto-control-btn');

@@ -37,7 +37,7 @@ const CARTAS_IMAGENES = {
     "EL SOLDADO": "https://i.ibb.co/NgCgJ8Tf/EL-SOLDADO.jpg",
     "LA CHALUPA": "https://i.ibb.co/1fwcH0zr/LA-CHALUPA.jpg",
     "LA ESCALERA": "https://i.ibb.co/Kx6Wns7Y/LA-ESCALERA.jpg",
-    "LA MANO": "https://i.ibb.co/PZb49PXB/LA-MANO.jpg",
+    "LA MANO": "https://i.ibb-co/PZb49PXB/LA-MANO.jpg",
     "LA ESTRELLA": "https://i.ibb.co/cKSXjW7f/LA-ESTRELLA.jpg",
     "EL PINO": "https://i.ibb.co/QFbCyN9r/EL-PINO.jpg",
     "LA BOTELLA": "https://i.ibb.co/TB6PjFPK/LA-BOTELLA.jpg",
@@ -58,7 +58,7 @@ const CARTAS_IMAGENES = {
     "EL ARPA": "https://i.ibb.co/35Jxddt7/EL-ARPA.jpg",
     "EL VALIENTE": "https://i.ibb.co/JRcbyDdM/EL-VALIENTE.jpg",
     "EL NEGRITO": "https://i.ibb.co/cKkDqtFm/EL-NEGRITO.jpg",
-    "EL ALACRÁN": "https://i.ibb.co/23FFxH87/EL-ALACRAN.jpg",
+    "EL ALACRÁN": "https://i.ibb-co/23FFxH87/EL-ALACRAN.jpg",
     "LA RANA": "https://i.ibb.co/SXhZF4Vr/LA-RANA.jpg",
     "EL GORRITO": "https://i.ibb.co/gZHw0X3k/EL-GORRITO.jpg",
     "EL CORAZÓN": "https://i.ibb.co/W4f2Yg6H/EL-CORAZON.jpg",
@@ -361,6 +361,7 @@ function handleRemove(e) {
 function updateConfirmButton() {
     const confirmDiv = document.getElementById('confirm-selection');
     const display = document.getElementById('selected-cards-display');
+    if (!confirmDiv || !display) return;
     const savedCount = getSavedCardsCount();
     const totalSelected = savedCount + tempSelections.size;
     if (tempSelections.size > 0 && window.appState.currentUser && !window.appState.userHasConfirmed) {
@@ -476,14 +477,6 @@ function agregarMiniatura(carta) {
         <div>${carta}</div>
     `;
     grid.prepend(miniatura);
-
-    // ✅ NO hacer push aquí — ya se hizo en next-card-btn
-    // Solo guardar el estado actual
-    ultimaCarta = carta;
-    localStorage.setItem('loteriaGenerador', JSON.stringify({
-        cartasGeneradas: cartasGeneradas, // ya incluye la nueva carta
-        ultimaCarta: ultimaCarta
-    }));
 }
 
 async function subirCapturaCartas() {
@@ -507,7 +500,6 @@ async function subirCapturaCartas() {
         canvas.toBlob(async (blob) => {
             const formData = new FormData();
             formData.append('image', blob, 'cartas-loteria.png');
-            // ⚠️ REEMPLAZA "TU_CLAVE_IMGBB" POR TU API KEY REAL
             const response = await fetch('https://api.imgbb.com/1/upload?key=9979891f16223fc79a7d5dfa7a42d526', {
                 method: 'POST',
                 body: formData
@@ -542,6 +534,7 @@ function reiniciarGenerador() {
     reiniciarMazo();
     cartasGeneradas = [];
     ultimaCarta = null;
+    localStorage.removeItem('loteriaGenerador');
     const grid = document.getElementById('miniatures-grid');
     if (grid) grid.innerHTML = '';
     const placeholder = document.getElementById('generator-placeholder');
@@ -555,11 +548,8 @@ function reiniciarGenerador() {
     if (lastText) lastText.textContent = 'Ninguna';
     if (finJuego) finJuego.style.display = 'none';
     document.getElementById('reset-confirm-modal').classList.add('hidden');
-    // ✅ Resetear contadores
     document.getElementById('cards-generated-count').textContent = '0';
     document.getElementById('cards-remaining-count').textContent = '54';
-    // ✅ Limpiar localStorage
-    localStorage.removeItem('loteriaGenerador');
 }
 
 function detenerGeneradorAutomatico() {
@@ -583,6 +573,15 @@ function iniciarGeneradorAutomatico(delay) {
         mostrarCartaActual(carta);
         agregarMiniatura(carta);
         cartasGeneradas.push(carta);
+        // Guardar en localStorage
+        localStorage.setItem('loteriaGenerador', JSON.stringify({
+            cartasGeneradas: cartasGeneradas,
+            ultimaCarta: ultimaCarta,
+            mazoMezclado: mazoMezclado,
+            indiceCartaActual: indiceCartaActual
+        }));
+        document.getElementById('cards-generated-count').textContent = cartasGeneradas.length;
+        document.getElementById('cards-remaining-count').textContent = 54 - cartasGeneradas.length;
     }, delay);
 }
 
@@ -590,38 +589,61 @@ function inicializarGenerador() {
     if (generadorInicializado) return;
     generadorInicializado = true;
 
-    // No reiniciar mazo ni limpiar cartas aquí
-    // Ya se hizo en initLoteria si hay estado guardado
-
     const placeholder = document.getElementById('generator-placeholder');
     const img = document.getElementById('current-card-img');
     const name = document.getElementById('current-card-name');
     const lastText = document.getElementById('last-card-text');
     const finJuego = document.getElementById('fin-juego');
-
-    if (ultimaCarta) {
-        // Si hay estado guardado, ya está todo listo
-        if (placeholder) placeholder.style.display = 'none';
-        if (img) {
-            img.src = CARTAS_IMAGENES[ultimaCarta];
-            img.style.display = 'block';
+    
+    // ✅ Restaurar estado si existe
+    const generadorGuardado = localStorage.getItem('loteriaGenerador');
+    if (generadorGuardado) {
+        try {
+            const { cartasGeneradas: guardadas, ultimaCarta: ultima, mazoMezclado: mazo, indiceCartaActual: indice } = JSON.parse(generadorGuardado);
+            mazoMezclado = mazo;
+            cartasGeneradas = guardadas;
+            ultimaCarta = ultima;
+            indiceCartaActual = indice;
+            // Mostrar miniaturas
+            const grid = document.getElementById('miniatures-grid');
+            if (grid) {
+                grid.innerHTML = '';
+                [...cartasGeneradas].reverse().forEach(carta => {
+                    const miniatura = document.createElement('div');
+                    miniatura.className = 'miniature-card';
+                    miniatura.innerHTML = `<img src="${CARTAS_IMAGENES[carta]}" alt="${carta}"><div>${carta}</div>`;
+                    grid.appendChild(miniatura);
+                });
+            }
+            // Mostrar última carta
+            if (ultimaCarta) {
+                img.src = CARTAS_IMAGENES[ultimaCarta];
+                img.style.display = 'block';
+                name.textContent = ultimaCarta;
+                name.style.display = 'block';
+                placeholder.style.display = 'none';
+                lastText.textContent = ultimaCarta;
+            }
+            // Actualizar contadores
+            document.getElementById('cards-generated-count').textContent = cartasGeneradas.length;
+            document.getElementById('cards-remaining-count').textContent = 54 - cartasGeneradas.length;
+        } catch (e) {
+            console.error('Error al restaurar generador:', e);
+            localStorage.removeItem('loteriaGenerador');
         }
-        if (name) {
-            name.textContent = ultimaCarta;
-            name.style.display = 'block';
-        }
-        if (lastText) lastText.textContent = ultimaCarta;
-        if (finJuego) finJuego.style.display = 'none';
     } else {
-        // Si no hay estado, mostrar placeholder
+        // Primer uso
+        reiniciarMazo();
+        cartasGeneradas = [];
+        ultimaCarta = null;
         if (placeholder) placeholder.style.display = 'block';
         if (img) img.style.display = 'none';
         if (name) name.style.display = 'none';
         if (lastText) lastText.textContent = 'Ninguna';
         if (finJuego) finJuego.style.display = 'none';
+        document.getElementById('cards-generated-count').textContent = '0';
+        document.getElementById('cards-remaining-count').textContent = '54';
     }
-
-    // ✅ Contadores ya están actualizados en initLoteria
 
     document.querySelector('#card-generator-modal .close')?.addEventListener('click', () => {
         document.getElementById('card-generator-modal').classList.add('hidden');
@@ -636,9 +658,15 @@ function inicializarGenerador() {
             return;
         }
         mostrarCartaActual(carta);
-        cartasGeneradas.push(carta); // ✅ Push aquí
         agregarMiniatura(carta);
-        // ✅ Actualizar contadores
+        cartasGeneradas.push(carta);
+        // Guardar
+        localStorage.setItem('loteriaGenerador', JSON.stringify({
+            cartasGeneradas: cartasGeneradas,
+            ultimaCarta: ultimaCarta,
+            mazoMezclado: mazoMezclado,
+            indiceCartaActual: indiceCartaActual
+        }));
         document.getElementById('cards-generated-count').textContent = cartasGeneradas.length;
         document.getElementById('cards-remaining-count').textContent = 54 - cartasGeneradas.length;
     });
@@ -767,55 +795,10 @@ async function initLoteria() {
         document.querySelector('.desktop-table').textContent = '⚠️ Error de conexión';
         document.querySelector('.mobile-table').textContent = '⚠️ Error de conexión';
     }
-
-    // ✅ Restaurar estado del generador
-    const generadorGuardado = localStorage.getItem('loteriaGenerador');
-    if (generadorGuardado) {
-        try {
-            const { cartasGeneradas: guardadas, ultimaCarta: ultima } = JSON.parse(generadorGuardado);
-            // Reconstruir el mazo en el mismo orden
-            reiniciarMazo();
-            // Avanzar el índice hasta donde se quedó
-            cartasGeneradas = guardadas;
-            ultimaCarta = ultima;
-            // Mostrar las miniaturas guardadas
-            const grid = document.getElementById('miniatures-grid');
-            if (grid) {
-                grid.innerHTML = '';
-                // Prepend en orden inverso para mantener el orden correcto
-                [...cartasGeneradas].reverse().forEach(carta => {
-                    const miniatura = document.createElement('div');
-                    miniatura.className = 'miniature-card';
-                    miniatura.innerHTML = `
-                    <img src="${CARTAS_IMAGENES[carta]}" alt="${carta}">
-                    <div>${carta}</div>
-                `;
-                    grid.appendChild(miniatura);
-                });
-            }
-            // Actualizar la carta actual si existe
-            if (ultimaCarta) {
-                document.getElementById('current-card-img').src = CARTAS_IMAGENES[ultimaCarta];
-                document.getElementById('current-card-img').style.display = 'block';
-                document.getElementById('current-card-name').textContent = ultimaCarta;
-                document.getElementById('current-card-name').style.display = 'block';
-                document.getElementById('generator-placeholder').style.display = 'none';
-                document.getElementById('last-card-text').textContent = ultimaCarta;
-            }
-            // Actualizar contadores
-            document.getElementById('cards-generated-count').textContent = cartasGeneradas.length;
-            document.getElementById('cards-remaining-count').textContent = 54 - cartasGeneradas.length;
-            // Avanzar el índice del mazo
-            indiceCartaActual = cartasGeneradas.length;
-        } catch (e) {
-            console.error('Error al restaurar generador:', e);
-            localStorage.removeItem('loteriaGenerador');
-        }
-    }
 }
 
-// ✅ Asignar evento al botón "Redirigir al xat" (estático en HTML)
-document.addEventListener('click', function (e) {
+// ✅ Event delegation para el botón de xat
+document.addEventListener('click', function(e) {
     if (e.target.id === 'redirect-to-xat-btn') {
         const input = document.getElementById('xat-group-name');
         const groupName = input.value.trim() || 'Viciososymas';
@@ -824,7 +807,6 @@ document.addEventListener('click', function (e) {
 });
 
 document.addEventListener('DOMContentLoaded', initLoteria);
-
 document.addEventListener('click', function (e) {
     if (e.target.id === 'cancel-reset') {
         document.getElementById('reset-confirm-modal').classList.add('hidden');

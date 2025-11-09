@@ -6,42 +6,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Xat</title>
     <style>
-        /* ===== TOPBAR ===== */
+        /* ===== TOPBAR (igual que en styles.css) ===== */
         .topbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
             background: #e91e63;
             color: white;
             padding: 12px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            z-index: 1000;
+            position: sticky;
+            top: 0;
+            z-index: 100;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
         }
 
         .topbar h1 {
-            margin: 0;
             font-size: 1.4rem;
             font-weight: bold;
+            margin: 0;
         }
 
-        .topbar a {
+        .back-btn {
+            background: none;
+            border: none;
             color: white;
-            text-decoration: none;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-weight: bold;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            margin-right: 15px;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
             transition: background 0.2s;
         }
 
-        .topbar a:hover {
-            background: rgba(0, 0, 0, 0.3);
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
 
+        #auth-btn {
+            background: white;
+            color: #e91e63;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+
+        #auth-btn:hover {
+            background: #f5f5f5;
+        }
+
+        .user-name-btn {
+            background: white;
+            color: #e91e63;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+        }
+
+        /* ===== ESTILOS EXISTENTES (sin cambios) ===== */
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f0f0f0;
@@ -56,7 +94,6 @@
             align-items: center;
             color: white;
             padding-top: 60px;
-            /* espacio para topbar */
         }
 
         .acceso-denegado {
@@ -105,7 +142,6 @@
             border-radius: 8px;
         }
 
-        /* === LAYOUT DEL GENERADOR === */
         .generator-layout {
             display: flex;
             gap: 15px;
@@ -114,25 +150,23 @@
         }
 
         .miniatures-column {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-
-        .miniatures-container {
             flex: 1;
             display: flex;
             flex-direction: column;
-            min-height: 0;
+        }
+
+        .controls-column {
+            width: 280px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .capture-wrapper {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
             background-color: #f0f0f0;
             padding: 16px;
             border-radius: 10px;
+            font-family: Arial, sans-serif;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
             color: #000;
         }
@@ -144,13 +178,9 @@
             color: #c62828;
             margin-bottom: 12px;
             text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
-            flex-shrink: 0;
         }
 
         .miniatures-grid {
-            flex: 1;
-            min-height: 0;
-            overflow-y: auto;
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 10px;
@@ -195,7 +225,6 @@
             border-top: 1px dashed #ccc;
             font-weight: bold;
             font-size: 1rem;
-            flex-shrink: 0;
         }
 
         .capture-footer #cards-generated-count {
@@ -204,13 +233,6 @@
 
         .capture-footer #cards-remaining-count {
             color: #c62828;
-        }
-
-        .controls-column {
-            width: 280px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
         }
 
         .current-card-display {
@@ -317,7 +339,10 @@
             display: none;
         }
 
-        /* Responsive */
+        .hidden {
+            display: none !important;
+        }
+
         @media (max-width: 900px) {
             .xat-container {
                 flex-direction: column;
@@ -351,19 +376,108 @@
 </head>
 
 <body>
-    <!-- Topbar -->
-    <div class="topbar">
+    <!-- Topbar idéntico al de las demás vistas -->
+    <header class="topbar">
+        <button id="back-to-home-btn" class="back-btn">←</button>
         <h1>Lotería Mexicana</h1>
-        <a href="/loteria">← Volver</a>
+        <div id="auth-container">
+            <button id="auth-btn">Iniciar sesión / Registrarse</button>
+            <div id="user-menu" class="hidden user-menu">
+                <button id="user-name-btn" class="user-name-btn">Usuario</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mensaje de acceso denegado -->
+    <div id="acceso-denegado" class="acceso-denegado hidden">
+        <p>🔒 Acceso restringido al generador de cartas.</p>
+        <p>Solo los administradores pueden usar esta función.</p>
     </div>
 
-    <div id="main-container">
-        <!-- Aquí se cargará el generador o el mensaje de acceso denegado -->
+    <!-- Contenido original (solo visible si es admin) -->
+    <div id="xat-container" class="xat-container hidden">
+        <div class="generator-panel" id="generator-embedded">
+            <h3 style="color: white; text-align: center; margin-bottom: 15px;">Generador de Cartas</h3>
+            <div class="generator-layout">
+                <div class="miniatures-column">
+                    <div class="miniatures-container">
+                        <div id="capture-wrapper" class="capture-wrapper">
+                            <div class="capture-header">Lotería Mexicana</div>
+                            <div id="miniatures-grid" class="miniatures-grid"></div>
+                            <div class="capture-footer">
+                                <span id="cards-generated-count">Lanzadas: 0</span>
+                                <span id="cards-remaining-count">Faltan: 54</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="controls-column">
+                    <div class="current-card-display">
+                        <div id="generator-placeholder" class="generator-placeholder">
+                            Pulse "Siguiente carta" para comenzar
+                        </div>
+                        <div id="fin-juego" class="fin-juego" style="display:none;">🎉 Fin del Juego</div>
+                        <img id="current-card-img" src="" alt="Carta actual" style="display:none;">
+                        <p id="current-card-name" class="current-card-name" style="display:none;">—</p>
+                    </div>
+                    <button id="copy-current-card" class="generator-btn copy-btn">📋 Copiar nombre</button>
+                    <button id="next-card-btn" class="generator-btn">Siguiente carta 🎲</button>
+                    <div class="auto-section">
+                        <label>Generador automático:</label>
+                        <select id="auto-speed-select">
+                            <option value="8000">Lento (8s)</option>
+                            <option value="5000">Normal (5s)</option>
+                            <option value="2500">Veloz (2.5s)</option>
+                        </select>
+                        <button id="auto-control-btn" class="generator-btn" style="background:#4CAF50;">▶️
+                            Iniciar</button>
+                    </div>
+                    <button id="capture-screenshot-btn" class="generator-btn capture-btn">📤 Captura de Cartas</button>
+                    <div id="screenshot-link-container" class="screenshot-link-container hidden">
+                        <input type="text" id="screenshot-link" class="screenshot-link-input" readonly>
+                        <button id="copy-screenshot-link" class="generator-btn copy-btn" style="margin-top:6px;">📋
+                            Copiar enlace</button>
+                    </div>
+                    <button id="reset-generator-btn" class="generator-btn reset-btn">🔄 Reiniciar Bingo</button>
+                </div>
+            </div>
+        </div>
+        <div class="chat-panel">
+            <iframe id="xat-chat" class="chat-frame" frameborder="0" scrolling="no" src="" title="Chat xat"></iframe>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <script>
-        // === VALIDACIÓN DE USUARIO ===
+        // === Redirección al hacer clic en "←" ===
+        document.getElementById('back-to-home-btn').addEventListener('click', () => {
+            window.location.href = '/loteria';
+        });
+
+        // === Actualizar UI de autenticación ===
+        function updateAuthUI() {
+            const saved = localStorage.getItem('loteriaUser');
+            const authBtn = document.getElementById('auth-btn');
+            const userMenu = document.getElementById('user-menu');
+            const userNameBtn = document.getElementById('user-name-btn');
+            if (saved) {
+                try {
+                    const { nickname } = JSON.parse(saved);
+                    if (authBtn) authBtn.classList.add('hidden');
+                    if (userMenu) userMenu.classList.remove('hidden');
+                    if (userNameBtn) userNameBtn.textContent = nickname;
+                } catch (e) {
+                    localStorage.removeItem('loteriaUser');
+                    if (authBtn) authBtn.classList.remove('hidden');
+                    if (userMenu) userMenu.classList.add('hidden');
+                }
+            } else {
+                if (authBtn) authBtn.classList.remove('hidden');
+                if (userMenu) userMenu.classList.add('hidden');
+            }
+        }
+
+        // === Validación de acceso ===
         function tieneAccesoAdmin() {
             const saved = localStorage.getItem('loteriaUser');
             if (!saved) return false;
@@ -375,78 +489,21 @@
             }
         }
 
-        // === RENDERIZAR INTERFAZ ===
-        function renderizarContenido() {
-            const container = document.getElementById('main-container');
+        // === Configuración del chat ===
+        const urlParams = new URLSearchParams(window.location.search);
+        const groupName = urlParams.get('group') || 'Viciososymas';
+        const chatUrl = `https://xat.com/embed/chat.php#id=220527281&gn=${encodeURIComponent(groupName)}`;
+        document.getElementById('xat-chat').src = chatUrl;
 
-            if (!tieneAccesoAdmin()) {
-                container.innerHTML = `
-                    <div class="acceso-denegado">
-                        <p>🔒 Acceso restringido al generador de cartas.</p>
-                        <p>Solo los administradores pueden usar esta función.</p>
-                    </div>
-                `;
-                return;
-            }
-
-            // Renderizar el generador + chat
-            container.innerHTML = `
-                <div class="xat-container">
-                    <div class="generator-panel" id="generator-embedded">
-                        <h3 style="color: white; text-align: center; margin-bottom: 15px;">Generador de Cartas</h3>
-                        <div class="generator-layout">
-                            <div class="miniatures-column">
-                                <div class="miniatures-container">
-                                    <div id="capture-wrapper" class="capture-wrapper">
-                                        <div class="capture-header">Lotería Mexicana</div>
-                                        <div id="miniatures-grid" class="miniatures-grid"></div>
-                                        <div class="capture-footer">
-                                            <span id="cards-generated-count">Lanzadas: 0</span>
-                                            <span id="cards-remaining-count">Faltan: 54</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="controls-column">
-                                <div class="current-card-display">
-                                    <div id="generator-placeholder" class="generator-placeholder">
-                                        Pulse "Siguiente carta" para comenzar
-                                    </div>
-                                    <div id="fin-juego" class="fin-juego" style="display:none;">🎉 Fin del Juego</div>
-                                    <img id="current-card-img" src="" alt="Carta actual" style="display:none;">
-                                    <p id="current-card-name" class="current-card-name" style="display:none;">—</p>
-                                </div>
-                                <button id="copy-current-card" class="generator-btn copy-btn">📋 Copiar nombre</button>
-                                <button id="next-card-btn" class="generator-btn">Siguiente carta 🎲</button>
-                                <div class="auto-section">
-                                    <label>Generador automático:</label>
-                                    <select id="auto-speed-select">
-                                        <option value="8000">Lento (8s)</option>
-                                        <option value="5000">Normal (5s)</option>
-                                        <option value="2500">Veloz (2.5s)</option>
-                                    </select>
-                                    <button id="auto-control-btn" class="generator-btn" style="background:#4CAF50;">▶️ Iniciar</button>
-                                </div>
-                                <button id="capture-screenshot-btn" class="generator-btn capture-btn">📤 Captura de Cartas</button>
-                                <div id="screenshot-link-container" class="screenshot-link-container hidden">
-                                    <input type="text" id="screenshot-link" class="screenshot-link-input" readonly>
-                                    <button id="copy-screenshot-link" class="generator-btn copy-btn" style="margin-top:6px;">📋 Copiar enlace</button>
-                                </div>
-                                <button id="reset-generator-btn" class="generator-btn reset-btn">🔄 Reiniciar Bingo</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="chat-panel">
-                        <iframe id="xat-chat" class="chat-frame" frameborder="0" scrolling="no" src="" title="Chat xat"></iframe>
-                    </div>
-                </div>
-            `;
-
-            // === INICIALIZAR FUNCIONALIDAD ===
-            inicializarXat();
+        // === Inicializar ===
+        updateAuthUI();
+        if (tieneAccesoAdmin()) {
+            document.getElementById('xat-container').classList.remove('hidden');
+        } else {
+            document.getElementById('acceso-denegado').classList.remove('hidden');
         }
 
-        // === DATOS Y FUNCIONES DEL GENERADOR ===
+        // === RESTO DEL CÓDIGO DEL GENERADOR (sin cambios) ===
         const CARTAS_IMAGENES = {
             "EL GALLO": "https://i.ibb.co/yBm513qg/EL-GALLO.jpg",
             "LA PERA": "https://i.ibb.co/Y457kCNQ/LA-PERA.jpg",
@@ -505,7 +562,6 @@
         };
 
         const cleanUrl = (url) => url.trim();
-
         let mazoMezclado = [];
         let indiceCartaActual = 0;
         let cartasGeneradas = [];
@@ -683,14 +739,8 @@
             actualizarContadores();
         }
 
-        function inicializarChat() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const groupName = urlParams.get('group') || 'Viciososymas';
-            const chatUrl = `https://xat.com/embed/chat.php#id=220527281&gn=${encodeURIComponent(groupName)}`;
-            document.getElementById('xat-chat').src = chatUrl;
-        }
-
-        function inicializarEventos() {
+        // === EVENTOS (solo si es admin) ===
+        if (tieneAccesoAdmin()) {
             document.getElementById('next-card-btn').addEventListener('click', () => {
                 if (generadorAutoActivo) return;
                 const carta = obtenerSiguienteCarta();
@@ -745,16 +795,9 @@
                     iniciarGeneradorAutomatico(delay);
                 }
             });
-        }
 
-        function inicializarXat() {
-            inicializarChat();
             inicializarGenerador();
-            inicializarEventos();
         }
-
-        // === INICIAR ===
-        renderizarContenido();
     </script>
 </body>
 

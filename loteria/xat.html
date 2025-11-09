@@ -122,7 +122,6 @@
             padding: 0;
             min-height: 100vh;
             color: white;
-            padding-top: 60px; /* espacio para el topbar sticky */
             box-sizing: border-box;
         }
 
@@ -464,12 +463,14 @@
                             <option value="5000">Normal (5s)</option>
                             <option value="2500">Veloz (2.5s)</option>
                         </select>
-                        <button id="auto-control-btn" class="generator-btn" style="background:#4CAF50;">▶️ Iniciar</button>
+                        <button id="auto-control-btn" class="generator-btn" style="background:#4CAF50;">▶️
+                            Iniciar</button>
                     </div>
                     <button id="capture-screenshot-btn" class="generator-btn capture-btn">📤 Captura de Cartas</button>
                     <div id="screenshot-link-container" class="screenshot-link-container hidden">
                         <input type="text" id="screenshot-link" class="screenshot-link-input" readonly>
-                        <button id="copy-screenshot-link" class="generator-btn copy-btn" style="margin-top:6px;">📋 Copiar enlace</button>
+                        <button id="copy-screenshot-link" class="generator-btn copy-btn" style="margin-top:6px;">📋
+                            Copiar enlace</button>
                     </div>
                     <button id="reset-generator-btn" class="generator-btn reset-btn">🔄 Reiniciar Bingo</button>
                 </div>
@@ -480,14 +481,104 @@
         </div>
     </div>
 
+    <!-- Modal: cambiar contraseña (solo en xat.html) -->
+    <div id="password-modal" class="modal hidden"
+        style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; display:flex; justify-content:center; align-items:center;">
+        <div class="modal-content"
+            style="background:white; padding:20px; border-radius:10px; width:90%; max-width:400px; position:relative;">
+            <span id="close-password-modal" class="close"
+                style="position:absolute; top:10px; right:15px; font-size:24px; cursor:pointer;">&times;</span>
+            <h2 style="margin-top:0; color:#e91e63;">Cambiar contraseña</h2>
+            <form id="password-form" style="display:flex; flex-direction:column; gap:12px;">
+                <input type="password" id="current-password" placeholder="Contraseña actual" required
+                    style="padding:10px; border:1px solid #ccc; border-radius:4px;">
+                <input type="password" id="new-password" placeholder="Nueva contraseña" required
+                    style="padding:10px; border:1px solid #ccc; border-radius:4px;">
+                <input type="password" id="confirm-password" placeholder="Confirmar nueva contraseña" required
+                    style="padding:10px; border:1px solid #ccc; border-radius:4px;">
+                <button type="submit"
+                    style="background:#e91e63; color:white; border:none; padding:10px; border-radius:6px; font-weight:bold;">Actualizar
+                    contraseña</button>
+                <p id="password-message" style="margin:0; color:red; min-height:20px; font-size:0.9rem;"></p>
+            </form>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <script>
+        // === UTILS ===
+        const cleanUrl = (url) => url.trim();
+
         // === REDIRECCIÓN AL VOLVER ===
         document.getElementById('back-to-home-btn').addEventListener('click', () => {
-            window.location.href = '/loteria';
+            window.location.href = '/';
         });
 
-        // === MANEJADORES DE AUTENTICACIÓN ===
+        // === MODAL: CAMBIAR CONTRASEÑA ===
+        const passwordModal = document.getElementById('password-modal');
+        const passwordForm = document.getElementById('password-form');
+        const passwordMessage = document.getElementById('password-message');
+        const closePasswordModal = document.getElementById('close-password-modal');
+
+        if (closePasswordModal) {
+            closePasswordModal.addEventListener('click', () => {
+                passwordModal.classList.add('hidden');
+            });
+        }
+
+        if (passwordForm) {
+            passwordForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                passwordMessage.textContent = '';
+
+                const currentPass = document.getElementById('current-password').value;
+                const newPass = document.getElementById('new-password').value;
+                const confirmPass = document.getElementById('confirm-password').value;
+
+                if (newPass !== confirmPass) {
+                    passwordMessage.textContent = '❌ Las nuevas contraseñas no coinciden.';
+                    return;
+                }
+
+                if (newPass.length < 6) {
+                    passwordMessage.textContent = '❌ La nueva contraseña debe tener al menos 6 caracteres.';
+                    return;
+                }
+
+                const saved = localStorage.getItem('loteriaUser');
+                if (!saved) {
+                    passwordMessage.textContent = '❌ Sesión inválida. Inicia sesión nuevamente.';
+                    return;
+                }
+
+                let userData;
+                try {
+                    userData = JSON.parse(saved);
+                } catch (e) {
+                    passwordMessage.textContent = '❌ Error en los datos de sesión.';
+                    return;
+                }
+
+                if (userData.password !== currentPass) {
+                    passwordMessage.textContent = '❌ Contraseña actual incorrecta.';
+                    return;
+                }
+
+                // ✅ Actualizar contraseña
+                userData.password = newPass;
+                localStorage.setItem('loteriaUser', JSON.stringify(userData));
+                passwordMessage.textContent = '✅ Contraseña actualizada correctamente.';
+                passwordMessage.style.color = '#4CAF50';
+
+                // Limpiar y cerrar después de 1.5s
+                setTimeout(() => {
+                    passwordForm.reset();
+                    passwordModal.classList.add('hidden');
+                }, 1500);
+            });
+        }
+
+        // === AUTENTICACIÓN ===
         function updateAuthUI() {
             const saved = localStorage.getItem('loteriaUser');
             const authBtn = document.getElementById('auth-btn');
@@ -496,40 +587,20 @@
             if (saved) {
                 try {
                     const { nickname } = JSON.parse(saved);
-                    if (authBtn) authBtn.classList.add('hidden');
-                    if (userMenu) userMenu.classList.remove('hidden');
-                    if (userNameBtn) userNameBtn.textContent = nickname;
+                    authBtn?.classList.add('hidden');
+                    userMenu?.classList.remove('hidden');
+                    userNameBtn.textContent = nickname;
                 } catch (e) {
                     localStorage.removeItem('loteriaUser');
-                    if (authBtn) authBtn.classList.remove('hidden');
-                    if (userMenu) userMenu.classList.add('hidden');
+                    authBtn?.classList.remove('hidden');
+                    userMenu?.classList.add('hidden');
                 }
             } else {
-                if (authBtn) authBtn.classList.remove('hidden');
-                if (userMenu) userMenu.classList.add('hidden');
+                authBtn?.classList.remove('hidden');
+                userMenu?.classList.add('hidden');
             }
         }
 
-        document.getElementById('auth-btn').addEventListener('click', () => {
-            alert('Para gestionar tu sesión, por favor ve a la página de Lotería Mexicana.');
-            window.location.href = '/loteria';
-        });
-
-        document.getElementById('user-name-btn').addEventListener('click', () => {
-            document.getElementById('user-dropdown').classList.toggle('hidden');
-        });
-
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            localStorage.removeItem('loteriaUser');
-            updateAuthUI();
-            location.reload();
-        });
-
-        document.getElementById('change-password-btn').addEventListener('click', () => {
-            window.location.href = '/loteria';
-        });
-
-        // === VALIDACIÓN DE ACCESO ===
         function tieneAccesoAdmin() {
             const saved = localStorage.getItem('loteriaUser');
             if (!saved) return false;
@@ -541,19 +612,47 @@
             }
         }
 
-        // === CONFIGURAR CHAT ===
+        function updateView() {
+            const accesoDenegado = document.getElementById('acceso-denegado');
+            const xatContainer = document.getElementById('xat-container');
+            if (tieneAccesoAdmin()) {
+                accesoDenegado?.classList.add('hidden');
+                xatContainer?.classList.remove('hidden');
+            } else {
+                xatContainer?.classList.add('hidden');
+                accesoDenegado?.classList.remove('hidden');
+            }
+        }
+
+        // === EVENTOS ===
+        document.getElementById('auth-btn')?.addEventListener('click', () => {
+            alert('Inicia sesión en la página principal.');
+            window.location.href = '/';
+        });
+
+        document.getElementById('user-name-btn')?.addEventListener('click', () => {
+            document.getElementById('user-dropdown')?.classList.toggle('hidden');
+        });
+
+        document.getElementById('change-password-btn')?.addEventListener('click', () => {
+            passwordModal?.classList.remove('hidden');
+        });
+
+        document.getElementById('logout-btn')?.addEventListener('click', () => {
+            localStorage.removeItem('loteriaUser');
+            updateAuthUI();
+            updateView();
+            // Redirigir a la página principal
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 500); // Breve delay para que el usuario vea el cambio
+        });
+
+        // === CHAT ===
         const urlParams = new URLSearchParams(window.location.search);
         const groupName = urlParams.get('group') || 'Viciososymas';
         const chatUrl = `https://xat.com/embed/chat.php#id=220527281&gn=${encodeURIComponent(groupName)}`;
         document.getElementById('xat-chat').src = chatUrl;
-
-        // === INICIALIZAR ===
-        updateAuthUI();
-        if (tieneAccesoAdmin()) {
-            document.getElementById('xat-container').classList.remove('hidden');
-        } else {
-            document.getElementById('acceso-denegado').classList.remove('hidden');
-        }
 
         // === GENERADOR DE CARTAS ===
         const CARTAS_IMAGENES = {
@@ -613,7 +712,6 @@
             "LA CALAVERA": "https://i.ibb.co/qYNV3ZYW/LA-CALAVERA.jpg"
         };
 
-        const cleanUrl = (url) => url.trim();
         let mazoMezclado = [];
         let indiceCartaActual = 0;
         let cartasGeneradas = [];
@@ -791,7 +889,10 @@
             actualizarContadores();
         }
 
-        // === EVENTOS (solo si es admin) ===
+        // === INICIALIZAR ===
+        updateAuthUI();
+        updateView();
+
         if (tieneAccesoAdmin()) {
             document.getElementById('next-card-btn').addEventListener('click', () => {
                 if (generadorAutoActivo) return;

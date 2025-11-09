@@ -422,6 +422,55 @@
         </div>
     </header>
 
+    <!-- Modal: Cambiar contraseña -->
+    <div id="password-modal" class="modal hidden" style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    z-index: 200;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+">
+        <div style="
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 400px;
+        position: relative;
+    ">
+            <span id="close-password-modal" style="
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+        ">&times;</span>
+            <h2 style="margin-top: 0; color: #e91e63;">Cambiar contraseña</h2>
+            <form id="password-form" style="display: flex; flex-direction: column; gap: 12px;">
+                <input type="password" id="current-password" placeholder="Contraseña actual" required
+                    style="padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                <input type="password" id="new-password" placeholder="Nueva contraseña" required
+                    style="padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                <input type="password" id="confirm-password" placeholder="Confirmar nueva contraseña" required
+                    style="padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                <button type="submit" style="
+                background: #e91e63;
+                color: white;
+                border: none;
+                padding: 10px;
+                border-radius: 6px;
+                font-weight: bold;
+            ">Actualizar contraseña</button>
+                <p id="password-message" style="margin: 0; color: red; min-height: 20px; font-size: 0.9rem;"></p>
+            </form>
+        </div>
+    </div>
+
     <!-- Mensaje de acceso denegado -->
     <div id="acceso-denegado" class="acceso-denegado hidden">
         <p>🔒 Acceso restringido al generador de cartas.</p>
@@ -481,29 +530,6 @@
         </div>
     </div>
 
-    <!-- Modal: cambiar contraseña (solo en xat.html) -->
-    <div id="password-modal" class="modal hidden"
-        style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; display:flex; justify-content:center; align-items:center;">
-        <div class="modal-content"
-            style="background:white; padding:20px; border-radius:10px; width:90%; max-width:400px; position:relative;">
-            <span id="close-password-modal" class="close"
-                style="position:absolute; top:10px; right:15px; font-size:24px; cursor:pointer;">&times;</span>
-            <h2 style="margin-top:0; color:#e91e63;">Cambiar contraseña</h2>
-            <form id="password-form" style="display:flex; flex-direction:column; gap:12px;">
-                <input type="password" id="current-password" placeholder="Contraseña actual" required
-                    style="padding:10px; border:1px solid #ccc; border-radius:4px;">
-                <input type="password" id="new-password" placeholder="Nueva contraseña" required
-                    style="padding:10px; border:1px solid #ccc; border-radius:4px;">
-                <input type="password" id="confirm-password" placeholder="Confirmar nueva contraseña" required
-                    style="padding:10px; border:1px solid #ccc; border-radius:4px;">
-                <button type="submit"
-                    style="background:#e91e63; color:white; border:none; padding:10px; border-radius:6px; font-weight:bold;">Actualizar
-                    contraseña</button>
-                <p id="password-message" style="margin:0; color:red; min-height:20px; font-size:0.9rem;"></p>
-            </form>
-        </div>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <script>
         // === UTILS ===
@@ -515,68 +541,66 @@
         });
 
         // === MODAL: CAMBIAR CONTRASEÑA ===
-        const passwordModal = document.getElementById('password-modal');
-        const passwordForm = document.getElementById('password-form');
-        const passwordMessage = document.getElementById('password-message');
-        const closePasswordModal = document.getElementById('close-password-modal');
+        document.getElementById('change-password-btn').addEventListener('click', () => {
+            document.getElementById('password-modal').classList.remove('hidden');
+        });
 
-        if (closePasswordModal) {
-            closePasswordModal.addEventListener('click', () => {
-                passwordModal.classList.add('hidden');
-            });
-        }
+        document.getElementById('close-password-modal').addEventListener('click', () => {
+            document.getElementById('password-modal').classList.add('hidden');
+            document.getElementById('password-form').reset();
+            document.getElementById('password-message').textContent = '';
+        });
 
-        if (passwordForm) {
-            passwordForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                passwordMessage.textContent = '';
+        document.getElementById('password-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const msg = document.getElementById('password-message');
+            msg.textContent = '';
 
-                const currentPass = document.getElementById('current-password').value;
-                const newPass = document.getElementById('new-password').value;
-                const confirmPass = document.getElementById('confirm-password').value;
+            const current = document.getElementById('current-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirm = document.getElementById('confirm-password').value;
 
-                if (newPass !== confirmPass) {
-                    passwordMessage.textContent = '❌ Las nuevas contraseñas no coinciden.';
-                    return;
-                }
+            if (newPassword !== confirm) {
+                msg.textContent = '❌ Las contraseñas no coinciden.';
+                return;
+            }
+            if (newPassword.length < 6) {
+                msg.textContent = '❌ La nueva contraseña debe tener al menos 6 caracteres.';
+                return;
+            }
 
-                if (newPass.length < 6) {
-                    passwordMessage.textContent = '❌ La nueva contraseña debe tener al menos 6 caracteres.';
-                    return;
-                }
+            const saved = localStorage.getItem('loteriaUser');
+            if (!saved) {
+                msg.textContent = '❌ Sesión no válida. Por favor, inicia sesión nuevamente.';
+                return;
+            }
 
-                const saved = localStorage.getItem('loteriaUser');
-                if (!saved) {
-                    passwordMessage.textContent = '❌ Sesión inválida. Inicia sesión nuevamente.';
-                    return;
-                }
+            let user;
+            try {
+                user = JSON.parse(saved);
+            } catch (err) {
+                msg.textContent = '❌ Error en los datos de sesión.';
+                return;
+            }
 
-                let userData;
-                try {
-                    userData = JSON.parse(saved);
-                } catch (e) {
-                    passwordMessage.textContent = '❌ Error en los datos de sesión.';
-                    return;
-                }
+            if (user.password !== current) {
+                msg.textContent = '❌ Contraseña actual incorrecta.';
+                return;
+            }
 
-                if (userData.password !== currentPass) {
-                    passwordMessage.textContent = '❌ Contraseña actual incorrecta.';
-                    return;
-                }
+            // ✅ Actualizar contraseña
+            user.password = newPassword;
+            localStorage.setItem('loteriaUser', JSON.stringify(user));
+            msg.textContent = '✅ Contraseña actualizada correctamente.';
+            msg.style.color = '#4CAF50';
 
-                // ✅ Actualizar contraseña
-                userData.password = newPass;
-                localStorage.setItem('loteriaUser', JSON.stringify(userData));
-                passwordMessage.textContent = '✅ Contraseña actualizada correctamente.';
-                passwordMessage.style.color = '#4CAF50';
-
-                // Limpiar y cerrar después de 1.5s
-                setTimeout(() => {
-                    passwordForm.reset();
-                    passwordModal.classList.add('hidden');
-                }, 1500);
-            });
-        }
+            // Cerrar automáticamente
+            setTimeout(() => {
+                document.getElementById('password-modal').classList.add('hidden');
+                document.getElementById('password-form').reset();
+                msg.textContent = '';
+            }, 1500);
+        });
 
         // === AUTENTICACIÓN ===
         function updateAuthUI() {
@@ -634,18 +658,14 @@
             document.getElementById('user-dropdown')?.classList.toggle('hidden');
         });
 
-        document.getElementById('change-password-btn')?.addEventListener('click', () => {
-            passwordModal?.classList.remove('hidden');
-        });
-
         document.getElementById('logout-btn')?.addEventListener('click', () => {
             localStorage.removeItem('loteriaUser');
             updateAuthUI();
             updateView();
-            // Redirigir a la página principal
+            // Redirigir a la página principal después de un breve delay
             setTimeout(() => {
                 window.location.href = '/';
-            }, 500); // Breve delay para que el usuario vea el cambio
+            }, 600);
         });
 
         // === CHAT ===

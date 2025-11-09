@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,6 +20,7 @@
             align-items: center;
             color: white;
         }
+
         .xat-container {
             display: flex;
             width: 95%;
@@ -28,6 +30,7 @@
             border-radius: 12px;
             overflow: hidden;
         }
+
         .generator-panel {
             width: 50%;
             background: #222;
@@ -36,6 +39,7 @@
             display: flex;
             flex-direction: column;
         }
+
         .chat-panel {
             width: 50%;
             background: #111;
@@ -44,6 +48,7 @@
             align-items: center;
             padding: 20px;
         }
+
         .chat-frame {
             width: 100%;
             height: 100%;
@@ -51,23 +56,43 @@
             border-radius: 8px;
         }
 
-        /* ===== COPIA EXACTA DE STYLES.CSS (GENERADOR) ===== */
+        /* === NUEVO LAYOUT DE GENERADOR === */
+        .generator-layout {
+            display: flex;
+            gap: 15px;
+            height: calc(100% - 40px);
+            flex-direction: row;
+        }
+
+        .miniatures-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .controls-column {
+            width: 280px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Miniaturas en 6 columnas */
         .miniatures-container {
-            flex: 2;
+            flex: 1;
             background: #f5f5f5;
             border-radius: 8px;
             padding: 12px;
             overflow-y: auto;
-            max-height: 300px;
-            margin-bottom: 15px;
         }
+
         .miniatures-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 6px;
             padding: 4px 0;
-            min-width: 100%;
         }
+
         .miniature-card {
             text-align: center;
             background: white;
@@ -76,36 +101,37 @@
             padding: 6px 4px;
             font-size: 0.65rem;
             font-weight: bold;
-            min-width: 80px;
-            width: 80px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            flex-shrink: 0;
             overflow: hidden;
         }
+
+        .miniature-card img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            margin-bottom: 4px;
+        }
+
         .miniature-card div {
             width: 100%;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             padding: 0 2px;
+            font-size: 0.65rem;
         }
-        .miniature-card img {
-            width: 60px;
-            height: 60px;
-            object-fit: contain;
-            margin-bottom: 4px;
-        }
+
+        /* Carta actual */
         .current-card-display {
             text-align: center;
-            margin-bottom: 20px;
-            flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            width: 100%;
+            align-items: center;
         }
+
         .current-card-display img {
             width: 120px;
             height: 120px;
@@ -115,12 +141,14 @@
             border-radius: 8px;
             margin-bottom: 10px;
         }
+
         .current-card-name {
             font-size: 1.2rem;
             font-weight: bold;
             color: #e91e63;
             margin: 0;
         }
+
         .generator-placeholder,
         .fin-juego {
             font-size: 1.1rem;
@@ -132,128 +160,124 @@
             border-radius: 8px;
             margin-bottom: 20px;
         }
+
         .fin-juego {
             color: #4CAF50;
             font-weight: bold;
             font-style: normal;
         }
-        .card-counters {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            margin-top: 15px;
-            font-size: 0.95rem;
-            color: #555;
-            font-weight: bold;
-        }
-        .card-counters span {
-            background: #f0f0f0;
-            padding: 4px 10px;
-            border-radius: 6px;
-        }
+
+        /* Botones */
         .generator-btn {
             background: #e91e63;
             color: white;
             border: none;
-            padding: 12px;
+            padding: 10px;
             border-radius: 6px;
             font-weight: bold;
-            font-size: 1rem;
+            font-size: 0.95rem;
             cursor: pointer;
-            margin: 8px 0;
             width: 100%;
             transition: background 0.2s;
         }
+
         .generator-btn:hover {
             background: #d81b60;
         }
+
         .copy-btn {
             background: #2196F3;
         }
+
         .copy-btn:hover {
             background: #1976D2;
         }
+
         .reset-btn {
             background: #ff5722;
         }
+
         .reset-btn:hover {
             background: #e64a19;
         }
+
         .capture-btn {
             background: #9c27b0;
         }
+
         .capture-btn:hover {
             background: #7b1fa2;
         }
-        .auto-section, .xat-section {
-            background: #f9f9f9;
-            padding: 12px;
-            border-radius: 6px;
-            margin-top: 10px;
-        }
-        .auto-section label,
-        .xat-section label {
+
+        .auto-section label {
             font-weight: bold;
             margin-bottom: 6px;
             display: block;
+            font-size: 0.95rem;
         }
+
         .auto-section select,
-        .xat-section input,
-        .auto-section button,
-        .xat-section button {
+        .screenshot-link-input {
             width: 100%;
-            padding: 8px;
+            padding: 6px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            margin-top: 4px;
+            font-size: 0.9rem;
         }
-        .last-card-section {
-            margin-top: auto;
-            padding-top: 16px;
-            border-top: 1px solid #eee;
-            text-align: center;
-            width: 100%;
+
+        .screenshot-link-container.hidden {
+            display: none;
         }
-        .last-card-display {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #4CAF50;
-            margin-top: 10px;
-            padding: 10px;
-            background: #f9f9f9;
-            border-radius: 6px;
-            display: inline-block;
-        }
-        /* ===== RESPONSIVE ===== */
+
+        /* Responsive */
         @media (max-width: 900px) {
             .xat-container {
                 flex-direction: column;
                 height: auto;
                 max-height: 90vh;
             }
+
             .generator-panel,
             .chat-panel {
                 width: 100%;
                 height: auto;
             }
+
             .generator-panel {
-                max-height: 400px;
+                max-height: 450px;
+            }
+
+            .generator-layout {
+                flex-direction: column;
+            }
+
+            .controls-column {
+                width: 100%;
+            }
+
+            .miniatures-grid {
+                grid-template-columns: repeat(5, 1fr);
             }
         }
     </style>
 </head>
+
 <body>
     <div class="xat-container">
-        <!-- Panel izquierdo: Generador de cartas (estructura idéntica al original) -->
+        <!-- Panel izquierdo: Generador de cartas -->
         <div class="generator-panel" id="generator-embedded">
             <h3 style="color: white; text-align: center; margin-bottom: 15px;">Generador de Cartas</h3>
-            <div class="generator-main">
-                <!-- Área de miniaturas -->
-                <div class="miniatures-container">
-                    <div id="miniatures-grid" class="miniatures-grid"></div>
+
+            <div class="generator-layout">
+                <!-- Columna izquierda: Miniaturas -->
+                <div class="miniatures-column">
+                    <div class="miniatures-container">
+                        <div id="miniatures-grid" class="miniatures-grid"></div>
+                    </div>
                 </div>
-                <!-- Panel derecho: carta actual + botones -->
-                <div class="current-card-panel">
+
+                <!-- Columna derecha: Controles -->
+                <div class="controls-column">
                     <div class="current-card-display">
                         <div id="generator-placeholder" class="generator-placeholder">
                             Pulse "Siguiente carta" para comenzar
@@ -264,19 +288,10 @@
                         <img id="current-card-img" src="" alt="Carta actual" style="display:none;">
                         <p id="current-card-name" class="current-card-name" style="display:none;">—</p>
                     </div>
-                    <button id="next-card-btn" class="generator-btn">Siguiente carta 🎲</button>
+
                     <button id="copy-current-card" class="generator-btn copy-btn">📋 Copiar nombre</button>
-                    <button id="reset-generator-btn" class="generator-btn reset-btn">🔄 Reiniciar Bingo</button>
-                    <button id="capture-screenshot-btn" class="generator-btn capture-btn">📤 Captura de Cartas</button>
-                    <div id="screenshot-link-container" class="screenshot-link-container hidden">
-                        <input type="text" id="screenshot-link" class="screenshot-link-input" readonly>
-                        <button id="copy-screenshot-link" class="generator-btn copy-btn" style="margin-top:8px;">📋 Copiar</button>
-                    </div>
-                    <!-- Contadores -->
-                    <div class="card-counters">
-                        <span id="cards-generated-count">0</span> / <span id="cards-remaining-count">54</span>
-                    </div>
-                    <!-- Generador automático -->
+                    <button id="next-card-btn" class="generator-btn">Siguiente carta 🎲</button>
+
                     <div class="auto-section">
                         <label>Generador automático:</label>
                         <select id="auto-speed-select">
@@ -288,26 +303,22 @@
                             ▶️ Iniciar
                         </button>
                     </div>
-                </div>
-            </div>
-            <!-- Última carta generada -->
-            <div class="last-card-section">
-                <h4>Última carta generada:</h4>
-                <div id="last-card-display" class="last-card-display">
-                    <span id="last-card-text">Ninguna</span>
+
+                    <button id="capture-screenshot-btn" class="generator-btn capture-btn">📤 Captura de Cartas</button>
+                    <div id="screenshot-link-container" class="screenshot-link-container hidden">
+                        <input type="text" id="screenshot-link" class="screenshot-link-input" readonly>
+                        <button id="copy-screenshot-link" class="generator-btn copy-btn" style="margin-top:6px;">📋
+                            Copiar enlace</button>
+                    </div>
+
+                    <button id="reset-generator-btn" class="generator-btn reset-btn">🔄 Reiniciar Bingo</button>
                 </div>
             </div>
         </div>
 
         <!-- Panel derecho: Chat xat -->
         <div class="chat-panel">
-            <iframe 
-                id="xat-chat" 
-                class="chat-frame"
-                frameborder="0"
-                scrolling="no"
-                src=""
-                title="Chat xat">
+            <iframe id="xat-chat" class="chat-frame" frameborder="0" scrolling="no" src="" title="Chat xat">
             </iframe>
         </div>
     </div>
@@ -320,7 +331,7 @@
         const chatUrl = `https://xat.com/embed/chat.php#id=220527281&gn=${encodeURIComponent(groupName)}`;
         document.getElementById('xat-chat').src = chatUrl;
 
-        // === CARTAS (igual que en loteria.js) ===
+        // === CARTAS (con URLs limpias) ===
         const CARTAS_IMAGENES = {
             "EL GALLO": "https://i.ibb.co/yBm513qg/EL-GALLO.jpg",
             "LA PERA": "https://i.ibb.co/Y457kCNQ/LA-PERA.jpg",
@@ -378,6 +389,9 @@
             "LA CALAVERA": "https://i.ibb.co/qYNV3ZYW/LA-CALAVERA.jpg"
         };
 
+        // === Función auxiliar para limpiar URLs (por si acaso) ===
+        const cleanUrl = (url) => url.trim();
+
         // === VARIABLES DEL GENERADOR ===
         let mazoMezclado = [];
         let indiceCartaActual = 0;
@@ -406,7 +420,7 @@
             const name = document.getElementById('current-card-name');
             const placeholder = document.getElementById('generator-placeholder');
             const finJuego = document.getElementById('fin-juego');
-            img.src = CARTAS_IMAGENES[carta];
+            img.src = cleanUrl(CARTAS_IMAGENES[carta]);
             img.alt = carta;
             img.style.display = 'block';
             name.textContent = carta;
@@ -414,7 +428,6 @@
             placeholder.style.display = 'none';
             finJuego.style.display = 'none';
             ultimaCarta = carta;
-            document.getElementById('last-card-text').textContent = carta;
         }
 
         function mostrarFinJuego() {
@@ -429,7 +442,7 @@
             const miniatura = document.createElement('div');
             miniatura.className = 'miniature-card';
             miniatura.innerHTML = `
-                <img src="${CARTAS_IMAGENES[carta]}" alt="${carta}">
+                <img src="${cleanUrl(CARTAS_IMAGENES[carta])}" alt="${carta}">
                 <div>${carta}</div>
             `;
             grid.prepend(miniatura);
@@ -446,9 +459,6 @@
             document.getElementById('current-card-img').style.display = 'none';
             document.getElementById('current-card-name').style.display = 'none';
             document.getElementById('fin-juego').style.display = 'none';
-            document.getElementById('last-card-text').textContent = 'Ninguna';
-            document.getElementById('cards-generated-count').textContent = '0';
-            document.getElementById('cards-remaining-count').textContent = '54';
             document.getElementById('screenshot-link-container').classList.add('hidden');
             localStorage.removeItem('xatGenerador');
         }
@@ -487,7 +497,7 @@
                         copyBtn.onclick = async () => {
                             await navigator.clipboard.writeText(imageUrl);
                             copyBtn.textContent = '✅ ¡Copiado!';
-                            setTimeout(() => copyBtn.textContent = '📋 Copiar', 2000);
+                            setTimeout(() => copyBtn.textContent = '📋 Copiar enlace', 2000);
                         };
                     } else {
                         throw new Error(result.error?.message || 'Error al subir');
@@ -522,8 +532,6 @@
                     mazoMezclado: mazoMezclado,
                     indiceCartaActual: indiceCartaActual
                 }));
-                document.getElementById('cards-generated-count').textContent = cartasGeneradas.length;
-                document.getElementById('cards-remaining-count').textContent = 54 - cartasGeneradas.length;
             }, delay);
         }
 
@@ -537,33 +545,23 @@
                     ultimaCarta = u;
                     mazoMezclado = m;
                     indiceCartaActual = i;
-                    // Mostrar miniaturas
                     const grid = document.getElementById('miniatures-grid');
                     grid.innerHTML = '';
                     [...cartasGeneradas].reverse().forEach(c => agregarMiniatura(c));
-                    // Mostrar última carta
                     if (ultimaCarta) {
-                        document.getElementById('current-card-img').src = CARTAS_IMAGENES[ultimaCarta];
+                        document.getElementById('current-card-img').src = cleanUrl(CARTAS_IMAGENES[ultimaCarta]);
                         document.getElementById('current-card-img').style.display = 'block';
                         document.getElementById('current-card-name').textContent = ultimaCarta;
                         document.getElementById('current-card-name').style.display = 'block';
                         document.getElementById('generator-placeholder').style.display = 'none';
-                        document.getElementById('last-card-text').textContent = ultimaCarta;
                     }
-                    document.getElementById('cards-generated-count').textContent = cartasGeneradas.length;
-                    document.getElementById('cards-remaining-count').textContent = 54 - cartasGeneradas.length;
                     return;
                 } catch (e) {
                     console.error('Error al restaurar:', e);
                     localStorage.removeItem('xatGenerador');
                 }
             }
-            // Nuevo juego
             reiniciarMazo();
-            cartasGeneradas = [];
-            ultimaCarta = null;
-            document.getElementById('cards-generated-count').textContent = '0';
-            document.getElementById('cards-remaining-count').textContent = '54';
         }
 
         // === EVENTOS ===
@@ -583,8 +581,6 @@
                 mazoMezclado: mazoMezclado,
                 indiceCartaActual: indiceCartaActual
             }));
-            document.getElementById('cards-generated-count').textContent = cartasGeneradas.length;
-            document.getElementById('cards-remaining-count').textContent = 54 - cartasGeneradas.length;
         });
 
         document.getElementById('copy-current-card').addEventListener('click', () => {
@@ -608,13 +604,6 @@
         });
 
         const autoBtn = document.getElementById('auto-control-btn');
-        document.getElementById('auto-speed-select').addEventListener('change', () => {
-            if (!generadorAutoActivo) return;
-            const delay = parseInt(document.getElementById('auto-speed-select').value);
-            autoBtn.textContent = '⏸ Pausa';
-            iniciarGeneradorAutomatico(delay);
-        });
-
         autoBtn.addEventListener('click', () => {
             if (generadorAutoActivo) {
                 clearInterval(generadorAutoInterval);
@@ -631,8 +620,8 @@
         });
 
         // === INICIAR ===
-        reiniciarMazo();
         inicializarGenerador();
     </script>
 </body>
+
 </html>

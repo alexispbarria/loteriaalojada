@@ -655,11 +655,11 @@ th {
         width: 8px;
     }
     .bingo-container::-webkit-scrollbar-track {
-        background: rgba(241, 241, 241, 0.2);
+        background: rgba(0, 0, 0, 0.2);
         border-radius: 10px;
     }
     .bingo-container::-webkit-scrollbar-thumb {
-        background: rgba(229, 31, 99, 0.7);
+        background: rgba(0, 0, 0, 0.7);
         border-radius: 10px;
     }
     /* Generador responsive */

@@ -659,7 +659,7 @@ th {
         border-radius: 10px;
     }
     .bingo-container::-webkit-scrollbar-thumb {
-        background: rgba(0, 0, 0, 0.7);
+        background: #f9f9f9;
         border-radius: 10px;
     }
     /* Generador responsive */

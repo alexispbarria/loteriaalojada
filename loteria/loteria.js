@@ -231,7 +231,7 @@ function createDesktopTable() {
                     jugador = window.appState.currentUser;
                 }
                 jugadorCell.textContent = jugador;
-                if (window.appState.isAdmin && jugador !== '—') {
+                if (window.appState.isAdmin && jugador !== '—' && selecciones[carta] !== undefined) {
                     jugadorCell.innerHTML = `${jugador} <span class="remove-btn" data-card="${carta}">×</span>`;
                 }
                 tr.appendChild(jugadorCell);
@@ -269,7 +269,7 @@ function createMobileTable() {
             jugador = window.appState.currentUser;
         }
         let celdaJugador = jugador;
-        if (window.appState.isAdmin && jugador !== '—') {
+        if (window.appState.isAdmin && jugador !== '—' && selecciones[carta] !== undefined) {
             celdaJugador = `${jugador} <span class="remove-btn" data-card="${carta}">×</span>`;
         }
         const row = document.createElement('tr');
@@ -594,7 +594,7 @@ function inicializarGenerador() {
     const name = document.getElementById('current-card-name');
     const lastText = document.getElementById('last-card-text');
     const finJuego = document.getElementById('fin-juego');
-    
+
     // ✅ Restaurar estado si existe
     const generadorGuardado = localStorage.getItem('loteriaGenerador');
     if (generadorGuardado) {
@@ -798,7 +798,7 @@ async function initLoteria() {
 }
 
 // ✅ Event delegation para el botón de xat
-document.addEventListener('click', function(e) {
+document.addEventListener('click', function (e) {
     if (e.target.id === 'redirect-to-xat-btn') {
         const input = document.getElementById('xat-group-name');
         const groupName = input.value.trim() || 'Viciososymas';

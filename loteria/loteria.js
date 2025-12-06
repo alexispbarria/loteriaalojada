@@ -925,6 +925,7 @@ function updateAdminPanel() {
             label.textContent = 'Cartas por usuario:';
             label.style.fontWeight = 'bold';
             label.style.fontSize = '0.9rem';
+            label.style.color = '#f0f0f0';
             const select = document.createElement('select');
             select.id = 'cards-per-user-select';
             select.style.padding = '6px';

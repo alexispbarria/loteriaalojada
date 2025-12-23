@@ -404,6 +404,30 @@ function updateConfirmButton() {
     } else {
         confirmDiv.classList.add('hidden');
     }
+
+    // ✅ Vincular botón "Copiar Cartas" si existe
+    const copyBottomBtn = document.getElementById('copy-cards-btn-bottom');
+    if (copyBottomBtn) {
+        copyBottomBtn.onclick = () => {
+            const cardsToCopy = Array.from(tempSelections);
+            Object.entries(selecciones).forEach(([carta, owner]) => {
+                if (owner && window.appState.currentUser &&
+                    owner.toLowerCase() === window.appState.currentUser.toLowerCase()) {
+                    cardsToCopy.push(carta);
+                }
+            });
+            const textToCopy = cardsToCopy.join('-');
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                copyBottomBtn.textContent = '✅ ¡Copiado!';
+                setTimeout(() => {
+                    copyBottomBtn.textContent = '📋 Copiar Cartas';
+                }, 2000);
+            }).catch(err => {
+                console.error('Error al copiar:', err);
+                alert('No se pudo copiar al portapapeles.');
+            });
+        };
+    }
 }
 
 async function confirmSelection() {

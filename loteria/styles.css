@@ -87,13 +87,15 @@ body {
     z-index: 200;
 }
 
+/* ✅ MODALES: Fondo negro, texto blanco */
 .modal-content {
-    background: white;
+    background: #000 !important;
+    color: #f0f0f0 !important;
     padding: 24px;
     border-radius: 12px;
     width: 90%;
     max-width: 420px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
     position: relative;
 }
 
@@ -421,9 +423,15 @@ th {
     padding: 20px;
     margin: 20px auto;
     max-width: 95%;
-    background: #e8f5e9;
+    background: #111 !important;
     border-radius: 8px;
     border: 1px solid #4CAF50;
+    color: #f0f0f0 !important;
+}
+
+.confirm-selection p {
+    color: #f0f0f0 !important;
+    margin-bottom: 12px;
 }
 
 .confirm-selection button {
@@ -784,14 +792,17 @@ th {
 .modal-content h2,
 .modal-content p,
 .modal-content label,
-.modal-content input,
 .modal-content strong {
     color: #f0f0f0 !important;
-    /* Texto blanco en todo el contenido */
 }
 
 .modal-content input {
     background: #222 !important;
     color: #f0f0f0 !important;
     border: 1px solid #555 !important;
+    border-radius: 6px;
+    padding: 12px;
+    width: 100%;
+    margin: 8px 0;
+    font-size: 1rem;
 }

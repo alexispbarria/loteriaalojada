@@ -4,6 +4,7 @@
     margin: 0;
     padding: 0;
 }
+
 body {
     font-family: 'Arial', sans-serif;
     background-color: #000000;
@@ -28,10 +29,12 @@ body {
     z-index: 100;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
+
 .topbar h1 {
     font-size: 1.4rem;
     font-weight: bold;
 }
+
 #auth-btn {
     background: white;
     color: #000000;
@@ -43,6 +46,7 @@ body {
     font-size: 1rem;
     transition: background 0.2s;
 }
+
 #auth-btn:hover {
     background: #f5f5f5;
 }
@@ -64,6 +68,7 @@ body {
     border-radius: 4px;
     transition: background 0.2s;
 }
+
 .back-btn:hover {
     background: rgba(255, 255, 255, 0.2);
 }
@@ -81,6 +86,7 @@ body {
     align-items: center;
     z-index: 200;
 }
+
 .modal-content {
     background: white;
     padding: 24px;
@@ -90,6 +96,7 @@ body {
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
     position: relative;
 }
+
 .close {
     position: absolute;
     top: 12px;
@@ -99,15 +106,18 @@ body {
     color: #aaa;
     cursor: pointer;
 }
+
 .close:hover {
     color: #333;
 }
+
 #modal-title,
 .modal-content h2 {
     margin-bottom: 20px;
     color: #000000;
     text-align: center;
 }
+
 #auth-form input,
 #password-form input {
     width: 100%;
@@ -117,6 +127,7 @@ body {
     border-radius: 6px;
     font-size: 1rem;
 }
+
 #auth-form button,
 #password-form button {
     width: 100%;
@@ -131,10 +142,12 @@ body {
     margin-top: 10px;
     transition: background 0.2s;
 }
+
 #auth-form button:hover,
 #password-form button:hover {
     background: #000000;
 }
+
 #auth-message,
 #password-message {
     margin-top: 12px;
@@ -143,6 +156,7 @@ body {
     color: #d32f2f;
     min-height: 1.2em;
 }
+
 #go-to-login-btn,
 #close-locked-modal {
     width: 100%;
@@ -155,6 +169,7 @@ body {
     cursor: pointer;
     margin-top: 15px;
 }
+
 #close-locked-modal {
     background: #4CAF50;
 }
@@ -165,9 +180,11 @@ body {
     display: flex;
     align-items: center;
 }
+
 .user-menu {
     position: relative;
 }
+
 .user-name-btn {
     background: white;
     color: #000000;
@@ -178,6 +195,7 @@ body {
     font-weight: bold;
     font-size: 1rem;
 }
+
 .user-dropdown {
     position: absolute;
     top: 100%;
@@ -189,6 +207,7 @@ body {
     min-width: 180px;
     z-index: 101;
 }
+
 .user-dropdown button {
     display: block;
     width: 100%;
@@ -199,6 +218,7 @@ body {
     cursor: pointer;
     font-size: 0.95rem;
 }
+
 .user-dropdown button:hover {
     background: #f5f5f5;
 }
@@ -227,6 +247,7 @@ body {
     font-size: 0.9rem;
     font-weight: bold;
 }
+
 .table-counters span {
     background: #333;
     padding: 4px 10px;
@@ -237,13 +258,16 @@ body {
 .desktop-table {
     display: block;
 }
+
 .mobile-table {
     display: none;
 }
+
 @media (max-width: 768px) {
     .desktop-table {
         display: none;
     }
+
     .mobile-table {
         display: block;
     }
@@ -257,6 +281,7 @@ body {
     background-color: #000;
     color: white;
 }
+
 .desktop-cards-table th,
 .desktop-cards-table td {
     border: 1px solid #555;
@@ -265,22 +290,26 @@ body {
     vertical-align: middle;
     font-weight: bold;
 }
+
 .desktop-cards-table th {
     background-color: #000;
     color: #fff;
     font-size: 0.9em;
 }
+
 .desktop-cards-table .number-cell {
     font-size: 0.85em;
     white-space: nowrap;
     min-width: 100px;
 }
+
 .desktop-cards-table .player-cell {
     background-color: #222;
     color: #ddd;
     cursor: pointer;
     min-width: 120px;
 }
+
 .desktop-cards-table .player-cell:hover {
     background-color: #333;
 }
@@ -293,6 +322,7 @@ table {
     background-color: #000;
     color: white;
 }
+
 th,
 td {
     border: 1px solid #555;
@@ -301,17 +331,20 @@ td {
     vertical-align: middle;
     font-weight: bold;
 }
+
 th {
     background-color: #000;
     color: #fff;
     font-size: 1rem;
 }
+
 .number-cell {
     font-size: 1.1em;
     background-color: #000;
     white-space: nowrap;
     color: white;
 }
+
 .player-cell {
     background-color: #222;
     color: #ddd;
@@ -319,6 +352,7 @@ th {
     transition: background 0.2s;
     min-width: 150px;
 }
+
 .player-cell:hover {
     background-color: #333;
 }
@@ -337,6 +371,7 @@ th {
     margin-left: 6px;
     vertical-align: middle;
 }
+
 .admin-panel {
     text-align: center;
     padding: 15px;
@@ -350,6 +385,7 @@ th {
     gap: 10px;
     flex-wrap: wrap;
 }
+
 .admin-panel button {
     background: #f44336;
     color: white;
@@ -359,6 +395,7 @@ th {
     cursor: pointer;
     font-weight: bold;
 }
+
 .admin-panel button:hover {
     background: #d32f2f;
 }
@@ -373,6 +410,7 @@ th {
     cursor: pointer;
     font-weight: bold;
 }
+
 #toggle-table-btn:hover {
     background: #f57c00;
 }
@@ -387,6 +425,7 @@ th {
     border-radius: 8px;
     border: 1px solid #4CAF50;
 }
+
 .confirm-selection button {
     background: #4CAF50;
     color: white;
@@ -397,6 +436,7 @@ th {
     cursor: pointer;
     margin-top: 10px;
 }
+
 .confirm-selection button:hover {
     background: #45a049;
 }
@@ -405,6 +445,7 @@ th {
 #user-cards-modal .modal-content {
     text-align: center;
 }
+
 #copy-cards-btn {
     background: #2196F3;
     color: white;
@@ -416,6 +457,7 @@ th {
     margin-top: 15px;
     transition: background 0.2s;
 }
+
 #copy-cards-btn:hover {
     background: #1976D2;
 }
@@ -431,6 +473,7 @@ th {
     cursor: pointer;
     margin-top: 15px;
 }
+
 #close-table-modal:hover {
     background: #f57c00;
 }
@@ -444,6 +487,7 @@ th {
     flex-direction: column;
     overflow: hidden;
 }
+
 .generator-modal .modal-content {
     display: flex;
     flex-direction: column;
@@ -451,6 +495,7 @@ th {
     max-height: 90vh;
     overflow: hidden;
 }
+
 .generator-main {
     display: flex;
     gap: 16px;
@@ -459,20 +504,24 @@ th {
     min-height: 0;
     overflow: hidden;
 }
+
 .miniatures-container {
     flex: 2;
     background: #f5f5f5;
     border-radius: 8px;
     padding: 12px;
-    overflow-y: auto; /* Scroll vertical */
+    overflow-y: auto;
+    /* Scroll vertical */
     max-height: 600px;
 }
+
 /* En móviles, altura más pequeña */
 @media (max-width: 768px) {
     .miniatures-container {
         max-height: 200px;
     }
 }
+
 .miniatures-grid {
     display: flex;
     flex-wrap: wrap;
@@ -490,14 +539,17 @@ th {
     font-size: 0.65rem;
     font-weight: bold;
     min-width: 80px;
-    width: 80px; /* Ancho fijo */
+    width: 80px;
+    /* Ancho fijo */
     display: flex;
     flex-direction: column;
     align-items: center;
     flex-shrink: 0;
     line-height: 1.2;
-    overflow: hidden; /* Evita desbordamiento */
+    overflow: hidden;
+    /* Evita desbordamiento */
 }
+
 .miniature-card div {
     width: 100%;
     white-space: nowrap;
@@ -505,12 +557,14 @@ th {
     text-overflow: ellipsis;
     padding: 0 2px;
 }
+
 .miniature-card img {
     width: 60px;
     height: 60px;
     object-fit: contain;
     margin-bottom: 4px;
 }
+
 .current-card-panel {
     flex: 1;
     display: flex;
@@ -523,6 +577,7 @@ th {
     overflow-y: auto;
     max-height: 100%;
 }
+
 .current-card-display {
     text-align: center;
     margin-bottom: 20px;
@@ -531,6 +586,7 @@ th {
     flex-direction: column;
     justify-content: center;
 }
+
 .current-card-display img {
     width: 120px;
     height: 120px;
@@ -540,12 +596,14 @@ th {
     border-radius: 8px;
     margin-bottom: 10px;
 }
+
 .current-card-name {
     font-size: 1.2rem;
     font-weight: bold;
     color: #e91e63;
     margin: 0;
 }
+
 .next-card-btn,
 .copy-btn,
 .reset-btn,
@@ -562,27 +620,34 @@ th {
     width: 100%;
     transition: background 0.2s;
 }
+
 .next-card-btn:hover,
 .copy-btn:hover,
 .reset-btn:hover,
 .capture-btn:hover {
     background: #d81b60;
 }
+
 .copy-btn {
     background: #2196F3;
 }
+
 .copy-btn:hover {
     background: #1976D2;
 }
+
 .reset-btn {
     background: #ff5722;
 }
+
 .reset-btn:hover {
     background: #e64a19;
 }
+
 .capture-btn {
     background: #9c27b0;
 }
+
 .capture-btn:hover {
     background: #7b1fa2;
 }
@@ -597,6 +662,7 @@ th {
     color: #555;
     font-weight: bold;
 }
+
 .card-counters span {
     background: #f0f0f0;
     padding: 4px 10px;
@@ -611,6 +677,7 @@ th {
     text-align: center;
     width: 100%;
 }
+
 .last-card-display {
     font-size: 1.3rem;
     font-weight: bold;
@@ -634,6 +701,7 @@ th {
     border-radius: 8px;
     margin-bottom: 20px;
 }
+
 .fin-juego {
     color: #4CAF50;
     font-weight: bold;
@@ -651,46 +719,79 @@ th {
         max-height: 70vh;
         overflow-y: auto;
     }
+
     .bingo-container::-webkit-scrollbar {
         width: 8px;
     }
+
     .bingo-container::-webkit-scrollbar-track {
         background: rgba(0, 0, 0, 0.2);
         border-radius: 10px;
     }
+
     .bingo-container::-webkit-scrollbar-thumb {
         background: #f9f9f9;
         border-radius: 10px;
     }
+
     /* Generador responsive */
     .generator-main {
         flex-direction: column;
     }
+
     .miniatures-container {
         max-height: 200px;
         order: 2;
     }
+
     .current-card-panel {
         order: 1;
         width: 100%;
         min-width: auto;
         padding: 12px;
     }
-    .current-card-panel > * {
+
+    .current-card-panel>* {
         width: 100% !important;
         margin-bottom: 8px;
     }
+
     #auto-generator-container {
         width: 100% !important;
         margin-top: 12px !important;
     }
+
     #auto-speed-select,
     #auto-control-btn {
         width: 100% !important;
     }
+
     .generator-modal .modal-content {
         max-height: 95vh;
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
     }
+}
+
+/* ✅ Corrección: Asegurar visibilidad en modales */
+.modal-content {
+    background: #000 !important;
+    /* Fondo negro */
+    color: #f0f0f0 !important;
+    /* Texto blanco */
+}
+
+.modal-content h2,
+.modal-content p,
+.modal-content label,
+.modal-content input,
+.modal-content strong {
+    color: #f0f0f0 !important;
+    /* Texto blanco en todo el contenido */
+}
+
+.modal-content input {
+    background: #222 !important;
+    color: #f0f0f0 !important;
+    border: 1px solid #555 !important;
 }

@@ -355,6 +355,17 @@ function handleRemove(e) {
     if (confirm(`¿Eliminar a ${selecciones[carta]} de ${carta}?`)) {
         delete selecciones[carta];
         saveSelections();
+
+        // ✅ NUEVO: Recalcular estado de confirmación del usuario actual
+        if (window.appState.currentUser) {
+            const userLower = window.appState.currentUser.toLowerCase();
+            const userCardCount = Object.values(selecciones).filter(owner =>
+                owner && owner.toLowerCase() === userLower
+            ).length;
+            const maxCartas = config.cartasPorUsuario || 2;
+            window.appState.userHasConfirmed = userCardCount >= maxCartas;
+            updateConfirmButton(); // ✅ Actualizar UI
+        }
     }
 }
 
@@ -362,17 +373,34 @@ function updateConfirmButton() {
     const confirmDiv = document.getElementById('confirm-selection');
     const display = document.getElementById('selected-cards-display');
     if (!confirmDiv || !display) return;
-    const savedCount = getSavedCardsCount();
-    const totalSelected = savedCount + tempSelections.size;
-    if (tempSelections.size > 0 && window.appState.currentUser && !window.appState.userHasConfirmed) {
-        const allSelected = Array.from(tempSelections);
-        Object.entries(selecciones).forEach(([carta, owner]) => {
-            if (owner && owner.toLowerCase() === window.appState.currentUser.toLowerCase()) {
-                allSelected.push(carta);
-            }
-        });
-        display.textContent = allSelected.join(', ');
+
+    if (!window.appState.currentUser) {
+        confirmDiv.classList.add('hidden');
+        return;
+    }
+
+    // Obtener todas las cartas del usuario (guardadas + temporales)
+    const userCards = [];
+    Object.entries(selecciones).forEach(([carta, owner]) => {
+        if (owner && owner.toLowerCase() === window.appState.currentUser.toLowerCase()) {
+            userCards.push(carta);
+        }
+    });
+    userCards.push(...tempSelections);
+
+    if (userCards.length > 0) {
+        display.textContent = userCards.join(', ');
         confirmDiv.classList.remove('hidden');
+
+        // Ocultar botón de confirmar si ya está confirmado
+        const confirmBtn = document.getElementById('confirm-btn');
+        if (confirmBtn) {
+            if (window.appState.userHasConfirmed) {
+                confirmBtn.style.display = 'none';
+            } else {
+                confirmBtn.style.display = 'inline-block';
+            }
+        }
     } else {
         confirmDiv.classList.add('hidden');
     }
